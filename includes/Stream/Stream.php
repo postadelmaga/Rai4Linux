@@ -18,11 +18,12 @@ class Stream
 
     public function getDaysRange()
     {
+        $range = array();
+
         date_default_timezone_set('Europe/Rome');
 
-        $range = array();
         for ($i = 1; $i <= 7; $i++) {
-            $prev = date("Y-d-m", mktime(2, 0, 0, date("d") - $i, date("m"), date("Y")));
+            $prev = date("Y-m-d", mktime(2, 0, 0, date("m"), date("d") - $i, date("Y")));
 
             $date = new DateTime($prev);
             $prevDay = $date->format('Y-m-d');
