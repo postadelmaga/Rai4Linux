@@ -58,32 +58,6 @@ class Stream
         }
     }
 
-    public function getChannel($ch)
-    {
-        $fileName = $ch . "-";
-        $jDays = array();
-
-        foreach ($this->getDaysRange() as $day) {
-            $jDays[] = updateDay($ch, $day);
-        }
-        return $jDays;
-    }
-
-//    public function getDay($ch, $day, $update = 0)
-//    {
-//        $currentFile = self::FILE_BASE . $ch . "-" . $day . ".json";
-//
-//        if (file_exists($currentFile)) {
-//            $jsonDay = $this->extractContent(file_get_contents($currentFile));
-//            return $jsonDay;
-//        } elseif ($update) {
-//            $jsonDay = $this->extractContent($this->updateDay($ch, $day,true));
-//            return $jsonDay;
-//        }
-//
-//        return false;
-//    }
-
     public function updateAllStreams()
     {
         foreach ($this->getChannelList() as $ch) {
@@ -128,25 +102,52 @@ class Stream
         }
     }
 
+//    protected function extractContent($ch, $date)
+//    {
+//        $dayList = array();
+//        $json = $this->_getStreamContent($ch, $date);
+//        $obj = json_decode($json);
+////      $content = $obj->{1};
+//
+//        // estrae il primo elemento numerico
+//        // contenente la lista oraria del giorno
+//        foreach ($obj as $key => $value) {
+//
+//            if ((int)$key > 0) {
+//                // il valore e' numerico
+//                foreach ($value as $lb => $field) {
+//                    $dayList[$lb] = $value;
+//                }
+//                var_dump($dayList);
+//                die();
+////                foreach ($value as $key => $item) {
+////                    $item->date = $key;
+////                    $days[$key] = $item;
+////                }
+//            }
+//        }
+//
+//        return false;
+//    }
     protected function extractContent($ch, $date)
     {
+        $dayList = array();
         $json = $this->_getStreamContent($ch, $date);
-        $obj = json_decode($json);
-//      $content = $obj->{1};
 
-        // estraele il primo elemento numerico
-        // contenente la lista oraria del giorno
-        foreach ($obj as $key => $value) {
-            $key = (int)$key;
-            if ($key > 0) {
-                return json_encode($value);
-//                foreach ($value as $key => $item) {
-//                    $item->date = $key;
-//                    $days[$key] = $item;
-//                }
+        $jsonIterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator(json_decode($json, TRUE)),
+            RecursiveIteratorIterator::SELF_FIRST);
+
+        $is = false;
+
+        foreach ($jsonIterator as $key => $val) {
+            if ($key == $date  || $is ) {
+                if (is_array($val) && $is) {
+                    $dayList[$key] = $val;
+                }
+                $is = true;
             }
         }
-
-        return false;
+        return json_encode($dayList);
     }
 }

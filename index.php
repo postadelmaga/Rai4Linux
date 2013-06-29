@@ -12,7 +12,7 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/functions.js"></script>
+<!--    <script src="js/functions.js"></script>-->
     <script src="js/Stream.js"></script>
     <!--    <script src="http://vjs.zencdn.net/4.0/video.js"></script>-->
     <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
@@ -97,10 +97,7 @@
         if (confirm('sicuro ?')) {
             ch = stream.currentChannel;
             stream.streemList[ch] = new Array();
-            for (var i in stream.dayRange) {
-                day = stream.dayRange[i];
-                stream._loadChannel(ch, 1);
-            }
+            stream._loadChannel(ch, 1);
         }
         return false;
     });

@@ -9,7 +9,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this.dayRange = dayRange;
     this.ajaxUrl = ajaxUrl;
 
-    this.streemList = new Array();
+    this.streamList = new Array();
 
     this.currentChannel = channelList[0];
     this.currentVideo = "";
@@ -93,15 +93,15 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         }
 
         if (update) {
-            this._ajaxDataDay(ch, day, this._processDayData, 1);
+            this._ajaxDataDay(ch, day, 1);
         }
         else {
-            if (this.streemList[ch] && this.streemList[ch][day]) {
-                dayData = this.streemList[ch][day];
+            if (this.streamList[ch] && this.streamList[ch][day]) {
+                dayData = this.streamList[ch][day];
                 this._processDayData(ch, day, dayData);
             }
             else {
-                this._ajaxDataDay(ch, day, this._processDayData, 0);
+                this._ajaxDataDay(ch, day, 0);
             }
         }
     }
@@ -109,10 +109,10 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this._processDayData = function (ch, day, data) {
 
         // add Day Data
-        if (!this.streemList[ch])
-            this.streemList[ch] = new Array();
+        if (!this.streamList[ch])
+            this.streamList[ch] = new Array();
         if (day && data)
-            this.streemList[ch][day] = data;
+            this.streamList[ch][day] = data;
 
         if (ch == this.currentChannel) {
             this._setDayHtml(day, ch);
@@ -123,6 +123,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this._ajaxDataDay = function (ch, day, callback, update) {
 
+        var callback = this._processDayData;
         var data = { ch: ch, day: day};
         if (update)
             data = { up: 1, ch: ch, day: day};
@@ -153,38 +154,42 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         jQuery('#' + day + ' .loader').hide();
         stream = this;
 
-        var dayList = this.streemList[ch][day];
+        var dayList = this.streamList[ch][day];
 
-        for (var property in dayList) {
-            var hr;
-            hr = dayList[property];
+        for (var hr in dayList) {
 
-            for (var time in hr) {
+            var curProg = dayList[hr];
 
-                if (hr.hasOwnProperty(time) && hr[time].h264) {
-                    var prog = hr[time];
-                    var title = prog.t;
-                    var streamUrl = prog.h264;
-                    var description = prog.t;
+//            if (curProg.hasOwnProperty(time) && curProg[time].h264) {
+//                var prog = hr[time];
+                var title = curProg.t;
+                var streamUrl = curProg.h264;
+                var description = curProg.d;
 
-                    var row = jQuery("<div>", {"class": "program"})
-                        .html(time + ' - ' + title)
-                        .click((function () {
-                            stream._setVideo(streamUrl);
-                        }));
-
-                    var desc = jQuery('<div>', {'class': 'description'}).html(description);
-                    desc.hide();
-
-                    row.append(desc);
-                    row.appendTo(target);
-//                    row.hover(alert('ss'));
-                }
+                var row = jQuery("<div>",
+                    {"class": "program",
+                        "data-url": streamUrl
+                    })
+                    .html(hr + ' - ' + title)
+                    .click((function () {
+                        stream._setVideo(this);
+                    }));
+            if (streamUrl == ''){
+                row.addClass('error');
             }
+
+                var desc = jQuery('<div>', {'class': 'description'}).html(description);
+                desc.hide();
+
+                row.append(desc);
+                row.appendTo(target);
+//                    row.hover(alert('ss'));
+//            }
         }
     }
 
-    this._setVideo = function (streamUrl) {
+    this._setVideo = function (el) {
+        streamUrl = jQuery(el).attr('data-url');
         this.videoBox.show();
         this.logger('_setVideo');
         this.videoBox.find('video').stop();
