@@ -3,9 +3,13 @@
 
 .description {
     color: black;
-    background-color: white;
+    background-color: darkgrey;
+    /*border: 2px crimson black;*/
     /*width: 100px;*/
     /*height: 100px;*/
+    /*position: relative;*/
+    /*right: -113px;*/
+    /*top: -18px;*/
 }
 
 .jumbotron {

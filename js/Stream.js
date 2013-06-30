@@ -20,7 +20,6 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.init = function () {
         this.logger('init');
-//        this.logger(this.element);
         for (var i in this.channelList) {
             this.createChannelBtn(this.channelList[i]);
         }
@@ -54,8 +53,6 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         var load = jQuery('#loadbar_' + ch);
         load.attr('data-percentage', 0);
         load.css('width', 0);
-
-        // load.parent().show('fold', 500);
 
         if (ch == this.currentChannel) {
             if (el.parent()) {
@@ -150,7 +147,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this._setDayHtml = function (day, ch) {
 
         var target = jQuery("#" + day + ' .program_list');
-        target.show();
+        target.fadeIn();
         jQuery('#' + day + ' .loader').hide();
         stream = this;
 
@@ -160,38 +157,44 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
             var curProg = dayList[hr];
 
-//            if (curProg.hasOwnProperty(time) && curProg[time].h264) {
-//                var prog = hr[time];
-                var title = curProg.t;
-                var streamUrl = curProg.h264;
-                var description = curProg.d;
+            var row = jQuery("<div>",
+                {"class": "program",
+                    "data-url": curProg.h264,
+                    "data-url_400": curProg.h264_400,
+                    "data-url_600": curProg.h264_600,
+                    "data-url_800": curProg.h264_800,
+                    "data-url_1200": curProg.h264_1200,
+                    "data-url_1500": curProg.h264_1500,
+                    "data-url_1800": curProg.h264_1800
+                })
+                .html(hr + ' - ' + curProg.t)
+                .click((function () {
+                    stream._setVideo(this);
+                }));
 
-                var row = jQuery("<div>",
-                    {"class": "program",
-                        "data-url": streamUrl
-                    })
-                    .html(hr + ' - ' + title)
-                    .click((function () {
-                        stream._setVideo(this);
-                    }));
-            if (streamUrl == ''){
+            if (curProg.h264 == '') {
                 row.addClass('error');
+//                row.attr('data-url',curProg.urlrisorsatagli);
             }
 
-                var desc = jQuery('<div>', {'class': 'description'}).html(description);
-                desc.hide();
-
-                row.append(desc);
-                row.appendTo(target);
-//                    row.hover(alert('ss'));
-//            }
+            var desc = jQuery('<div>', {'class': 'description'}).html(curProg.d)
+                .hide().appendTo(row);
+            row.hoverIntent((function () {
+                jQuery(this).find('.description').fadeIn()
+            }),
+                (function () {
+                    jQuery(this).find('.description').fadeOut(1200);
+                })
+            );
+//            row.append(desc);
+            row.appendTo(target);
         }
     }
 
     this._setVideo = function (el) {
         streamUrl = jQuery(el).attr('data-url');
         this.videoBox.show();
-        this.logger('_setVideo');
+//        this.logger('_setVideo');
         this.videoBox.find('video').stop();
         this._ajaxloadVideo(streamUrl);
 
@@ -231,7 +234,6 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         if (jQuery('.jq_current_video').length) {
             this.videoBox = jQuery('.jq_current_video');
             if (url) {
-                this.logger('set video:' + url);
                 this.videoBox.find('source').attr('src', url);
                 this.videoBox.find('video').load();
             }
