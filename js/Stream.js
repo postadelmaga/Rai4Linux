@@ -2,7 +2,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.element = jQuery('.' + classname);
     this.weekBox = '';
-    this.chlBox = '';
+    this.chBox = '';
     this.videoBox = '';
 
     this.channelList = channelList;
@@ -19,16 +19,16 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this.height = 530;
 
     this.init = function () {
-        this.logger('init');
+        this.logger('- Init() Stream obj');
         for (var i in this.channelList) {
-            this.createChannelBtn(this.channelList[i]);
+            this.initChannelBtn(this.channelList[i]);
         }
         this.initVideoBox();
     };
 
     this.preload = function () {
 
-        this.logger('preload');
+        this.logger('- preload() other channel List');
         for (var i in this.channelList) {
             var chUp = this.channelList[i];
             if (chUp != this.currentChannel) {
@@ -38,7 +38,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     }
 
     this.selectChannel = function (ch) {
-        this.logger('selectChannel:' + ch);
+        this.logger('- selectChannel:' + ch);
         this.currentChannel = ch;
 
         this._selectChannelBtn(ch);
@@ -67,6 +67,12 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     }
 
     this._loadChannel = function (ch, update) {
+
+        if (update) {
+            this.streamList[ch] = new Array();
+            jQuery('#channel_list').find('#btn_'+ch + ' .progress').show();
+        }
+
         for (var i in  this.dayRange) {
             jQuery('label#load-' + ch).text("0");
             jQuery('label#load').text("0");
@@ -77,6 +83,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this._getDayData = function (ch, day, update) {
         this.logger('_getDayData(' + ch + ',' + day + ',' + update + ')');
+
         // Problemi con prototype
         var target = jQuery("#" + day);
 
@@ -118,12 +125,13 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         this._loaderUp(ch);
     }
 
-    this._ajaxDataDay = function (ch, day, callback, update) {
+    this._ajaxDataDay = function (ch, day, update) {
 
         var callback = this._processDayData;
         var data = { ch: ch, day: day};
+
         if (update)
-            data = { up: 1, ch: ch, day: day};
+            data = { up: 1, ch: ch, day: day };
 
         jQuery.ajax({
                 type: "POST",
@@ -191,37 +199,22 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
         }
     }
 
-    this._setVideo = function (el) {
-        streamUrl = jQuery(el).attr('data-url');
-        this.videoBox.show();
-//        this.logger('_setVideo');
-        this.videoBox.find('video').stop();
-        this._ajaxloadVideo(streamUrl);
-
-    }
-
-    this.createChannelBtn = function (ch) {
+    this.initChannelBtn = function (ch) {
 
         var stream = this;
 
         var chbtn = jQuery("<li>", {"id": 'btn_' + ch})
-            .append(jQuery('<a>', {'class': 'btn btn-primary btn-danger btn-large', 'href': '#'}).text(ch));
+            .append(jQuery('<a>', {'class': 'btn btn-primary btn-danger btn-large', 'href': '#'}).text(ch))
+            .click(function () {
+                stream.selectChannel(ch);
+            }).appendTo(jQuery('#channel_list'));
 
-        chbtn.click(function () {
-            stream.selectChannel(ch);
-        })
-
-        var load = jQuery("<div>", {'class': 'progress progress-striped active'}).append(
+        var loader = jQuery("<div>", {'class': 'progress progress-striped active'}).append(
             jQuery("<div>", {
                 "id": 'loadbar_' + ch,
                 "class": 'bar',
                 'data-percentage': 0
-            }));
-
-        chbtn.append(load);
-//            chbtn.hide();
-        jQuery('#channel_list').append(chbtn)
-//        jQuery('#programs').prepend(chbtn);
+            })).appendTo(chbtn);
 
         return this;
     }
@@ -229,18 +222,17 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this.initVideoBox = function (url) {
 
         var video_id = "jq_videoplayer";
-
-        //second time show
+        //second time show it
         if (jQuery('.jq_current_video').length) {
-            this.videoBox = jQuery('.jq_current_video');
+//            this.videoBox = jQuery('.jq_current_video');
             if (url) {
                 this.videoBox.find('source').attr('src', url);
                 this.videoBox.find('video').load();
             }
-            this.videoBox.show('fold', 1000);
         }
         else {
-            this.videoBox = jQuery("<div>", {"class": "jq_current_video"});
+            // first time creates the block
+            this.videoBox = jQuery("<div>", {"class": "jq_current_video"}).hide();
 
             var video = jQuery("<video>", {
                 "id": video_id,
@@ -250,18 +242,25 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 "height": this.height,
                 controls: "",
                 autoplay: ""
-            });
-            var source = jQuery("<source>", { 'type': 'video/mp4' });
+            }).appendTo(this.videoBox);
 
-            video.append(source);
-            this.videoBox.append(video);
-            this.videoBox.hide();
+            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(video);
+
+            // prepend it to the base element
             this.element.prepend(this.videoBox);
         }
         return this;
     }
 
+    this._setVideo = function (el) {
+        streamUrl = jQuery(el).attr('data-url');
+        this.videoBox.show('fold', 1000);
+        this.goToByScroll(this.videoBox);
+        this._ajaxloadVideo(streamUrl);
+    }
+
     this._ajaxloadVideo = function (streamUrl) {
+        this.videoBox.find('video').stop();
         jQuery.ajax({
             type: "POST",
             url: this.ajaxUrl,
@@ -306,15 +305,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             loadBarCh.attr("data-percentage", 0);
             loadBarCh.parent().hide();//removeClass('bar');
         }
-
     }
-
-    this.logger = function (msg) {
-        console.log(Stream.logCounter + ': ' + msg);
-        Stream.logCounter = Stream.logCounter + 1;
-    }
-    this.init();
-
 
     this.updateStreams = function (stream) {
         jQuery('#titleMenu').css('color', 'yellow');
@@ -324,17 +315,31 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             dataType: "json",
             data: { up: 1},
             success: function (data) {
-                stream.log('- StreamUpdate: OK');
-                stream.log(data);
+                stream.logger('- StreamUpdate: OK');
+                stream.logger(data);
                 jQuery('#titleMenu').css('color', 'green');
                 stream.init();
             },
             error: function (data) {
-                stream.log('- StreamUpdate: ERROR');
-                stream.log(data);
+                stream.logger('- StreamUpdate: ERROR');
+                stream.logger(data);
                 jQuery('#titleMenu').css('color', 'red');
-
             }
         })
     }
+
+    this.goToByScroll = function (el) {
+        // Remove "link" from the ID
+        $('html,body').animate({
+                scrollTop: el.offset().top},
+            'slow');
+    }
+
+    this.logger = function (msg) {
+        console.log(Stream.logCounter + ': ' + msg);
+        Stream.logCounter = Stream.logCounter + 1;
+    }
+
+    // Init
+    this.init();
 }

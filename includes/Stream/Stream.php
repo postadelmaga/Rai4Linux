@@ -33,6 +33,9 @@ class Stream
         return $range;
     }
 
+    /*
+     * Remove old streamSource
+     */
     public function cleanStreamSourceRep()
     {
         $allowed = array();
@@ -68,7 +71,7 @@ class Stream
         return "OK";
     }
 
-    public function updateDay($ch, $date, $reload = false)
+    public function updateDay($ch, $date, $forceDownload = false)
     {
         $fileName = "";
         $content = "";
@@ -76,9 +79,9 @@ class Stream
         $fileName = $ch . "-" . $date . ".json";
         $filePath = self::FILE_BASE . $fileName;
 
-        if (!file_exists($filePath)) { //|| $reload) {
+        if (!file_exists($filePath) || $forceDownload) {
 
-            $content = $this->extractContent($ch, $date);
+            $content = $this->_getStreamContent($ch, $date);
             if ($content) {
                 file_put_contents($filePath, $content);
                 return $content;
@@ -94,45 +97,18 @@ class Stream
 
         $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $date);
         try {
-            $content = file_get_contents($url);
+            $json = file_get_contents($url);
+            $content = $this->_extractContent($date, $json);
 
-            return $content;
         } catch (Exception $e) {
             return false;
         }
+        return $content;
     }
 
-//    protected function extractContent($ch, $date)
-//    {
-//        $dayList = array();
-//        $json = $this->_getStreamContent($ch, $date);
-//        $obj = json_decode($json);
-////      $content = $obj->{1};
-//
-//        // estrae il primo elemento numerico
-//        // contenente la lista oraria del giorno
-//        foreach ($obj as $key => $value) {
-//
-//            if ((int)$key > 0) {
-//                // il valore e' numerico
-//                foreach ($value as $lb => $field) {
-//                    $dayList[$lb] = $value;
-//                }
-//                var_dump($dayList);
-//                die();
-////                foreach ($value as $key => $item) {
-////                    $item->date = $key;
-////                    $days[$key] = $item;
-////                }
-//            }
-//        }
-//
-//        return false;
-//    }
-    protected function extractContent($ch, $date)
+    protected function _extractContent($date, $json)
     {
         $dayList = array();
-        $json = $this->_getStreamContent($ch, $date);
 
         $jsonIterator = new RecursiveIteratorIterator(
             new RecursiveArrayIterator(json_decode($json, TRUE)),
@@ -141,7 +117,7 @@ class Stream
         $is = false;
 
         foreach ($jsonIterator as $key => $val) {
-            if ($key == $date  || $is ) {
+            if ($key == $date || $is) {
                 if (is_array($val) && $is) {
                     $dayList[$key] = $val;
                 }
