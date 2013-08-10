@@ -3,10 +3,10 @@ class Stream
 {
     const FILE_BASE = "./streamSource/";
     const URL_BASE = "http://www.rai.tv/dl/portale/html/palinsesti/replaytv/static/";
+    const LOG_DIR = "./log/";
 
     public function __construct()
     {
-
         $this->cleanStreamSourceRep();
     }
 
@@ -63,12 +63,14 @@ class Stream
 
     public function updateAllStreams()
     {
+        $msg = '';
         foreach ($this->getChannelList() as $ch) {
             foreach ($this->getDaysRange() as $day) {
                 $this->updateDay($ch, $day);
+                $msg .= " ch:$ch - day:$day <br>";
             }
         }
-        return "OK";
+        return $msg;
     }
 
     public function updateDay($ch, $date, $forceDownload = false)
@@ -97,13 +99,39 @@ class Stream
 
         $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $date);
         try {
-            $json = file_get_contents($url);
+            $context = stream_context_create(array('http' => array('timeout' => 2500)));
+
+//            $json = file_get_contents($url, false, $context);
+            $json = $this->new_get_file_contents($url);
             $content = $this->_extractContent($date, $json);
 
         } catch (Exception $e) {
+            $this->_log($e);
             return false;
         }
         return $content;
+    }
+
+    protected function new_get_file_contents($url)
+    {
+        // Initializing curl
+        $ch = curl_init( $url );
+
+// Configuring curl options
+        $options = array(
+            CURLOPT_RETURNTRANSFER => 1,
+//            CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
+            CURLOPT_CONNECTTIMEOUT => 0,
+        );
+
+// Setting curl options
+        curl_setopt_array( $ch, $options );
+
+// Getting results
+        $file_contents =  curl_exec($ch); // Getting jSON result string
+
+        curl_close($ch);
+        return $file_contents;
     }
 
     protected function _extractContent($date, $json)
@@ -125,5 +153,28 @@ class Stream
             }
         }
         return json_encode($dayList);
+    }
+
+    public function debug()
+    {
+        $ch = $this->getChannelList();
+        $day = $this->getDaysRange();
+        error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+        echo "$ch[1],$day[1]<br>";
+
+        return $this->updateDay($ch[1], $day[1], true);
+    }
+
+    protected function _log($msg)
+    {
+        $filename = self::LOG_DIR . 'log.txt';
+
+        date_default_timezone_set('Europe/Rome');
+        $day = date("Y-m-d", mktime(2, 0, 0, date("m"), date("d"), date("Y")));
+
+        $current = $day . PHP_EOL;
+        $current .= $msg . PHP_EOL;
+
+        file_put_contents($filename, $current, FILE_APPEND);
     }
 }
