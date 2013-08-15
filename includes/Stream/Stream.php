@@ -1,13 +1,106 @@
 <?php
+
+function coreErrorHandler($errno, $errstr, $errfile, $errline)
+{
+    if (strpos($errstr, 'DateTimeZone::__construct') !== false) {
+        // there's no way to distinguish between caught system exceptions and warnings
+        return false;
+    }
+
+    $errno = $errno & error_reporting();
+    if ($errno == 0) {
+        return false;
+    }
+    if (!defined('E_STRICT')) {
+        define('E_STRICT', 2048);
+    }
+    if (!defined('E_RECOVERABLE_ERROR')) {
+        define('E_RECOVERABLE_ERROR', 4096);
+    }
+    if (!defined('E_DEPRECATED')) {
+        define('E_DEPRECATED', 8192);
+    }
+
+    // PEAR specific message handling
+    if (stripos($errfile . $errstr, 'pear') !== false) {
+        // ignore strict and deprecated notices
+        if (($errno == E_STRICT) || ($errno == E_DEPRECATED)) {
+            return true;
+        }
+        // ignore attempts to read system files when open_basedir is set
+        if ($errno == E_WARNING && stripos($errstr, 'open_basedir') !== false) {
+            return true;
+        }
+    }
+
+    $errorMessage = '';
+
+    switch ($errno) {
+        case E_ERROR:
+            $errorMessage .= "Error";
+            break;
+        case E_WARNING:
+            $errorMessage .= "Warning";
+            break;
+        case E_PARSE:
+            $errorMessage .= "Parse Error";
+            break;
+        case E_NOTICE:
+            $errorMessage .= "Notice";
+            break;
+        case E_CORE_ERROR:
+            $errorMessage .= "Core Error";
+            break;
+        case E_CORE_WARNING:
+            $errorMessage .= "Core Warning";
+            break;
+        case E_COMPILE_ERROR:
+            $errorMessage .= "Compile Error";
+            break;
+        case E_COMPILE_WARNING:
+            $errorMessage .= "Compile Warning";
+            break;
+        case E_USER_ERROR:
+            $errorMessage .= "User Error";
+            break;
+        case E_USER_WARNING:
+            $errorMessage .= "User Warning";
+            break;
+        case E_USER_NOTICE:
+            $errorMessage .= "User Notice";
+            break;
+        case E_STRICT:
+            $errorMessage .= "Strict Notice";
+            break;
+        case E_RECOVERABLE_ERROR:
+            $errorMessage .= "Recoverable Error";
+            break;
+        case E_DEPRECATED:
+            $errorMessage .= "Deprecated functionality";
+            break;
+        default:
+            $errorMessage .= "Unknown error ($errno)";
+            break;
+    }
+
+    $errorMessage .= ": {$errstr}  in {$errfile} on line {$errline}";
+    Stream::log($errorMessage);
+}
+
 class Stream
 {
     const FILE_BASE = "./streamSource/";
     const URL_BASE = "http://www.rai.tv/dl/portale/html/palinsesti/replaytv/static/";
     const LOG_DIR = "./log/";
+    const DEFAULT_ERROR_HANDLER = 'coreErrorHandler';
 
     public function __construct()
     {
-        $this->cleanStreamSourceRep();
+        date_default_timezone_set('Europe/Rome');
+
+        error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+        set_error_handler(self::DEFAULT_ERROR_HANDLER, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+        $this->cleanOldStreamSource();
     }
 
     public function getChannelList()
@@ -19,8 +112,6 @@ class Stream
     public function getDaysRange()
     {
         $range = array();
-
-        date_default_timezone_set('Europe/Rome');
 
         for ($i = 1; $i <= 7; $i++) {
             $prev = date("Y-m-d", mktime(2, 0, 0, date("m"), date("d") - $i, date("Y")));
@@ -36,7 +127,7 @@ class Stream
     /*
      * Remove old streamSource
      */
-    public function cleanStreamSourceRep()
+    public function cleanOldStreamSource()
     {
         $allowed = array();
         foreach ($this->getChannelList() as $ch) {
@@ -93,45 +184,72 @@ class Stream
         return file_get_contents($filePath);
     }
 
-    protected function _getStreamContent($ch, $date)
+    protected function _getStreamContent($ch, $date, $iteration = 0)
     {
         $content = "";
+        $ex = false;
 
         $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $date);
         try {
             $context = stream_context_create(array('http' => array('timeout' => 2500)));
 
-//            $json = file_get_contents($url, false, $context);
-            $json = $this->new_get_file_contents($url);
+//            if ($iteration % 2 == 0) {
+//                $m = 1;
+////                Stream::log("I:$iteration,M:1--$ch-$date");
+//                $json = file_get_contents($url, false, $context);
+//
+//            } elseif ($iteration % 2 == 1) {
+            $m = 2;
+//                Stream::log("I:$iteration,M:2--$ch-$date");
+            $json = $this->get_file_contents_2($url);
+//            }
             $content = $this->_extractContent($date, $json);
 
         } catch (Exception $e) {
-            $this->_log($e);
-            return false;
+            if ($iteration < 20) {
+                return $this->_getStreamContent($ch, $date, $iteration + 1);
+            } else {
+                Stream::log("FAIL-I:$iteration|M:$m -- $ch-$date");
+                return false;
+            }
+            $ex = true;
         }
+//        if ($iteration > 15 && !$ex)
+//            Stream::log("SUCCESS-I:$iteration|M:$m -- $ch-$date");
         return $content;
     }
 
-    protected function new_get_file_contents($url)
+    public function get_file_contents_2($url)
     {
-        // Initializing curl
-        $ch = curl_init( $url );
-
-// Configuring curl options
         $options = array(
-            CURLOPT_RETURNTRANSFER => 1,
-//            CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
-            CURLOPT_CONNECTTIMEOUT => 0,
+            CURLOPT_RETURNTRANSFER => true, // return web page
+            CURLOPT_HEADER => false, // don't return headers
+            CURLOPT_ENCODING => "", // handle all encodings
+            CURLOPT_USERAGENT => "spider", // who am i
+            CURLOPT_AUTOREFERER => true, // set referer on redirect
+            CURLOPT_CONNECTTIMEOUT => 120, // timeout on connect
+            CURLOPT_TIMEOUT => 120, // timeout on response
+            CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
         );
 
-// Setting curl options
-        curl_setopt_array( $ch, $options );
-
-// Getting results
-        $file_contents =  curl_exec($ch); // Getting jSON result string
-
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        $content = curl_exec($ch);
+        $err = curl_errno($ch);
+        $errmsg = curl_error($ch);
+        $header = curl_getinfo($ch);
         curl_close($ch);
-        return $file_contents;
+
+        $header['errno'] = $err;
+        if ($err) {
+            Stream::log("CURL_ERR:$err");
+        }
+        $header['errmsg'] = $errmsg;
+        if ($errmsg) {
+            Stream::log("CURL_ERR:$errmsg");
+        }
+        $header['content'] = $content;
+        return $content;
     }
 
     protected function _extractContent($date, $json)
@@ -165,15 +283,12 @@ class Stream
         return $this->updateDay($ch[1], $day[1], true);
     }
 
-    protected function _log($msg)
+    static function log($msg)
     {
         $filename = self::LOG_DIR . 'log.txt';
 
-        date_default_timezone_set('Europe/Rome');
-        $day = date("Y-m-d", mktime(2, 0, 0, date("m"), date("d"), date("Y")));
-
-        $current = $day . PHP_EOL;
-        $current .= $msg . PHP_EOL;
+        $day = date("Y-m-d H:i:s") . ': ';
+        $current = $day . $msg . PHP_EOL;
 
         file_put_contents($filename, $current, FILE_APPEND);
     }
