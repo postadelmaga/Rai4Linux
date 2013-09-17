@@ -4,6 +4,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this.weekBox = '';
     this.chBox = '';
     this.videoBox = '';
+    this.videoel = '';
 
     this.channelList = channelList;
     this.dayRange = dayRange;
@@ -70,7 +71,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
         if (update) {
             this.streamList[ch] = new Array();
-            jQuery('#channel_list').find('#btn_'+ch + ' .progress').show();
+            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
         }
 
         for (var i in  this.dayRange) {
@@ -223,18 +224,20 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
         var video_id = "jq_videoplayer";
         //second time show it
-        if (jQuery('.jq_current_video').length) {
-//            this.videoBox = jQuery('.jq_current_video');
+        if (this.videoel.length) {
+            this.videoel = jQuery('#jq_videoplayer');
+            this.videoBox = this.videoel.parent();
+
             if (url) {
-                this.videoBox.find('source').attr('src', url);
-                this.videoBox.find('video').load();
+                this.videoel.attr('src', url);
+                this.videoel.load();
             }
         }
         else {
             // first time creates the block
             this.videoBox = jQuery("<div>", {"class": "jq_current_video"}).hide();
 
-            var video = jQuery("<video>", {
+            this.videoel = jQuery("<video>", {
                 "id": video_id,
                 "preload": 'none',
                 "name": "media",
@@ -243,8 +246,11 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 controls: "",
                 autoplay: ""
             }).appendTo(this.videoBox);
+            this.videoel.click(function () {
+                this.videoel.pause();
+            });
 
-            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(video);
+            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(this.videoel);
 
             // prepend it to the base element
             this.element.prepend(this.videoBox);
