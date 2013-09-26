@@ -1,8 +1,17 @@
 # Do not remove this line, otherwise mod_rewrite rules will stop working
 RewriteBase /
 
-# MIME types for Video
-AddType video/mp4 mp4 m4v f4v f4p
+# AddType TYPE/SUBTYPE EXTENSION
+
+AddType audio/mpeg mp3
+AddType audio/mp4 m4a
+AddType audio/ogg ogg
+AddType audio/ogg oga
+AddType audio/webm webma
+AddType audio/wav wav
+
+AddType video/mp4 mp4
+AddType video/mp4 m4v
 AddType video/ogg ogv
 AddType video/webm webm
-AddType video/x-flv flv
+AddType video/webm webmv
