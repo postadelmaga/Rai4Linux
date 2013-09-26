@@ -4,6 +4,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
     this.weekBox = '';
     this.chBox = '';
     this.videoBox = '';
+    this.videoel = '';
 
     this.channelList = channelList;
     this.dayRange = dayRange;
@@ -17,6 +18,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.width = 940;
     this.height = 530;
+    this.setFlash = false;
 
     this.init = function () {
         this.logger('- Init() Stream obj');
@@ -35,6 +37,11 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 this._loadChannel(chUp, 0);
             }
         }
+    }
+
+    this.setFlash = function () {
+
+        this.setFlash = true;
     }
 
     this.selectChannel = function (ch) {
@@ -70,7 +77,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
         if (update) {
             this.streamList[ch] = new Array();
-            jQuery('#channel_list').find('#btn_'+ch + ' .progress').show();
+            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
         }
 
         for (var i in  this.dayRange) {
@@ -222,33 +229,50 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.initVideoBox = function (url) {
 
-        var video_id = "jq_videoplayer";
         //second time show it
-        if (jQuery('.jq_current_video').length) {
-//            this.videoBox = jQuery('.jq_current_video');
+        if (this.videoBox.length) {
+            this.videoBox = jQuery('#video_tv');
+//            this.videoBox = this.videoel.parent();
+
             if (url) {
-                this.videoBox.find('source').attr('src', url);
-                this.videoBox.find('video').load();
+                if (this.setFlash == true) {
+                    //                jwplayer("video_tv")
+                    jwplayer().load([ {file: url} ]);
+                    jwplayer().play();
+                    jwplayer().onResize(jQuery('#video_tv').parent().css({width: 'auto',height: 'auto'}));
+                }
+                else {
+//                this.videoBox.find('video').attr('src', url);
+//                    this.videoBox.pause();
+                    this.videoBox.attr('src', url);
+                    this.videoBox.get(0).load();
+                    this.videoBox.get(0).play();
+//                html5media();
+                }
+                jQuery('#video_tv').height('500');
             }
         }
         else {
             // first time creates the block
-            this.videoBox = jQuery("<div>", {"class": "jq_current_video"}).hide();
+//                this.videoBox = jQuery('#video_tv').hide();
+            this.videoBox = jQuery("<div>", {"class": "video_tv"});
 
-            var video = jQuery("<video>", {
-                "id": video_id,
-                "preload": 'none',
-                "name": "media",
-                "width": this.width,
-                "height": this.height,
-                controls: "",
-                autoplay: ""
-            }).appendTo(this.videoBox);
+//            this.videoel = jQuery("<video>", {
+//                "id": video_id,
+//                "preload": 'none',
+//                "name": "media",
+//                "width": this.width,
+//                "height": this.height,
+//                controls: "",
+//                autoplay: ""
+//            }).appendTo(this.videoBox);
 
-            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(video);
-
+//            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(this.videoel);
+//            this.videoBox.click(function () {
+//                jQuery('#video_tv').pause();
+//            });
             // prepend it to the base element
-            this.element.prepend(this.videoBox);
+//            this.element.prepend(this.videoBox);
         }
         return this;
     }

@@ -1,22 +1,40 @@
 <?php include_once('./includes/Core.php'); ?>
-<?php $stream = new Stream(); ?>
+<?php
+$stream = new Stream();
+$setFlash = false;
+if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') === false) {
+    $setFlash = true;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="css/bootstrap/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
     <link href="css/style.css" rel="stylesheet" media="screen"/>
-    <link href="player_skin/jplayer.blue.monday.css" rel="stylesheet" media="screen"/>
 
+    <!--    <script type="text/javascript" src="js/jquery/jquery-1.8.3.min.js"></script>-->
+    <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
+    <!--    <script type="text/javascript" src="js/jquery/jquery-migrate-1.2.1.js"></script>-->
     <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    <script type="text/javascript" src="js/jquery.hoverIntent.minified.js"></script>
-    <script type="text/javascript" src="js/jquery.jplayer.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/Stream.js"></script>
-    <!--    <script src="http://vjs.zencdn.net/4.0/video.js"></script>-->
+
+    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/Stream/Stream.js"></script>
+    <!--    <script src="js/html5media.js"></script>-->
+    <!--    <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">-->
+    <!--    <script src="http://vjs.zencdn.net/4.1/video.js"></script>-->
+    <!--    <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
+    <!--        <script src="js/JW/jwplayer.js"></script>-->
+    <?php
+    if ($setFlash): ?>
+        <script src="js/JW/jwplayer.js"></script>
+    <?php endif ?>
+
+    <!--    <!- -        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->-->
+
     <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
 </head>
 
@@ -31,63 +49,26 @@
 
 <!--<div class="clearfix"></div>-->
 <div class="container">
+
+
     <div class="navbar navbar-inverse">
-        <div class="jq_video_box">
-            <div id="jp_container_1" class="jp-video ">
-                <div class="jp-type-single">
-                    <div id="jquery_jplayer_1" class="jp-jplayer"></div>
-                    <div class="jp-gui">
-                        <div class="jp-video-play">
-                            <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
-                        </div>
-                        <div class="jp-interface">
-                            <div class="jp-progress">
-                                <div class="jp-seek-bar">
-                                    <div class="jp-play-bar"></div>
-                                </div>
-                            </div>
-                            <div class="jp-current-time"></div>
-                            <div class="jp-duration"></div>
-                            <div class="jp-controls-holder">
-                                <ul class="jp-controls">
-                                    <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-                                    <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-                                    <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-                                    <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-                                    <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a>
-                                    </li>
-                                    <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max
-                                            volume</a></li>
-                                </ul>
-                                <div class="jp-volume-bar">
-                                    <div class="jp-volume-bar-value"></div>
-                                </div>
-                                <ul class="jp-toggles">
-                                    <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full
-                                            screen</a></li>
-                                    <li><a href="javascript:;" class="jp-restore-screen" tabindex="1"
-                                           title="restore screen">restore screen</a></li>
-                                    <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a>
-                                    </li>
-                                    <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat
-                                            off</a></li>
-                                </ul>
-                            </div>
-                            <div class="jp-title">
-                                <ul>
-                                    <li>Big Buck Bunny Trailer</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="jp-no-solution">
-                        <span>Update Required</span>
-                        To play the media you will need to either update your browser to a recent version or update your
-                        <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-                    </div>
-                </div>
-            </div>
+        <div id="video_box">
+            <video id="video_tv" class="video-js vjs-default-skin"
+                   controls preload="auto" height="200px"
+                   poster="img/tvbroken.jpg"
+                   data-setup='{"example_option":true}'></video>
         </div>
+        <?php if ($setFlash): ?>
+            <script>
+                jwplayer("video_tv").setup({
+                    image: "img/tvbroken.jpg",
+                    file: "http://creativemedia3.rai.it/podcastcdn/Rai/TivuON/1845360_1800.mp4",
+                    title: "My Cool Trailer"
+                });
+            </script>
+        <?php endif ?>
+
+
         <div class="navbar-inner">
             <ul class="nav-pills" id="channel_list">
             </ul>
@@ -125,17 +106,17 @@
 </div>
 </div>
 
-<footer>
-    <div class="shiny">
-        <script type="text/javascript"
-                src="http://codice.shinystat.com/cgi-bin/getcod.cgi?USER=postadelmaga"></script>
-    </div>
-    <!-- ShinyStat -->
-</footer>
-
+<?php if ($_SERVER['HTTP_HOST'] != 'localhost'): ?>
+    <footer>
+        <div class="shiny">
+            <script type="text/javascript"
+                    src="http://codice.shinystat.com/cgi-bin/getcod.cgi?USER=postadelmaga"></script>
+        </div>
+        <!-- ShinyStat -->
+    </footer>
+<?php endif; ?>
 <script type="text/javascript">
     //    $(document).ready(function () {
-
     // initialize with default options
     var daysRange = <?php echo json_encode($stream->getDaysRange()); ?>;
     var channelList = <?php echo json_encode($stream->getChannelList()); ?>;
@@ -147,6 +128,10 @@
 
     stream.selectChannel(channelList[0]);
     stream.preload();
+    <?php if ($setFlash): ?>
+    stream.setFlash();
+    <?php endif ?>
+
 
     $('#titleMenu').bind('contextmenu', function (e) {
 
