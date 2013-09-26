@@ -1,5 +1,11 @@
 <?php include_once('./includes/Core.php'); ?>
-<?php $stream = new Stream(); ?>
+<?php
+$stream = new Stream();
+$setFlash = false;
+if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') === false) {
+    $setFlash = true;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,8 +14,11 @@
     <link href="css/bootstrap/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
     <link href="css/style.css" rel="stylesheet" media="screen"/>
 
-    <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
+    <!--    <script type="text/javascript" src="js/jquery/jquery-1.8.3.min.js"></script>-->
     <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
+    <!--    <script type="text/javascript" src="js/jquery/jquery-migrate-1.2.1.js"></script>-->
+    <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
+
     <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
@@ -19,8 +28,12 @@
     <!--    <script src="http://vjs.zencdn.net/4.1/video.js"></script>-->
     <!--    <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
     <!--        <script src="js/JW/jwplayer.js"></script>-->
-    <script src="js/JW/jwplayer.js"></script>
-    <!--        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
+    <?php
+    if ($setFlash): ?>
+        <script src="js/JW/jwplayer.js"></script>
+    <?php endif ?>
+
+    <!--    <!- -        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->-->
 
     <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
 </head>
@@ -41,17 +54,20 @@
     <div class="navbar navbar-inverse">
         <div id="video_box">
             <video id="video_tv" class="video-js vjs-default-skin"
-                   controls preload="auto" width="640" height="480"
+                   controls preload="auto" height="200px"
                    poster="img/tvbroken.jpg"
                    data-setup='{"example_option":true}'></video>
         </div>
-        <script>
-            jwplayer("video_tv").setup({
-                image: "img/tvbroken.jpg",
-                file: "http://creativemedia3.rai.it/podcastcdn/Rai/TivuON/1845360_1800.mp4",
-                title: "My Cool Trailer"
-            });
-        </script>
+        <?php if ($setFlash): ?>
+            <script>
+                jwplayer("video_tv").setup({
+                    image: "img/tvbroken.jpg",
+                    file: "http://creativemedia3.rai.it/podcastcdn/Rai/TivuON/1845360_1800.mp4",
+                    title: "My Cool Trailer"
+                });
+            </script>
+        <?php endif ?>
+
 
         <div class="navbar-inner">
             <ul class="nav-pills" id="channel_list">
@@ -112,6 +128,10 @@
 
     stream.selectChannel(channelList[0]);
     stream.preload();
+    <?php if ($setFlash): ?>
+    stream.setFlash();
+    <?php endif ?>
+
 
     $('#titleMenu').bind('contextmenu', function (e) {
 

@@ -79,17 +79,13 @@ body {
 /*bottom: -36px;*/
 /*}*/
 #video_box {
-    height: 270px;
     margin: 0 auto;
+    text-align: center;
 }
 
 #video_tv {
+    height: 0px;
     margin: 0 auto
-}
-
-.jq_video_box {
-    width: 1009px;
-    margin: 0 auto;
 }
 
 .program {

@@ -18,6 +18,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.width = 940;
     this.height = 530;
+    this.setFlash = false;
 
     this.init = function () {
         this.logger('- Init() Stream obj');
@@ -36,6 +37,11 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 this._loadChannel(chUp, 0);
             }
         }
+    }
+
+    this.setFlash = function () {
+
+        this.setFlash = true;
     }
 
     this.selectChannel = function (ch) {
@@ -228,15 +234,22 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 //            this.videoBox = this.videoel.parent();
 
             if (url) {
-                this.videoBox.pause
-//                jwplayer("video_tv")
-                jwplayer().load([{file:url}]);
-                jwplayer().play();
+                if (this.setFlash == true) {
+                    //                jwplayer("video_tv")
+                    jwplayer().load([
+                        {file: url}
+                    ]);
+                    jwplayer().play();
+                }
+                else {
 //                this.videoBox.find('video').attr('src', url);
-//                    this.videoBox.get(0).load();
-//                this.videoBox.get(0).play();
+                    this.videoBox.pause();
+                    this.videoBox.attr('src', url);
+                    this.videoBox.get(0).load();
+                    this.videoBox.get(0).play();
 //                html5media();
-                    jQuery('#video_tv').height('500');
+                }
+                jQuery('#video_tv').height('500');
             }
         }
         else {
