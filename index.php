@@ -4,21 +4,24 @@
 <html lang="en">
 
 <head>
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="css/bootstrap/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
     <link href="css/style.css" rel="stylesheet" media="screen"/>
 
     <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    <script src="js/jquery.hoverIntent.minified.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/Stream.js"></script>
-<!--    <script src="js/html5media.js"></script>-->
-    <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">
-    <script src="http://vjs.zencdn.net/4.1/video.js"></script>
-<!--    <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
-    <!--    <script src="http://vjs.zencdn.net/4.0/video.js"></script>-->
+    <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
+    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/Stream/Stream.js"></script>
+    <!--    <script src="js/html5media.js"></script>-->
+    <!--    <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">-->
+    <!--    <script src="http://vjs.zencdn.net/4.1/video.js"></script>-->
+    <!--    <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
+    <!--        <script src="js/JW/jwplayer.js"></script>-->
+    <script src="js/JW/jwplayer.js"></script>
+    <!--        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
+
     <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
 </head>
 
@@ -33,11 +36,23 @@
 
 <!--<div class="clearfix"></div>-->
 <div class="container">
+
+
     <div class="navbar navbar-inverse">
-        <video id="video_tv" class="video-js vjs-default-skin"
-               controls preload="auto" width="640" height="264"
-               poster="http://video-js.zencoder.com/oceans-clip.png"
-               data-setup='{"example_option":true}'></video>
+        <div id="video_box">
+            <video id="video_tv" class="video-js vjs-default-skin"
+                   controls preload="auto" width="640" height="480"
+                   poster="img/tvbroken.jpg"
+                   data-setup='{"example_option":true}'></video>
+        </div>
+        <script>
+            jwplayer("video_tv").setup({
+                image: "img/tvbroken.jpg",
+                file: "http://creativemedia3.rai.it/podcastcdn/Rai/TivuON/1845360_1800.mp4",
+                title: "My Cool Trailer"
+            });
+        </script>
+
         <div class="navbar-inner">
             <ul class="nav-pills" id="channel_list">
             </ul>
@@ -75,17 +90,17 @@
 </div>
 </div>
 
-<footer>
-    <div class="shiny">
-        <script type="text/javascript"
-                src="http://codice.shinystat.com/cgi-bin/getcod.cgi?USER=postadelmaga"></script>
-    </div>
-    <!-- ShinyStat -->
-</footer>
-
+<?php if ($_SERVER['HTTP_HOST'] != 'localhost'): ?>
+    <footer>
+        <div class="shiny">
+            <script type="text/javascript"
+                    src="http://codice.shinystat.com/cgi-bin/getcod.cgi?USER=postadelmaga"></script>
+        </div>
+        <!-- ShinyStat -->
+    </footer>
+<?php endif; ?>
 <script type="text/javascript">
     //    $(document).ready(function () {
-
     // initialize with default options
     var daysRange = <?php echo json_encode($stream->getDaysRange()); ?>;
     var channelList = <?php echo json_encode($stream->getChannelList()); ?>;

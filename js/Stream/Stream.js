@@ -229,8 +229,11 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
             if (url) {
                 this.videoBox.pause
-                this.videoBox.find('video').attr('src', url);
-//                this.videoBox.get(0).load();
+//                jwplayer("video_tv")
+                jwplayer().load([{file:url}]);
+                jwplayer().play();
+//                this.videoBox.find('video').attr('src', url);
+//                    this.videoBox.get(0).load();
 //                this.videoBox.get(0).play();
 //                html5media();
                     jQuery('#video_tv').height('500');
