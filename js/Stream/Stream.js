@@ -236,14 +236,13 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             if (url) {
                 if (this.setFlash == true) {
                     //                jwplayer("video_tv")
-                    jwplayer().load([
-                        {file: url}
-                    ]);
+                    jwplayer().load([ {file: url} ]);
                     jwplayer().play();
+                    jwplayer().onResize(jQuery('#video_tv').parent().css({width: 'auto',height: 'auto'}));
                 }
                 else {
 //                this.videoBox.find('video').attr('src', url);
-                    this.videoBox.pause();
+//                    this.videoBox.pause();
                     this.videoBox.attr('src', url);
                     this.videoBox.get(0).load();
                     this.videoBox.get(0).play();
