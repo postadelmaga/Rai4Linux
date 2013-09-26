@@ -14,6 +14,10 @@
     <script src="js/jquery.hoverIntent.minified.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/Stream.js"></script>
+<!--    <script src="js/html5media.js"></script>-->
+    <link href="http://vjs.zencdn.net/4.1/video-js.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/4.1/video.js"></script>
+<!--    <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
     <!--    <script src="http://vjs.zencdn.net/4.0/video.js"></script>-->
     <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
 </head>
@@ -30,7 +34,10 @@
 <!--<div class="clearfix"></div>-->
 <div class="container">
     <div class="navbar navbar-inverse">
-        <div class="jq_video_box"></div>
+        <video id="video_tv" class="video-js vjs-default-skin"
+               controls preload="auto" width="640" height="264"
+               poster="http://video-js.zencoder.com/oceans-clip.png"
+               data-setup='{"example_option":true}'></video>
         <div class="navbar-inner">
             <ul class="nav-pills" id="channel_list">
             </ul>

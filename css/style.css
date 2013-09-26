@@ -66,17 +66,21 @@ body {
     background-color: black !important;
 }
 
-.jq_current_video {
-    background: url("../img/frame_1.png") no-repeat;
-    height: 564px;
-}
+/*.jq_current_video {*/
+    /*background: url("../img/frame_1.png") no-repeat;*/
+    /*height: 564px;*/
+/*}*/
 
-.jq_current_video video {
-    width: 940px;
-    height: 530px;
-    position: relative;
-    left: 32px;
-    bottom: -36px;
+/*.jq_current_video video {*/
+    /*width: 940px;*/
+    /*height: 530px;*/
+    /*position: relative;*/
+    /*left: 32px;*/
+    /*bottom: -36px;*/
+/*}*/
+#video_tv{
+    height: 390px;
+    margin:0 auto;
 }
 
 .jq_video_box {

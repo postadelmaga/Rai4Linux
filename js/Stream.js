@@ -222,38 +222,41 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
     this.initVideoBox = function (url) {
 
-        var video_id = "jq_videoplayer";
         //second time show it
-        if (this.videoel.length) {
-            this.videoel = jQuery('#jq_videoplayer');
-            this.videoBox = this.videoel.parent();
+        if (this.videoBox.length) {
+            this.videoBox = jQuery('#video_tv');
+//            this.videoBox = this.videoel.parent();
 
             if (url) {
-                this.videoel.attr('src', url);
-                this.videoel.load();
+                this.videoBox.pause
+                this.videoBox.find('video').attr('src', url);
+//                this.videoBox.get(0).load();
+//                this.videoBox.get(0).play();
+//                html5media();
+                    jQuery('#video_tv').height('500');
             }
         }
         else {
             // first time creates the block
-            this.videoBox = jQuery("<div>", {"class": "jq_current_video"}).hide();
+//                this.videoBox = jQuery('#video_tv').hide();
+            this.videoBox = jQuery("<div>", {"class": "video_tv"});
 
-            this.videoel = jQuery("<video>", {
-                "id": video_id,
-                "preload": 'none',
-                "name": "media",
-                "width": this.width,
-                "height": this.height,
-                controls: "",
-                autoplay: ""
-            }).appendTo(this.videoBox);
-            this.videoel.click(function () {
-                this.videoel.pause();
-            });
+//            this.videoel = jQuery("<video>", {
+//                "id": video_id,
+//                "preload": 'none',
+//                "name": "media",
+//                "width": this.width,
+//                "height": this.height,
+//                controls: "",
+//                autoplay: ""
+//            }).appendTo(this.videoBox);
 
-            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(this.videoel);
-
+//            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(this.videoel);
+//            this.videoBox.click(function () {
+//                jQuery('#video_tv').pause();
+//            });
             // prepend it to the base element
-            this.element.prepend(this.videoBox);
+//            this.element.prepend(this.videoBox);
         }
         return this;
     }
