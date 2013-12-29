@@ -100,8 +100,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             jQuery('#' + day + ' .program_list').hide();
             var today = new Date(day);
 //            var cDate = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
-            var options = {weekday: "short", year: "numeric", month: "short", day: "numeric"};
-            var label = jQuery('#' + day + ' button label').text(ch + ' - ' + today.toLocaleDateString("it-IT", options));
+            var label = jQuery('#' + day + ' button label').text(ch + ' - ' + today.toDateString());
         }
 
         if (update) {

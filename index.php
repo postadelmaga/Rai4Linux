@@ -33,9 +33,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') === false) {
         <script src="js/JW/jwplayer.js"></script>
     <?php endif ?>
 
-    <!--    <!- -        <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->-->
+    <!--  <script src="http://api.html5media.info/1.1.5/html5media.min.js"></script>-->
 
-    <link rel="Shortcut Icon" href="http://www.rai.tv/dl/RaiTV/images/favicon.gif">
+    <link rel="Shortcut Icon" href="http://www.rai.it/dl/RaiTV/images/favicon.gif">
 </head>
 
 <body>

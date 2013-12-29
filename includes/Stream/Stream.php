@@ -90,7 +90,7 @@ function coreErrorHandler($errno, $errstr, $errfile, $errline)
 class Stream
 {
     const FILE_BASE = "./streamSource/";
-    const URL_BASE = "http://www.rai.tv/dl/portale/html/palinsesti/replaytv/static/";
+    const URL_BASE = "http://www.rai.it/dl/portale/html/palinsesti/replaytv/static/";
     const LOG_DIR = "./log/";
     const DEFAULT_ERROR_HANDLER = 'coreErrorHandler';
 
@@ -209,7 +209,7 @@ class Stream
             if ($iteration < 20) {
                 return $this->_getStreamContent($ch, $date, $iteration + 1);
             } else {
-                Stream::log("FAIL-I:$iteration|M:$m -- $ch-$date");
+                Stream::log($url."FAIL-I:$iteration|M:$m -- $ch-$date --".$e->getMessage().'-- Line: '.$e->getLine().$json);
                 return false;
             }
             $ex = true;
