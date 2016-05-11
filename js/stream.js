@@ -1,48 +1,41 @@
-function Stream(classname, channelList, dayRange, ajaxUrl) {
+function Stream(classname, config) {
 
     this.element = jQuery('.' + classname);
-    this.weekBox = '';
-    this.chBox = '';
-    this.videoBox = '';
-    this.videoel = '';
-
-    this.channelList = channelList;
-    this.dayRange = dayRange;
-    this.ajaxUrl = ajaxUrl;
-
     this.streamList = new Array();
+    this.config = JSON.parse(config);
 
-    this.currentChannel = channelList[0];
-    this.currentVideo = "";
-    this.showloader = true;
+    this.videoBox = '';
+    this.config.ajaxUrl = this.config.ajaxUrl;
 
     this.width = 940;
     this.height = 530;
     this.setFlash = false;
 
     this.init = function () {
+        this.currentChannel = this.config.channelList[0];
         this.logger('- Init() Stream obj');
-        for (var i in this.channelList) {
-            this.initChannelBtn(this.channelList[i]);
+        for (var i in this.config.channelList) {
+            this.initChannelBtn(this.config.channelList[i]);
         }
         this.initVideoBox();
+        this.selectChannel(this.currentChannel);
+        this.preload();
     };
 
     this.preload = function () {
 
         this.logger('- preload() other channel List');
-        for (var i in this.channelList) {
-            var chUp = this.channelList[i];
+        for (var i in this.config.channelList) {
+            var chUp = this.config.channelList[i];
             if (chUp != this.currentChannel) {
                 this._loadChannel(chUp, 0);
             }
         }
-    }
+    };
 
     this.setFlash = function () {
-
         this.setFlash = true;
-    }
+    };
 
     this.selectChannel = function (ch) {
         this.logger('- selectChannel:' + ch);
@@ -50,7 +43,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
         this._selectChannelBtn(ch);
         this._loadChannel(ch, 0);
-    }
+    };
 
     this._selectChannelBtn = function (ch) {
 
@@ -71,7 +64,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             }
             el.find('a').addClass("active");
         }
-    }
+    };
 
     this._loadChannel = function (ch, update) {
 
@@ -80,18 +73,16 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
         }
 
-        for (var i in  this.dayRange) {
+        for (var i in  this.config.dayRange) {
             jQuery('label#load-' + ch).text("0");
             jQuery('label#load').text("0");
-            this._getDayData(ch, this.dayRange[i], update);
+            this._getDayData(ch, this.config.dayRange[i], update);
             var target = jQuery('label#' + ch).css('color', 'yellow');
         }
-    }
+    };
 
     this._getDayData = function (ch, day, update) {
         this.logger('_getDayData(' + ch + ',' + day + ',' + update + ')');
-
-        // Problemi con prototype
         var target = jQuery("#" + day);
 
         if (ch == this.currentChannel) {
@@ -115,7 +106,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 this._ajaxDataDay(ch, day, 0);
             }
         }
-    }
+    };
 
     this._processDayData = function (ch, day, data) {
 
@@ -130,19 +121,19 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 
         }
         this._loaderUp(ch);
-    }
+    };
 
     this._ajaxDataDay = function (ch, day, update) {
 
         var callback = this._processDayData;
-        var data = { ch: ch, day: day};
+        var data = {ch: ch, day: day};
 
         if (update)
-            data = { up: 1, ch: ch, day: day };
+            data = {up: 1, ch: ch, day: day};
 
         jQuery.ajax({
                 type: "POST",
-                url: this.ajaxUrl,
+                url: this.config.ajaxUrl,
                 dataType: "json",
                 data: data,
                 context: this,
@@ -157,7 +148,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 }
             }
         )
-    }
+    };
 
     this._setDayHtml = function (day, ch) {
 
@@ -173,7 +164,8 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             var curProg = dayList[hr];
 
             var row = jQuery("<div>",
-                {"class": "program",
+                {
+                    "class": "program",
                     "data-url": curProg.h264,
                     "data-url_400": curProg.h264_400,
                     "data-url_600": curProg.h264_600,
@@ -195,8 +187,8 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             var desc = jQuery('<div>', {'class': 'description'}).html(curProg.d)
                 .hide().appendTo(row);
             row.hoverIntent((function () {
-                jQuery(this).find('.description').fadeIn()
-            }),
+                    jQuery(this).find('.description').fadeIn()
+                }),
                 (function () {
                     jQuery(this).find('.description').fadeOut(1200);
                 })
@@ -204,7 +196,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 //            row.append(desc);
             row.appendTo(target);
         }
-    }
+    };
 
     this.initChannelBtn = function (ch) {
 
@@ -224,21 +216,19 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             })).appendTo(chbtn);
 
         return this;
-    }
+    };
 
     this.initVideoBox = function (url) {
-
         //second time show it
         if (this.videoBox.length) {
             this.videoBox = jQuery('#video_tv');
-//            this.videoBox = this.videoel.parent();
 
             if (url) {
                 if (this.setFlash == true) {
                     //                jwplayer("video_tv")
-                    jwplayer().load([ {file: url} ]);
+                    jwplayer().load([{file: url}]);
                     jwplayer().play();
-                    jwplayer().onResize(jQuery('#video_tv').parent().css({width: 'auto',height: 'auto'}));
+                    jwplayer().onResize(jQuery('#video_tv').parent().css({width: 'auto', height: 'auto'}));
                 }
                 else {
 //                this.videoBox.find('video').attr('src', url);
@@ -274,22 +264,22 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
 //            this.element.prepend(this.videoBox);
         }
         return this;
-    }
+    };
 
     this._setVideo = function (el) {
         streamUrl = jQuery(el).attr('data-url');
         this.videoBox.show('fold', 1000);
         this.goToByScroll(this.videoBox);
         this._ajaxloadVideo(streamUrl);
-    }
+    };
 
     this._ajaxloadVideo = function (streamUrl) {
         this.videoBox.find('video').stop();
         jQuery.ajax({
             type: "POST",
-            url: this.ajaxUrl,
+            url: this.config.ajaxUrl,
             dataType: "json",
-            data: { video: streamUrl},
+            data: {video: streamUrl},
             context: this,
             success: function (data) {
                 this.logger('-_ajaxloadVideo :' + streamUrl + '  ----->  ' + data);
@@ -299,7 +289,7 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 this.logger('-ERROR: _ajaxGetRedirect');
             }
         })
-    }
+    };
 
     this._loaderUp = function (ch) {
 
@@ -329,15 +319,15 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
             loadBarCh.attr("data-percentage", 0);
             loadBarCh.parent().hide();//removeClass('bar');
         }
-    }
+    };
 
     this.updateStreams = function (stream) {
         jQuery('#titleMenu').css('color', 'yellow');
         jQuery.ajax({
             type: "POST",
-            url: this.ajaxUrl,
+            url: this.config.ajaxUrl,
             dataType: "json",
-            data: { up: 1},
+            data: {up: 1},
             success: function (data) {
                 stream.logger('- StreamUpdate: OK');
                 stream.logger(data);
@@ -350,19 +340,20 @@ function Stream(classname, channelList, dayRange, ajaxUrl) {
                 jQuery('#titleMenu').css('color', 'red');
             }
         })
-    }
+    };
 
     this.goToByScroll = function (el) {
         // Remove "link" from the ID
         $('html,body').animate({
-                scrollTop: el.offset().top},
+                scrollTop: el.offset().top
+            },
             'slow');
-    }
+    };
 
     this.logger = function (msg) {
         console.log(Stream.logCounter + ': ' + msg);
         Stream.logCounter = Stream.logCounter + 1;
-    }
+    };
 
     // Init
     this.init();

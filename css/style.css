@@ -27,13 +27,6 @@ section {
     padding-top: 30px;
 }
 
-.shiny {
-    position: relative;
-    left: 500px;
-    bottom: 50px;
-    display: inline;
-}
-
 header h1, #video-box, #channel-menu {
     margin: 0px;
     padding-top: 0px;
@@ -108,10 +101,6 @@ s
 
 #btn_RaiTre .active {
     background-color: limegreen !important;
-}
-
-.shiny {
-    display: none;
 }
 
 .progress {
