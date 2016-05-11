@@ -20,9 +20,11 @@ class Stream
     public function getJsonConfig()
     {
         $config = array(
+            'ajaxUrl' => 'ajax.php',
             'channelList' => array_values($this->getChannelList()),
             'dayRange' => $this->getDayRange(),
-            'ajaxUrl' => 'ajax.php',
+            'qualityUrlType' => $this->getQualityType(),
+            'debug' => isset($_GET['debug']) && $_GET['debug'] == 1
         );
         return json_encode($config);
     }
@@ -31,6 +33,20 @@ class Stream
     {
         $ch = array(1 => 'RaiUno', 2 => 'RaiDue', 3 => 'RaiTre', 31 => 'RaiCinque');
         return $ch;
+    }
+
+    public function getQualityType()
+    {
+        $types = array(
+            'h264',
+            'h264_400',
+            'h264_600',
+            'h264_800',
+            'h264_1200',
+            'h264_1500',
+            'h264_1800',
+        );
+        return $types;
     }
 
     public function getDayRange()

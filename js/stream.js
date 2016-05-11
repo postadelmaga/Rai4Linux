@@ -1,52 +1,61 @@
-function Stream(classname, config) {
-
-    this.element = jQuery('.' + classname);
+function Stream(videoId, config) {
     this.streamList = new Array();
     this.config = JSON.parse(config);
-
-    this.videoBox = '';
-    this.config.ajaxUrl = this.config.ajaxUrl;
-
-    this.width = 940;
-    this.height = 530;
-    this.setFlash = false;
+    this.videoId = videoId;
 
     this.init = function () {
         this.currentChannel = this.config.channelList[0];
         this.logger('- Init() Stream obj');
         for (var i in this.config.channelList) {
             this.initChannelBtn(this.config.channelList[i]);
+            this._loadChannel(this.config.channelList[i], false);
         }
-        this.initVideoBox();
         this.selectChannel(this.currentChannel);
-        this.preload();
     };
 
-    this.preload = function () {
+    this.initChannelBtn = function (ch) {
 
-        this.logger('- preload() other channel List');
-        for (var i in this.config.channelList) {
-            var chUp = this.config.channelList[i];
-            if (chUp != this.currentChannel) {
-                this._loadChannel(chUp, 0);
-            }
+        var stream = this;
+
+        var chbtn = jQuery('<li>', {'id': 'btn_' + ch})
+            .append(jQuery('<a>', {'class': 'btn btn-primary btn-danger btn-large', 'href': '#'}).text(ch))
+            .click(function () {
+                stream.selectChannel(ch);
+            }).appendTo(jQuery('#channel_list'));
+
+        var loader = jQuery('<div>', {'class': 'progress progress-striped active'}).append(
+            jQuery('<div>', {
+                'id': 'loadbar_' + ch,
+                'class': 'bar',
+                'data-percentage': 0
+            })).appendTo(chbtn);
+
+        return this;
+    };
+
+    this._loadChannel = function (ch, update) {
+
+        if (update) {
+            this.streamList[ch] = new Array();
+            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
         }
-    };
 
-    this.setFlash = function () {
-        this.setFlash = true;
+        for (var i in  this.config.dayRange) {
+            jQuery('label#load-' + ch).text('0');
+            jQuery('label#load').text('0');
+            this._getDayData(ch, this.config.dayRange[i], update);
+            var target = jQuery('label#' + ch).css('color', 'yellow');
+        }
     };
 
     this.selectChannel = function (ch) {
         this.logger('- selectChannel:' + ch);
         this.currentChannel = ch;
-
         this._selectChannelBtn(ch);
         this._loadChannel(ch, 0);
     };
 
     this._selectChannelBtn = function (ch) {
-
         var el = jQuery('#btn_' + ch);
         el.show('fold', 1000);
 
@@ -62,28 +71,13 @@ function Stream(classname, config) {
                     }
                 );
             }
-            el.find('a').addClass("active");
-        }
-    };
-
-    this._loadChannel = function (ch, update) {
-
-        if (update) {
-            this.streamList[ch] = new Array();
-            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
-        }
-
-        for (var i in  this.config.dayRange) {
-            jQuery('label#load-' + ch).text("0");
-            jQuery('label#load').text("0");
-            this._getDayData(ch, this.config.dayRange[i], update);
-            var target = jQuery('label#' + ch).css('color', 'yellow');
+            el.find('a').addClass('active');
         }
     };
 
     this._getDayData = function (ch, day, update) {
-        this.logger('_getDayData(' + ch + ',' + day + ',' + update + ')');
-        var target = jQuery("#" + day);
+        this.logger('- Get(' + ch + ',' + day + ',' + update + ')');
+        var target = jQuery('#' + day);
 
         if (ch == this.currentChannel) {
             target.find('.program_list').html('');
@@ -132,9 +126,9 @@ function Stream(classname, config) {
             data = {up: 1, ch: ch, day: day};
 
         jQuery.ajax({
-                type: "POST",
+                type: 'POST',
                 url: this.config.ajaxUrl,
-                dataType: "json",
+                dataType: 'json',
                 data: data,
                 context: this,
                 success: function (data) {
@@ -151,8 +145,7 @@ function Stream(classname, config) {
     };
 
     this._setDayHtml = function (day, ch) {
-
-        var target = jQuery("#" + day + ' .program_list');
+        var target = jQuery('#' + day + ' .program_list');
         target.fadeIn();
         jQuery('#' + day + ' .loader').hide();
         stream = this;
@@ -160,28 +153,32 @@ function Stream(classname, config) {
         var dayList = this.streamList[ch][day];
 
         for (var hr in dayList) {
-
             var curProg = dayList[hr];
 
-            var row = jQuery("<div>",
-                {
-                    "class": "program",
-                    "data-url": curProg.h264,
-                    "data-url_400": curProg.h264_400,
-                    "data-url_600": curProg.h264_600,
-                    "data-url_800": curProg.h264_800,
-                    "data-url_1200": curProg.h264_1200,
-                    "data-url_1500": curProg.h264_1500,
-                    "data-url_1800": curProg.h264_1800
-                })
-                .html(hr + ' - ' + curProg.t)
-                .click((function () {
+            var data = {class: 'program'};
+
+            for (var i in this.config.qualityUrlType) {
+                var type = this.config.qualityUrlType[i];
+
+                if (curProg[type] != '') {
+                    if (!data.hasOwnProperty('data-url')) {
+                        data['data-url'] = curProg[type];
+                    }
+                    if (data['data-url'] != curProg[type])
+                        data['hd-url'] = curProg[type];
+                }
+            }
+
+            var row = jQuery('<div>', data).html(hr + ' - ' + curProg.t);
+
+
+            if (!data.hasOwnProperty('data-url')) {
+                row.addClass('error');
+            }
+            else {
+                row.click((function () {
                     stream._setVideo(this);
                 }));
-
-            if (curProg.h264 == '') {
-                row.addClass('error');
-//                row.attr('data-url',curProg.urlrisorsatagli);
             }
 
             var desc = jQuery('<div>', {'class': 'description'}).html(curProg.d)
@@ -193,96 +190,58 @@ function Stream(classname, config) {
                     jQuery(this).find('.description').fadeOut(1200);
                 })
             );
-//            row.append(desc);
             row.appendTo(target);
         }
     };
 
-    this.initChannelBtn = function (ch) {
-
-        var stream = this;
-
-        var chbtn = jQuery("<li>", {"id": 'btn_' + ch})
-            .append(jQuery('<a>', {'class': 'btn btn-primary btn-danger btn-large', 'href': '#'}).text(ch))
-            .click(function () {
-                stream.selectChannel(ch);
-            }).appendTo(jQuery('#channel_list'));
-
-        var loader = jQuery("<div>", {'class': 'progress progress-striped active'}).append(
-            jQuery("<div>", {
-                "id": 'loadbar_' + ch,
-                "class": 'bar',
-                'data-percentage': 0
-            })).appendTo(chbtn);
-
-        return this;
+    this.getPlayer = function () {
+        return videojs(this.videoId);
     };
 
-    this.initVideoBox = function (url) {
-        //second time show it
-        if (this.videoBox.length) {
-            this.videoBox = jQuery('#video_tv');
-
-            if (url) {
-                if (this.setFlash == true) {
-                    //                jwplayer("video_tv")
-                    jwplayer().load([{file: url}]);
-                    jwplayer().play();
-                    jwplayer().onResize(jQuery('#video_tv').parent().css({width: 'auto', height: 'auto'}));
-                }
-                else {
-//                this.videoBox.find('video').attr('src', url);
-//                    this.videoBox.pause();
-                    this.videoBox.attr('src', url);
-                    this.videoBox.get(0).load();
-                    this.videoBox.get(0).play();
-//                html5media();
-                }
-                jQuery('#video_tv').height('500');
-            }
+    this.initVideoBox = function (urls) {
+        if (urls[1]) {
+            this.getPlayer().updateSrc([
+                {type: "video/mp4", src: urls[1], label: 'HD'}
+            ]);
+            this.getPlayer().updateSrc([
+                {type: "video/mp4", src: urls[0], label: 'SD'}
+            ]);
         }
         else {
-            // first time creates the block
-//                this.videoBox = jQuery('#video_tv').hide();
-            this.videoBox = jQuery("<div>", {"class": "video_tv"});
-
-//            this.videoel = jQuery("<video>", {
-//                "id": video_id,
-//                "preload": 'none',
-//                "name": "media",
-//                "width": this.width,
-//                "height": this.height,
-//                controls: "",
-//                autoplay: ""
-//            }).appendTo(this.videoBox);
-
-//            var source = jQuery("<source>", { 'type': 'video/mp4' }).appendTo(this.videoel);
-//            this.videoBox.click(function () {
-//                jQuery('#video_tv').pause();
-//            });
-            // prepend it to the base element
-//            this.element.prepend(this.videoBox);
+            // only one resolution
+            this.getPlayer().src([
+                {type: "video/mp4", src: urls[0]}
+            ]);
         }
-        return this;
+
+        this.getPlayer().load();
+        this.getPlayer().play();
+
+        jQuery('#video_tv').height('500');
     };
 
     this._setVideo = function (el) {
-        streamUrl = jQuery(el).attr('data-url');
-        this.videoBox.show('fold', 1000);
-        this.goToByScroll(this.videoBox);
-        this._ajaxloadVideo(streamUrl);
+        var streamUrl = jQuery(el).attr('data-url');
+        var streamUrlHq = jQuery(el).attr('hd-url');
+        if (streamUrl == '') {
+            this.logger('-- No Data Url');
+        }
+        this._ajaxloadVideo(streamUrl, streamUrlHq);
+        this.getPlayer().show('fold', 1000);
+        this.goToByScroll(jQuery('#' + this.videoId));
     };
 
-    this._ajaxloadVideo = function (streamUrl) {
-        this.videoBox.find('video').stop();
+    this._ajaxloadVideo = function (streamUrl, streamUrlHq) {
+        this.getPlayer().pause();
         jQuery.ajax({
-            type: "POST",
+            type: 'POST',
             url: this.config.ajaxUrl,
-            dataType: "json",
-            data: {video: streamUrl},
+            dataType: 'json',
+            data: {video: streamUrl, hq: streamUrlHq},
             context: this,
             success: function (data) {
-                this.logger('-_ajaxloadVideo :' + streamUrl + '  ----->  ' + data);
+                this.logger('- data-url :' + streamUrl + '  ----->  ' + data);
+                this.logger('- hd-url:' + streamUrl + '  ----->  ' + data);
                 this.initVideoBox(data);
             },
             error: function (data) {
@@ -295,55 +254,34 @@ function Stream(classname, config) {
 
         // Main Load Bar
         var loadBar = jQuery('#loadbar');
-        var perc = parseInt(loadBar.attr("data-percentage"));
+        var perc = parseInt(loadBar.attr('data-percentage'));
         var newVal = Math.ceil(perc + (1 / 32 * 100));
 
         if (newVal > 100) {
             loadBar.parent().fadeOut();
         }
-        loadBar.attr("data-percentage", newVal);
+        loadBar.attr('data-percentage', newVal);
         loadBar.css('width', (newVal) + '%');
         loadBar.text(newVal);
 
         // Ch Bar
         var loadBarCh = jQuery('#loadbar_' + ch);
-        var perc = parseInt(loadBarCh.attr("data-percentage"));
+        var perc = parseInt(loadBarCh.attr('data-percentage'));
         var newVal = Math.ceil(perc + (1 / 7 * 100));
 
-        loadBarCh.attr("data-percentage", newVal);
+        loadBarCh.attr('data-percentage', newVal);
         loadBarCh.css('width', (newVal) + '%');
         loadBarCh.text(newVal);
 
         if (newVal > 100) {
             loadBarCh.css('width', '0px');
-            loadBarCh.attr("data-percentage", 0);
+            loadBarCh.attr('data-percentage', 0);
             loadBarCh.parent().hide();//removeClass('bar');
         }
     };
 
-    this.updateStreams = function (stream) {
-        jQuery('#titleMenu').css('color', 'yellow');
-        jQuery.ajax({
-            type: "POST",
-            url: this.config.ajaxUrl,
-            dataType: "json",
-            data: {up: 1},
-            success: function (data) {
-                stream.logger('- StreamUpdate: OK');
-                stream.logger(data);
-                jQuery('#titleMenu').css('color', 'green');
-                stream.init();
-            },
-            error: function (data) {
-                stream.logger('- StreamUpdate: ERROR');
-                stream.logger(data);
-                jQuery('#titleMenu').css('color', 'red');
-            }
-        })
-    };
-
     this.goToByScroll = function (el) {
-        // Remove "link" from the ID
+        // Remove 'link' from the ID
         $('html,body').animate({
                 scrollTop: el.offset().top
             },
@@ -351,8 +289,10 @@ function Stream(classname, config) {
     };
 
     this.logger = function (msg) {
-        console.log(Stream.logCounter + ': ' + msg);
-        Stream.logCounter = Stream.logCounter + 1;
+        if (this.config.debug) {
+            console.log(Stream.logCounter + ': ' + msg);
+            Stream.logCounter = Stream.logCounter + 1;
+        }
     };
 
     // Init

@@ -5,16 +5,24 @@ $ch = isset($_POST['ch']) ? $_POST['ch'] : null;
 $day = isset($_POST['day']) ? $_POST['day'] : null;
 $update = isset($_POST['up']) ? $_POST['up'] : null;
 $videoUrl = isset($_POST['video']) ? $_POST['video'] : null;
+$videoUrl = isset($_POST['video']) ? $_POST['video'] : null;
+$videoUrlHq = isset($_POST['hq']) ? $_POST['hq'] : null;
 
 $stream = new Stream();
 
 if ($videoUrl) {
-    echo json_encode(getRedirectUrl($videoUrl));
+    $hd = null;
+    $url = getRedirectUrl($videoUrl);
+    if ($videoUrlHq && $videoUrlHq != $videoUrl) {
+        $hd = getRedirectUrl($videoUrlHq);
+    }
+
+    echo json_encode(array($url, $hd));
 }
 
 if ($update) {
     if ($ch && $day) {
-        $json = $stream->updateDay($ch, $day,true);
+        $json = $stream->updateDay($ch, $day, true);
         echo $json;
         return;
     } else {
@@ -35,10 +43,8 @@ if ($ch && $day) {
 }
 
 if ($ch) {
-
     $json = json_encode($stream->getChannel($ch));
     echo $json;
-
 }
 
 
