@@ -14,7 +14,7 @@ $stream = new Stream();
     <link href="css/style.css" rel="stylesheet" media="screen"/>
 
     <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
-<!--    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>-->
+    <!--    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>-->
     <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
@@ -23,6 +23,7 @@ $stream = new Stream();
     <link href="js/player/plugin/videojs-resolution-switcher.css" rel="stylesheet">
     <script src="js/player/video.js"></script>
     <script src="js/player/plugin/videojs-resolution-switcher.js"></script>
+    <script src="js/player/plugin/videojs.hotkeys.js"></script>
     <link rel="Shortcut Icon" href="http://www.rai.it/dl/RaiTV/images/favicon.gif">
     <style>
         #HCB_comment_box .submit {
@@ -95,8 +96,13 @@ $stream = new Stream();
     videojs.options.flash.swf = "js/player/plugin/video-js.swf"
 </script>
 <script type="text/javascript">
+    videojs('my-video').ready(function () {
+        this.hotkeys({
+            volumeStep: 0.1,
+            seekStep: 5
+        });
+    });
     videojs('my-video').videoJsResolutionSwitcher();
-
     Stream.logCounter = 0;
     var stream = new Stream('my-video', <?php echo json_encode($stream->getJsonConfig()); ?>);
 
