@@ -35,6 +35,7 @@ $stream = new Stream();
     </style>
 </head>
 <body>
+
 <div class="jumbotron subhead">
     <h1 id="titleMenu"> Rai Mobile </h1>
     <!-- ShinyStat -->
@@ -42,7 +43,7 @@ $stream = new Stream();
         <div data-percentage="0" class="bar" id="loadbar" style="width: 0%;"></div>
     </div>
 </div>
-
+<?php include('blocks/forkme.php') ?>
 <!--<div class="clearfix"></div>-->
 <div class="container">
 
