@@ -112,7 +112,8 @@ class Stream
         if (!file_exists($filePath) || $forceDownload) {
 
             $content = $this->_getStreamContent($ch, $date);
-            if ($content) {
+            if ($content != "") {
+                $content = json_encode($content);
                 file_put_contents($filePath, $content);
                 return $content;
             }
@@ -130,7 +131,7 @@ class Stream
             $json = $this->downloadFile($url);
             $data = json_decode($json, TRUE);
             $key = array_search($ch, $this->getChannelList());
-            $content = json_encode($data[$key][$day]);
+            $content = $data[$key][$day];
 
         } catch (Exception $e) {
             if ($iteration < 20) {
@@ -181,6 +182,25 @@ class Stream
         $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $day);
         return $url;
     }
+
+
+    public function getVideoUrl($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+
+        $header = "Location: ";
+        $pos = strpos($response, $header);
+        $pos += strlen($header);
+        $redirect_url = substr($response, $pos, strpos($response, "\r\n", $pos) - $pos);
+
+        return $redirect_url;
+    }
+
 //    protected function _extractContent($date, $json)
 //    {
 //        $dayList = array();

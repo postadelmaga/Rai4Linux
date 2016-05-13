@@ -217,7 +217,7 @@ function Stream(videoId, config) {
         this.getPlayer().load();
         this.getPlayer().play();
 
-        jQuery('#video_tv').height('500');
+        jQuery('#' + this.videoId).height('360');
     };
 
     this._setVideo = function (el) {
@@ -227,7 +227,7 @@ function Stream(videoId, config) {
             this.logger('-- No Data Url');
         }
         this._ajaxloadVideo(streamUrl, streamUrlHq);
-        this.getPlayer().show('fold', 1000);
+        //this.getPlayer().show('fold', 1000);
         this.goToByScroll(jQuery('#' + this.videoId));
     };
 
