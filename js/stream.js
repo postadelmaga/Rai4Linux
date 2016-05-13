@@ -22,9 +22,20 @@ function Stream(videoId, config) {
                 'type': 'button',
                 'class': 'btn btn-secondary'
             }).text(ch))
-            .click(function () {
+            .click(function (e) {
                 stream.selectChannel(ch);
-            }).appendTo(jQuery('#channel_list'));
+
+            }).mousedown(function (event) {
+                switch (event.which) {
+                    case 3:
+                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
+                            stream._loadChannel(ch, true);
+                        }
+                        break;
+                    default:
+                }
+            })
+            .appendTo(jQuery('#channel_list'));
 
         var loader = jQuery('<div>', {'class': 'progress progress-striped active'}).append(
             jQuery('<div>', {
