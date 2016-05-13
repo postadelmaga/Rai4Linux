@@ -217,7 +217,7 @@ function Stream(videoId, config) {
         this.getPlayer().load();
         this.getPlayer().play();
 
-        jQuery('#' + this.videoId).height('360');
+        //jQuery('#' + this.videoId).height('360');
     };
 
     this._setVideo = function (el) {

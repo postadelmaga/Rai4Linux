@@ -1,11 +1,5 @@
 <?php include_once('./includes/Core.php'); ?>
-<?php
-$stream = new Stream();
-//$setFlash = false;
-//if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') === false) {
-//    $setFlash = true;
-//}
-?>
+<?php $stream = new Stream(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,86 +29,13 @@ $stream = new Stream();
     </style>
 </head>
 <body>
+<?php include('blocks/header.php') ?>
 
-<div class="jumbotron subhead">
-    <h1 id="titleMenu"> Rai Mobile </h1>
-    <!-- ShinyStat -->
-    <div class="progress progress-striped active" id="main_loader">
-        <div data-percentage="0" class="bar" id="loadbar" style="width: 0%;"></div>
-    </div>
-</div>
-<?php include('blocks/forkme.php') ?>
-<!--<div class="clearfix"></div>-->
 <div class="container">
-
-    <div id="video_box">
-        <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered"
-               controls preload="auto" width="640" height="264"
-               poster="img/tvbroken.jpg">
-            <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-            </p>
-        </video>
-    </div>
-
-    <div class="navbar navbar-inverse">
-        <div class="navbar-inner">
-            <ul class="nav-pills" id="channel_list"></ul>
-            <div id="programs" class="">
-                <?php $i = 0; ?>
-                <?php foreach ($stream->getDayRange() as $day): ?>
-
-                    <?php if ($i % 4 == 0): ?>
-                        <div class="row-fluid">
-                    <?php endif; ?>
-
-                    <div class="day" id="<?php echo $day ?>">
-                        <button class="btn-primary btn active">
-                            <label><?php echo $day ?><label>
-                        </button>
-                        <div class="loader"></div>
-                        <div class="program_list">
-                        </div>
-                    </div>
-
-                    <?php if ($i % 4 == 3): ?>
-                        </div>
-                        <!--                                <div class='clearfix'></div>-->
-                    <?php endif; ?>
-
-                    <?php $i++; ?>
-                <?php endforeach; ?>
-
-            </div>
-        </div>
-    </div>
+    <?php include('blocks/videobox.php') ?>
     <?php include('blocks/comment.php') ?>
 </div>
 
-
-<script>
-    videojs.options.flash.swf = "js/player/plugin/video-js.swf"
-</script>
-<script type="text/javascript">
-    videojs('my-video').ready(function () {
-        this.hotkeys({
-            volumeStep: 0.1,
-            seekStep: 5
-        });
-    });
-    videojs('my-video').videoJsResolutionSwitcher();
-    Stream.logCounter = 0;
-    var stream = new Stream('my-video', <?php echo json_encode($stream->getJsonConfig()); ?>);
-
-
-    $('#titleMenu').bind('contextmenu', function (e) {
-        if (confirm('Vuoi ripopolare la lista per ' + stream.currentChannel + '?')) {
-            stream._loadChannel(stream.currentChannel, 1);
-        }
-        return false;
-    });
-</script>
 </body>
 </html>
 

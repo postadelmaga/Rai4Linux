@@ -3,9 +3,10 @@
     background-color: darkgrey;
 }
 
-.jumbotron h1{
+.jumbotron h1 {
     line-height: 20px;
 }
+
 .jumbotron {
     position: relative;
     padding: 6px 0;
@@ -25,7 +26,7 @@
     box-shadow: inset 0 3px 7px rgba(0, 0, 0, .2), inset 0 -3px 7px rgba(0, 0, 0, .2);
 }
 
-.container{
+.container {
     padding-top: 6px;
 }
 
@@ -64,6 +65,7 @@ header h1, #video-box, #channel-menu {
 body {
     background-color: black !important;
 }
+
 s
 #video_box {
     margin: 0 auto;
@@ -120,6 +122,20 @@ s
 .navbar-inner {
     padding: 10px;
 }
-#video_box div{
-    margin: auto;
+
+#video_box {
+    background-image: url('../img/tv.png');
+    background-repeat: no-repeat;
+    height: 715px;
+    padding-top: 47px;
+    padding-left:46px;
+    overflow: hidden;
+}
+
+#video_box div {
+    text-align: center;
+}
+
+#video_box div ul {
+    display: inline-block;
 }
