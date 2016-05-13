@@ -7,7 +7,7 @@
             <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
         </p>
     </video>
-    <div>
+    <div class="channel-wrapper">
         <ul class="nav-pills" id="channel_list"></ul>
     </div>
 </div>

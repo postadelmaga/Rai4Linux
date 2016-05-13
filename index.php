@@ -3,9 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="css/bootstrap/bootstrap-responsive.min.css" rel="stylesheet" media="screen"/>
-    <link href="css/style.css" rel="stylesheet" media="screen"/>
+    <link href="style/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="style/style.css" rel="stylesheet" media="screen"/>
 
     <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
     <!--    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>-->

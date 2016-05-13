@@ -1,10 +1,24 @@
-.description {
-    color: black;
-    background-color: darkgrey;
+body {
+    background-color: black !important;
 }
 
-.jumbotron h1 {
-    line-height: 20px;
+header h1, #video-box, #channel-menu {
+    margin: 0px;
+    padding-top: 0px;
+}
+
+section {
+    padding-top: 30px;
+}
+
+.page-header {
+    text-align: center;
+    padding: 0px;
+    margin: 0px 0 20px;
+}
+
+.page-header h1 {
+    margin-top: 10px;
 }
 
 .jumbotron {
@@ -27,20 +41,7 @@
 }
 
 .container {
-    padding-top: 6px;
-}
-
-section {
-    padding-top: 30px;
-}
-
-header h1, #video-box, #channel-menu {
-    margin: 0px;
-    padding-top: 0px;
-}
-
-.container {
-    width: 1024px;
+    width: 1054px;
 }
 
 .day {
@@ -48,34 +49,37 @@ header h1, #video-box, #channel-menu {
     width: 245px;
 }
 
-#channel_list {
-    padding-top: 3px;
-    list-style: none;
-}
-
-.loader {
-    background-image: url("../img/loader.gif");
-    width: 25px;
-    height: 25px;
-    position: relative;
-    left: 70px;
-    top: 10px;
-}
-
-body {
-    background-color: black !important;
-}
-
-s
 #video_box {
-    margin: 0 auto;
-    text-align: center;
+    background-image: url('../img/tv.png');
+    background-repeat: no-repeat;
+    height: 715px;
+    padding-top: 47px;
+    padding-left: 46px;
+    overflow: hidden;
 }
 
-#video_tv {
-    height: 0px;
-    margin: 0 auto;
-    width: 100%;
+.channel-wrapper {
+    text-align: center;
+    padding-top: 5px;
+}
+
+.channel-wrapper ul {
+    display: inline-block;
+}
+
+#channel_list {
+    list-style: none;
+    padding: 0px;
+}
+
+.channel-wrapper .progress {
+    height: 12px;
+    font-size: 11px;
+}
+
+.description {
+    color: black;
+    background-color: darkgrey;
 }
 
 .program {
@@ -94,7 +98,7 @@ s
     color: black;
 }
 
-.btn {
+button.active {
     color: white !important;
     /*background-color: blue !important;*/
 }
@@ -108,7 +112,20 @@ s
 }
 
 #btn_RaiTre .active {
-    background-color: limegreen !important;
+    background-color: #028200 !important;
+}
+
+#btn_RaiCinque .active {
+    background-color: #fe6500 !important;
+}
+
+.loader {
+    background-image: url("../img/loader.gif");
+    width: 25px;
+    height: 25px;
+    position: relative;
+    left: 70px;
+    top: 10px;
 }
 
 .progress {
@@ -121,21 +138,4 @@ s
 
 .navbar-inner {
     padding: 10px;
-}
-
-#video_box {
-    background-image: url('../img/tv.png');
-    background-repeat: no-repeat;
-    height: 715px;
-    padding-top: 47px;
-    padding-left:46px;
-    overflow: hidden;
-}
-
-#video_box div {
-    text-align: center;
-}
-
-#video_box div ul {
-    display: inline-block;
 }

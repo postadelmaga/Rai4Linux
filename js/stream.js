@@ -10,7 +10,7 @@ function Stream(videoId, config) {
             this.initChannelBtn(this.config.channelList[i]);
             this._loadChannel(this.config.channelList[i], false);
         }
-        this.selectChannel(this.currentChannel);
+        this.selectChannel(this.currentChannel, true);
     };
 
     this.initChannelBtn = function (ch) {
@@ -18,7 +18,10 @@ function Stream(videoId, config) {
         var stream = this;
 
         var chbtn = jQuery('<li>', {'id': 'btn_' + ch})
-            .append(jQuery('<a>', {'class': 'btn btn-primary btn-danger btn-large', 'href': '#'}).text(ch))
+            .append(jQuery('<button>', {
+                'type': 'button',
+                'class': 'btn btn-secondary'
+            }).text(ch))
             .click(function () {
                 stream.selectChannel(ch);
             }).appendTo(jQuery('#channel_list'));
@@ -27,7 +30,7 @@ function Stream(videoId, config) {
             jQuery('<div>', {
                 'id': 'loadbar_' + ch,
                 'class': 'bar',
-                'data-percentage': 0
+                'aria-valuenow': 0
             })).appendTo(chbtn);
 
         return this;
@@ -48,30 +51,33 @@ function Stream(videoId, config) {
         }
     };
 
-    this.selectChannel = function (ch) {
+    this.selectChannel = function (ch, nogoto) {
         this.logger('- selectChannel:' + ch);
         this.currentChannel = ch;
         this._selectChannelBtn(ch);
         this._loadChannel(ch, 0);
+        if (nogoto)
+            return;
+        this.goToByScroll("programs")
     };
 
     this._selectChannelBtn = function (ch) {
         var el = jQuery('#btn_' + ch);
-        el.show('fold', 1000);
+        //el.show('fold', 1000);
 
         var load = jQuery('#loadbar_' + ch);
-        load.attr('data-percentage', 0);
+        load.attr('aria-valuenow', 0);
         load.css('width', 0);
 
         if (ch == this.currentChannel) {
             if (el.parent()) {
                 // remove active class from all buttons
-                el.parent().find('a').each(function () {
+                el.parent().find('button').each(function () {
                         $(this).removeClass('active')
                     }
                 );
             }
-            el.find('a').addClass('active');
+            el.find('button').addClass('active');
         }
     };
 
@@ -103,22 +109,19 @@ function Stream(videoId, config) {
     };
 
     this._processDayData = function (ch, day, data) {
-
         // add Day Data
         if (!this.streamList[ch])
             this.streamList[ch] = new Array();
         if (day && data)
             this.streamList[ch][day] = data;
-
         if (ch == this.currentChannel) {
             this._setDayHtml(day, ch);
 
         }
-        this._loaderUp(ch);
+        this._loaderIncreaseOneDay(ch);
     };
 
     this._ajaxDataDay = function (ch, day, update) {
-
         var callback = this._processDayData;
         var data = {ch: ch, day: day};
 
@@ -228,7 +231,7 @@ function Stream(videoId, config) {
         }
         this._ajaxloadVideo(streamUrl, streamUrlHq);
         //this.getPlayer().show('fold', 1000);
-        this.goToByScroll(jQuery('#' + this.videoId));
+        this.goToByScroll(this.videoId);
     };
 
     this._ajaxloadVideo = function (streamUrl, streamUrlHq) {
@@ -250,42 +253,46 @@ function Stream(videoId, config) {
         })
     };
 
-    this._loaderUp = function (ch) {
+    this._loaderIncreaseOneDay = function (ch) {
 
         // Main Load Bar
         var loadBar = jQuery('#loadbar');
-        var perc = parseInt(loadBar.attr('data-percentage'));
-        var newVal = Math.ceil(perc + (1 / 32 * 100));
+        var perc = parseFloat(loadBar.attr('aria-valuenow'));
+        perc = Math.round((perc + (1 / 28 * 100)) * 10) / 10; // round number (*10/10)
 
-        if (newVal > 100) {
+        if (perc >= 100) {
+            perc = 100;
             loadBar.parent().fadeOut();
         }
-        loadBar.attr('data-percentage', newVal);
-        loadBar.css('width', (newVal) + '%');
-        loadBar.text(newVal);
+        loadBar.attr('aria-valuenow', perc);
+        loadBar.css('width', (perc) + '%');
+        loadBar.text(Math.ceil(perc));
 
         // Ch Bar
         var loadBarCh = jQuery('#loadbar_' + ch);
-        var perc = parseInt(loadBarCh.attr('data-percentage'));
-        var newVal = Math.ceil(perc + (1 / 7 * 100));
+        perc = parseFloat(loadBarCh.attr('aria-valuenow'));
+        perc = Math.round((perc + (1 / 7 * 100)) * 10) / 10; // round number (*10/10)
 
-        loadBarCh.attr('data-percentage', newVal);
-        loadBarCh.css('width', (newVal) + '%');
-        loadBarCh.text(newVal);
-
-        if (newVal > 100) {
+        if (perc >= 100) {
+            perc = 100;
             loadBarCh.css('width', '0px');
-            loadBarCh.attr('data-percentage', 0);
+            loadBarCh.attr('aria-valuenow', 0);
             loadBarCh.parent().hide();//removeClass('bar');
         }
+        loadBarCh.attr('aria-valuenow', perc);
+        loadBarCh.css('width', (perc) + '%');
+        loadBarCh.text(Math.ceil(perc));
     };
 
-    this.goToByScroll = function (el) {
-        // Remove 'link' from the ID
-        $('html,body').animate({
-                scrollTop: el.offset().top
-            },
-            'slow');
+    this.goToByScroll = function (elId) {
+        var el;
+        if (el = jQuery('#' + elId)) {
+            // Remove 'link' from the ID
+            $('html,body').animate({
+                    scrollTop: el.offset().top
+                },
+                'slow');
+        }
     };
 
     this.logger = function (msg) {
