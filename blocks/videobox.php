@@ -1,6 +1,7 @@
-<div id="video_box">
+<div id="tv_box">
+    <div id="tv_title"><span>RAI4Linux</span></div>
     <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered"
-           controls preload="auto" width="930" height="524"
+           controls preload="auto" width="930" height="522"
            poster="img/tvbroken.jpg">
         <p class="vjs-no-js">
             To view this video please enable JavaScript, and consider upgrading to a web browser that

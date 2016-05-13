@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Rai4Linux</title>
     <link href="style/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
     <link href="style/style.css" rel="stylesheet" media="screen"/>
 
