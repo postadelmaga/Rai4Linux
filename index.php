@@ -5,14 +5,14 @@
 <head>
     <title>Rai4Linux</title>
     <link href="style/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="style/style.css" rel="stylesheet" media="screen"/>
+    <link href="style/style.css?a=1" rel="stylesheet" media="screen"/>
 
     <script type="text/javascript" src="js/jquery/jquery-2.0.3.min.js"></script>
     <!--    <script src="js/jquery/jquery-ui-1.10.3.custom.min.js"></script>-->
     <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
-    <script src="js/stream.js"></script>
+    <script src="js/stream.js?a=1"></script>
     <link href="js/player/video-js.css" rel="stylesheet">
     <link href="js/player/plugin/videojs-resolution-switcher.css" rel="stylesheet">
     <script src="js/player/video.js"></script>
