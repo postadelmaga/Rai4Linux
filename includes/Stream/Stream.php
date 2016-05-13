@@ -1,6 +1,5 @@
 <?php
 
-
 class Stream
 {
     const LOG_DIR = "log";
@@ -14,6 +13,15 @@ class Stream
 
         error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
         set_error_handler(self::DEFAULT_ERROR_HANDLER, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+
+        if (!file_exists(self::FILE_BASE)) {
+            mkdir(self::FILE_BASE, 0777, true);
+        }
+
+        if (!file_exists(self::LOG_DIR)) {
+            mkdir(self::LOG_DIR, 0777, true);
+        }
+
         $this->cleanOldStreamSource();
     }
 
@@ -234,7 +242,7 @@ class Stream
 
     static function log($msg)
     {
-        $filename = self::LOG_DIR . DIRECTORY_SEPARATOR . date("Y-m-d") . '.txt';
+        $filename = self::LOG_DIR . DIRECTORY_SEPARATOR . date("Y-m-d") . '.log';
         $day = date("Y-m-d H:i:s") . ': ';
         $current = $day . $msg . PHP_EOL;
 
