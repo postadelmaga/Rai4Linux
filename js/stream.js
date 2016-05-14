@@ -69,7 +69,7 @@ function Stream(videoId, config) {
         this._loadChannel(ch, 0);
         if (nogoto)
             return;
-        this.goToByScroll("programs")
+        this.goToByScroll("program_box")
     };
 
     this._selectChannelBtn = function (ch) {
