@@ -1,5 +1,9 @@
-<div class="progress progress-striped active" id="main_loader">
-    <div id="loadbar" class="progress-bar" role="progressbar" aria-valuenow="0" style="width: 0%;"></div>
+<div id="header">
+    <div class="progress progress-striped active" id="main_loader">
+        <div id="loadbar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            <span class="sr-only"></span>
+        </div>
+    </div>
 </div>
 <a id="github_forkme" href="https://github.com/postadelmaga/Rai4Linux">
     <img style="position: absolute; top: 0; right: 0; border: 0;"

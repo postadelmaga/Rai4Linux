@@ -2,11 +2,6 @@ body {
     background-color: black !important;
 }
 
-header h1, #video-box, #channel-menu {
-    margin: 0px;
-    padding-top: 0px;
-}
-
 section {
     padding-top: 30px;
 }
@@ -36,6 +31,10 @@ section {
 /*box-shadow: inset 0 3px 7px rgba(0, 0, 0, .2), inset 0 -3px 7px rgba(0, 0, 0, .2);*/
 /*}*/
 
+#header, #main_loader {
+    height: 8px
+}
+
 .container {
     width: 1054px;
 }
@@ -49,7 +48,7 @@ section {
     background: url('../img/tv.png') no-repeat center;
     padding-right: 2px;
     overflow: hidden;
-    margin: 10px;
+    /*margin: 10px;*/
 }
 
 #tv_title {
@@ -81,6 +80,12 @@ section {
 .channel-wrapper .progress {
     height: 12px;
     font-size: 11px;
+}
+
+#program_box{
+    padding: 2%;
+    max-width: 97%;
+    margin: auto;
 }
 
 .description {
@@ -142,6 +147,3 @@ button.active {
     color: red;
 }
 
-.navbar-inner {
-    padding: 10px;
-}

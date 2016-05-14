@@ -13,35 +13,26 @@
     </div>
 </div>
 
-<div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-        <div id="programs" class="">
-            <?php $i = 0; ?>
-            <?php foreach ($stream->getDayRange() as $day): ?>
-
-                <?php if ($i % 4 == 0): ?>
-                    <div class="row-fluid">
-                <?php endif; ?>
-
-                <div class="day" id="<?php echo $day ?>">
-                    <button class="btn-primary btn active">
-                        <label><?php echo $day ?><label>
-                    </button>
-                    <div class="loader"></div>
-                    <div class="program_list">
-                    </div>
-                </div>
-
-                <?php if ($i % 4 == 3): ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php $i++; ?>
-            <?php endforeach; ?>
+<div id="program_box" class="navbar navbar-inverse">
+    <?php $i = 0; ?>
+    <?php foreach ($stream->getDayRange() as $day): ?>
+        <?php if ($i % 4 == 0): ?>
+            <div class="row">
+        <?php endif; ?>
+        <div class="day col-xs-3" id="<?php echo $day ?>">
+            <button class="btn-primary btn active">
+                <label><?php echo $day ?><label>
+            </button>
+            <div class="loader"></div>
+            <div class="program_list"></div>
         </div>
-    </div>
-</div>
 
+        <?php if ($i % 4 == 3 || $i == 6): ?>
+            </div>
+        <?php endif; ?>
+        <?php $i++; ?>
+    <?php endforeach; ?>
+</div>
 
 <script type="text/javascript">
     videojs.options.flash.swf = "js/player/plugin/video-js.swf"

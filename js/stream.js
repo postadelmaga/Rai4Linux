@@ -277,7 +277,7 @@ function Stream(videoId, config) {
         }
         loadBar.attr('aria-valuenow', perc);
         loadBar.css('width', (perc) + '%');
-        loadBar.text(Math.ceil(perc));
+        //loadBar.text(Math.ceil(perc));
 
         // Ch Bar
         var loadBarCh = jQuery('#loadbar_' + ch);
