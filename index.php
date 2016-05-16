@@ -25,7 +25,7 @@
     <script src="js/jquery/jquery.hoverIntent.minified.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
-    <script src="js/stream.js?v=0"></script>
+    <script src="js/stream.js?v=1"></script>
     <link href="js/player/video-js.css" rel="stylesheet">
     <link href="js/player/plugin/videojs-resolution-switcher.css" rel="stylesheet">
     <script src="js/player/video.js"></script>
