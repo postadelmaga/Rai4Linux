@@ -168,7 +168,7 @@ function Stream(videoId, config) {
             var row = jQuery('<div>', {id: idP, class: 'program'}).html(data.time + ' - ' + data.title);
 
 
-            if (!data.video_urls.lenght == 0) {
+            if (data.video_urls.lenght == 0) {
                 row.addClass('error');
                 this.logger('-- No Data Url');
             }
