@@ -186,7 +186,7 @@ class Stream
                 unset($videoUrls[$k]);
             }
         }
-        return $videoUrls;
+        return $videoUrls ? $videoUrls : array();
     }
 
     public function downloadFile($url)
