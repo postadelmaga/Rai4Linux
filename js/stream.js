@@ -163,43 +163,21 @@ function Stream(videoId, config) {
 
         var dayList = this.streamList[ch][day];
 
-        for (var hr in dayList) {
-            var curProg = dayList[hr];
-
-            var data = {class: 'program'};
-            var baseUrl = curProg['h264'];
-            var videoUrls = new Array();
-
-            for (var i in this.config.qualityUrlType) {
-                var type = this.config.qualityUrlType[i];
-                if (curProg[type] != '') {
-                    videoUrls.push(curProg[type]);
-                }
-            }
-            if (videoUrls.length > 0) {
-                data['sd-url'] = videoUrls[0];
-                if (videoUrls.length > 1) {
-                    data['hd-url'] = videoUrls[videoUrls.length - 1];
-                }
-            }
-            else {
-                data['sd-url'] = baseUrl;
-            }
-            data['id'] = curProg.i;
-            data['idProgramma'] = curProg.idProgramma;
-            var row = jQuery('<div>', data).html(hr + ' - ' + curProg.t);
+        for (var idP in dayList) {
+            var data = dayList[idP];
+            var row = jQuery('<div>', {id: idP, class: 'program'}).html(data.time + ' - ' + data.title);
 
 
-            if (!data.hasOwnProperty('sd-url')) {
+            if (!data.video_urls.lenght == 0) {
                 row.addClass('error');
+                this.logger('-- No Data Url');
             }
             else {
                 row.click((function () {
                     stream._setVideo(this);
                 }));
             }
-
-            var desc = jQuery('<div>', {'class': 'description'}).html(curProg.d)
+            var desc = jQuery('<div>', {'class': 'description'}).html(data.description)
                 .hide().appendTo(row);
             row.hoverIntent((function () {
                     jQuery(this).find('.description').fadeIn()
@@ -216,16 +194,23 @@ function Stream(videoId, config) {
         return videojs(this.videoId);
     };
 
-    this.initVideoBox = function (urls) {
-        if (urls.hd) {
+    this.getDataById = function (prog_id) {
+        var ch = this.currentChannel;
+        var day = jQuery('#' + prog_id).parents('.day').attr('id');
+        return this.streamList[ch][day][prog_id];
+    };
+
+    this._setVideo = function (el) {
+        var data = this.getDataById(el.id);
+        if (data.video_urls.lenght > 1) {
             this.getPlayer().updateSrc([
                 {
-                    src: urls.sd,
+                    src: data.video_urls[0],
                     type: 'video/mp4; codecs="avc1.42E01E"',
                     label: 'SD'
                 },
                 {
-                    src: urls.hd,
+                    src: data.video_urls[1],
                     type: 'video/mp4; codecs="avc1.42E01E"',
                     label: 'HD'
                 }
@@ -235,7 +220,7 @@ function Stream(videoId, config) {
             // only one resolution
             this.getPlayer().src(
                 {
-                    src: urls.sd,
+                    src: data.video_urls[0],
                     type: 'video/mp4; codecs="avc1.42E01E"'
                 }
             );
@@ -243,38 +228,8 @@ function Stream(videoId, config) {
 
         this.getPlayer().load();
         this.getPlayer().play();
-
-        //jQuery('#' + this.videoId).height('360');
-    };
-
-    this._setVideo = function (el) {
-        var streamUrl = jQuery(el).attr('sd-url');
-        var streamUrlHq = jQuery(el).attr('hd-url');
-        if (streamUrl == '') {
-            this.logger('-- No Data Url');
-        }
-        this._ajaxloadVideo(streamUrl, streamUrlHq);
-        //this.getPlayer().show('fold', 1000);
         this.goToByScroll(this.videoId);
-    };
 
-    this._ajaxloadVideo = function (streamUrl, streamUrlHq) {
-        this.getPlayer().pause();
-        jQuery.ajax({
-            type: 'POST',
-            url: this.config.ajaxUrl,
-            dataType: 'json',
-            data: {sd: streamUrl, hq: streamUrlHq},
-            context: this,
-            success: function (data) {
-                this.logger('- sd-url :' + streamUrl + '  ----->  ' + data);
-                this.logger('- hd-url:' + streamUrl + '  ----->  ' + data);
-                this.initVideoBox(data);
-            },
-            error: function (data) {
-                this.logger('-ERROR: _ajaxGetRedirect');
-            }
-        })
     };
 
     this._loaderIncreaseOneDay = function (ch) {

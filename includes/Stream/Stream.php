@@ -22,7 +22,8 @@ class Stream
             mkdir(self::LOG_DIR, 0777, true);
         }
 
-        $this->cleanOldStreamSource();
+        // tmp disabled
+//        $this->cleanOldStreamSource();
     }
 
     public function getJsonConfig()
@@ -132,13 +133,24 @@ class Stream
     protected function _getStreamContent($ch, $day, $iteration = 0)
     {
         $url = $this->_getUrlByChannelDay($ch, $day);
-
+        $data_clean = array();
         try {
 //            $context = stream_context_create(array('http' => array('timeout' => 2500)));
             $json = $this->downloadFile($url);
             $data = json_decode($json, TRUE);
             $key = array_search($ch, $this->getChannelList());
-            $content = $data[$key][$day];
+
+            foreach ($data[$key][$day] as $time => $info) {
+
+                $data_clean[$info['i']] = array(
+                    'time' => $time,
+                    'program_id' => $info['t'],
+                    'title' => $info['t'],
+                    'description' => $info['d'],
+                    'video_urls' => $this->_getVideoUrls($info),
+                    'str' => $info['urlrisorsasottotitoli']
+                );
+            }
 
         } catch (Exception $e) {
             if ($iteration < 20) {
@@ -148,7 +160,33 @@ class Stream
                 return false;
             }
         }
-        return $content;
+        return $data_clean;
+    }
+
+    protected function _getVideoUrls($info)
+    {
+        $tmvideoUrls = array();
+
+        foreach ($this->getQualityType() as $type) {
+            if (isset($info[$type]) && $info[$type] != '' && !in_array($info[$type], $videoUrls)) {
+                $videoUrls[] = $info[$type];
+            }
+        }
+        if (count($videoUrls) == 0 && isset($info['h264']) && $info['h264'] != '') {
+            $videoUrls[] = $info['h264'];
+        }
+
+        if (count($videoUrls) > 1) {
+            $videoUrls = array($videoUrls[0], $videoUrls[count($videoUrls) - 1]);
+        }
+        foreach ($videoUrls as $k => $url) {
+            if ($direct_video = $this->_getVideoUrl($url)) {
+                $videoUrls[$k] = $this->_getVideoUrl($url);
+            } else {
+                unset($videoUrls[$k]);
+            }
+        }
+        return $videoUrls;
     }
 
     public function downloadFile($url)
@@ -191,7 +229,7 @@ class Stream
     }
 
 
-    public function getVideoUrl($url)
+    protected function _getVideoUrl($url)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, true);
@@ -205,7 +243,7 @@ class Stream
         $pos += strlen($header);
         $redirect_url = substr($response, $pos, strpos($response, "\r\n", $pos) - $pos);
 
-        return $redirect_url;
+        return ($redirect_url != '' && $redirect_url != "00 OK") ? $redirect_url : false;
     }
 
 //    protected function _extractContent($date, $json)
