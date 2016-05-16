@@ -10,11 +10,10 @@ function Stream(videoId, config) {
             this.initChannelBtn(this.config.channelList[i]);
             this._loadChannel(this.config.channelList[i], false);
         }
-        this.selectChannel(this.currentChannel, true);
+        this._selectChannelBtn(this.currentChannel);
     };
 
     this.initChannelBtn = function (ch) {
-
         var stream = this;
 
         var chbtn = jQuery('<li>', {'id': 'btn_' + ch})
@@ -24,7 +23,6 @@ function Stream(videoId, config) {
             }).text(ch))
             .click(function (e) {
                 stream.selectChannel(ch);
-
             }).mousedown(function (event) {
                 switch (event.which) {
                     case 3:
@@ -47,21 +45,6 @@ function Stream(videoId, config) {
         return this;
     };
 
-    this._loadChannel = function (ch, update) {
-
-        if (update) {
-            this.streamList[ch] = new Array();
-            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
-        }
-
-        for (var i in  this.config.dayRange) {
-            jQuery('label#load-' + ch).text('0');
-            jQuery('label#load').text('0');
-            this._getDayData(ch, this.config.dayRange[i], update);
-            var target = jQuery('label#' + ch).css('color', 'yellow');
-        }
-    };
-
     this.selectChannel = function (ch, nogoto) {
         this.logger('- selectChannel:' + ch);
         this.currentChannel = ch;
@@ -69,7 +52,7 @@ function Stream(videoId, config) {
         this._loadChannel(ch, 0);
         if (nogoto)
             return;
-        this.goToByScroll("program_box")
+        this.goToByScroll('program_box');
     };
 
     this._selectChannelBtn = function (ch) {
@@ -92,6 +75,21 @@ function Stream(videoId, config) {
         }
     };
 
+    this._loadChannel = function (ch, update) {
+
+        if (update) {
+            this.streamList[ch] = new Array();
+            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
+        }
+
+        for (var i in  this.config.dayRange) {
+            jQuery('label#load-' + ch).text('0');
+            jQuery('label#load').text('0');
+            this._getDayData(ch, this.config.dayRange[i], update);
+            var target = jQuery('label#' + ch).css('color', 'yellow');
+        }
+    };
+
     this._getDayData = function (ch, day, update) {
         this.logger('- Get(' + ch + ',' + day + ',' + update + ')');
         var target = jQuery('#' + day);
@@ -110,8 +108,7 @@ function Stream(videoId, config) {
         }
         else {
             if (this.streamList[ch] && this.streamList[ch][day]) {
-                dayData = this.streamList[ch][day];
-                this._processDayData(ch, day, dayData);
+                this._processDayData(ch, day,  this.streamList[ch][day]);
             }
             else {
                 this._ajaxDataDay(ch, day, 0);
