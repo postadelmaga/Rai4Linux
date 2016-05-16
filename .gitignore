@@ -1,3 +1,5 @@
 .idea/
-.htaccess
+
 /data/
+/log/
+/.htaccess
