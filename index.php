@@ -47,6 +47,7 @@
 <div class="container">
     <?php include('blocks/videobox.php') ?>
     <?php include('blocks/comment.php') ?>
+    <?php include('blocks/chat.php') ?>
 </div>
 
 </body>
