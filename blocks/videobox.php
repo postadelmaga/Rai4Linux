@@ -35,7 +35,6 @@
 </div>
 
 <script type="text/javascript">
-    videojs.options.flash.swf = "js/player/plugin/video-js.swf"
     videojs('my-video').ready(function () {
         this.hotkeys({
             volumeStep: 0.1,

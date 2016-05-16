@@ -12,7 +12,7 @@ class streamAjax extends Varien_Object
 $ch = isset($_POST['ch']) ? $_POST['ch'] : null;
 $day = isset($_POST['day']) ? $_POST['day'] : null;
 $update = isset($_POST['up']) ? $_POST['up'] : null;
-$videoUrl = isset($_POST['video']) ? $_POST['video'] : null;
+$videoUrl = isset($_POST['sd']) ? $_POST['sd'] : null;
 $videoUrlHq = isset($_POST['hq']) ? $_POST['hq'] : null;
 
 
@@ -25,7 +25,7 @@ if ($videoUrl) {
         $hd = $stream->getVideoUrl($videoUrlHq);
     }
 
-    echo json_encode(array($url, $hd));
+    echo json_encode(array('sd' => $url, 'hd' => $hd));
 }
 
 if ($update) {

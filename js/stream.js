@@ -108,7 +108,7 @@ function Stream(videoId, config) {
         }
         else {
             if (this.streamList[ch] && this.streamList[ch][day]) {
-                this._processDayData(ch, day,  this.streamList[ch][day]);
+                this._processDayData(ch, day, this.streamList[ch][day]);
             }
             else {
                 this._ajaxDataDay(ch, day, 0);
@@ -167,23 +167,30 @@ function Stream(videoId, config) {
             var curProg = dayList[hr];
 
             var data = {class: 'program'};
+            var baseUrl = curProg['h264'];
+            var videoUrls = new Array();
 
             for (var i in this.config.qualityUrlType) {
                 var type = this.config.qualityUrlType[i];
-
                 if (curProg[type] != '') {
-                    if (!data.hasOwnProperty('data-url')) {
-                        data['data-url'] = curProg[type];
-                    }
-                    if (data['data-url'] != curProg[type])
-                        data['hd-url'] = curProg[type];
+                    videoUrls.push(curProg[type]);
                 }
             }
-
+            if (videoUrls.length > 0) {
+                data['sd-url'] = videoUrls[0];
+                if (videoUrls.length > 1) {
+                    data['hd-url'] = videoUrls[videoUrls.length - 1];
+                }
+            }
+            else {
+                data['sd-url'] = baseUrl;
+            }
+            data['id'] = curProg.i;
+            data['idProgramma'] = curProg.idProgramma;
             var row = jQuery('<div>', data).html(hr + ' - ' + curProg.t);
 
 
-            if (!data.hasOwnProperty('data-url')) {
+            if (!data.hasOwnProperty('sd-url')) {
                 row.addClass('error');
             }
             else {
@@ -210,19 +217,28 @@ function Stream(videoId, config) {
     };
 
     this.initVideoBox = function (urls) {
-        if (urls[1]) {
+        if (urls.hd) {
             this.getPlayer().updateSrc([
-                {type: "video/mp4", src: urls[1], label: 'HD'}
-            ]);
-            this.getPlayer().updateSrc([
-                {type: "video/mp4", src: urls[0], label: 'SD'}
+                {
+                    src: urls.sd,
+                    type: 'video/mp4; codecs="avc1.42E01E"',
+                    label: 'SD'
+                },
+                {
+                    src: urls.hd,
+                    type: 'video/mp4; codecs="avc1.42E01E"',
+                    label: 'HD'
+                }
             ]);
         }
         else {
             // only one resolution
-            this.getPlayer().src([
-                {type: "video/mp4", src: urls[0]}
-            ]);
+            this.getPlayer().src(
+                {
+                    src: urls.sd,
+                    type: 'video/mp4; codecs="avc1.42E01E"'
+                }
+            );
         }
 
         this.getPlayer().load();
@@ -232,7 +248,7 @@ function Stream(videoId, config) {
     };
 
     this._setVideo = function (el) {
-        var streamUrl = jQuery(el).attr('data-url');
+        var streamUrl = jQuery(el).attr('sd-url');
         var streamUrlHq = jQuery(el).attr('hd-url');
         if (streamUrl == '') {
             this.logger('-- No Data Url');
@@ -248,10 +264,10 @@ function Stream(videoId, config) {
             type: 'POST',
             url: this.config.ajaxUrl,
             dataType: 'json',
-            data: {video: streamUrl, hq: streamUrlHq},
+            data: {sd: streamUrl, hq: streamUrlHq},
             context: this,
             success: function (data) {
-                this.logger('- data-url :' + streamUrl + '  ----->  ' + data);
+                this.logger('- sd-url :' + streamUrl + '  ----->  ' + data);
                 this.logger('- hd-url:' + streamUrl + '  ----->  ' + data);
                 this.initVideoBox(data);
             },

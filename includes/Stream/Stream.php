@@ -46,7 +46,6 @@ class Stream
     public function getQualityType()
     {
         $types = array(
-            'h264',
             'h264_400',
             'h264_600',
             'h264_800',
