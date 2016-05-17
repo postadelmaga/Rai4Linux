@@ -165,7 +165,7 @@ class Stream
 
     protected function _getVideoUrls($info)
     {
-        $tmvideoUrls = array();
+        $videoUrls = array();
 
         foreach ($this->getQualityType() as $type) {
             if (isset($info[$type]) && $info[$type] != '' && !in_array($info[$type], $videoUrls)) {
@@ -227,7 +227,6 @@ class Stream
         $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $day);
         return $url;
     }
-
 
     protected function _getVideoUrl($url)
     {

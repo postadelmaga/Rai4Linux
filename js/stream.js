@@ -149,7 +149,7 @@ function Stream(videoId, config) {
                 error: function (data) {
                     jQuery('#' + day + ' .loader').hide();
                     this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-FAIL');
-                    this._loaderUp(ch);
+                    this._loaderIncreaseOneDay(ch);
                 }
             }
         )
