@@ -1,0 +1,35 @@
+#btn_RaiUno .active {
+    background-color: #002a80 !important;
+}
+
+#btn_RaiDue .active {
+    background-color: darkred !important;
+}
+
+#btn_RaiTre .active {
+    background-color: #028200 !important;
+}
+
+#btn_RaiCinque .active {
+    background-color: #fe6500 !important;
+}
+
+.loader {
+    background-image: url("../img/loader.gif");
+    width: 25px;
+    height: 25px;
+    position: relative;
+    left: 70px;
+    top: 10px;
+}
+
+.progress {
+    margin-bottom: 0px !important;
+}
+
+.error {
+    color: red;
+}
+
+
+
