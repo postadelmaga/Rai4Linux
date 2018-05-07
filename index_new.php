@@ -59,35 +59,18 @@ $stream = new Stream();
 $days = $stream->getDayRange();
 
 foreach ($days as $day): ?>
-
-    <?php if ($i == 0 || $i % 3 == 0): ?>
-        <div class="w3-cell-row">
-    <?php endif; ?>
-
-    <div class="w3-card-4 w3-cell">
-
+    <div class="w3-card w3-cell-row" id="<?php echo $day ?>"">
         <header class="w3-container w3-blue">
             <h1><?php echo $day ?></h1>
-        </header>
-
-        <div class="w3-container day" id="<?php echo $day ?>">
             <div class="loader"></div>
-            <ul class="w3-ul program_list"></ul>
-        </div>
-
-        <!--    <footer class="w3-container w3-blue">-->
-        <!--        <h5>Footer</h5>-->
-        <!--    </footer>-->
-        <!---->
-
+        </header>
+        <ul class="w3-ul program_list"></ul>
     </div>
 
     <?php $i++; ?>
-
-
-    <?php if (count($days) == $i || ($i > 0 && $i % 3 == 0)): ?>
-        </div>
-    <?php endif; ?>
+    <!--    --><?php //if (count($days) == $i || ($i > 0 && $i % 3 == 0)): ?>
+    <!--        </div>-->
+    <!--    --><?php //endif; ?>
 
 <?php endforeach; ?>
 

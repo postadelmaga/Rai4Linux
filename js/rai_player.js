@@ -12,13 +12,12 @@ function Stream(videoId, config) {
 
 
         for (var i in this.config.channelList) {
-            this.initChannelBtn(this.config.channelList[i]);
-            this._loadChannel(this.config.channelList[i], false);
+            this.chInit(this.config.channelList[i]);
+            this.chLoadData(this.config.channelList[i], false);
         }
 
 
-        this._selectChannelBtn(this.currentChannel);
-
+        this.chSwitch(this.currentChannel);
 
         this.player = new MediaElementPlayer('videoElement', {
                 /**
@@ -42,39 +41,31 @@ function Stream(videoId, config) {
 
     };
 
-
-    this.getPlayer = function () {
-        // return videojs(this.videoId);
-        return this.player;
-    };
-
-
-    this._setVideo = function (el) {
-        var data = this.getDataById(el.id);
+    this._playProgram = function (el) {
+        var data = this.streamList[$(el).data('ch')][$(el).data('day')][el.id];
 
         // only one resolution
-        if (this.getPlayer()) {
-            this.getPlayer().setSrc(data.video_urls[0]);
-            this.getPlayer().load();
-            this.getPlayer().play();
+        if (this.player) {
+            this.player.setSrc(data.video_urls[0]);
+            this.player.load();
+            this.player.play();
             this.logger('Set Url: ' + data.video_urls[0]);
 
         }
     };
 
-
-    this.initChannelBtn = function (ch) {
+    this.chInit = function (ch) {
         var stream = this;
 
         var chbtn = jQuery('<a>', {'id': 'btn_' + ch, 'class': "w3-button", 'href': "#"})
             .text(ch)
             .click(function (e) {
-                stream.selectChannel(ch);
+                stream.chClick(ch);
             }).mousedown(function (event) {
                 switch (event.which) {
                     case 3:
                         if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
-                            stream._loadChannel(ch, true);
+                            stream.chLoadData(ch, true);
                         }
                         break;
                     default:
@@ -92,17 +83,7 @@ function Stream(videoId, config) {
         return this;
     };
 
-    this.selectChannel = function (ch, nogoto) {
-        this.logger('- selectChannel:' + ch);
-        this.currentChannel = ch;
-        this._selectChannelBtn(ch);
-        this._loadChannel(ch, 0);
-        if (nogoto)
-            return;
-        this.goToByScroll('program_box');
-    };
-
-    this._loadChannel = function (ch, update) {
+    this.chLoadData = function (ch, update) {
 
         if (update) {
             this.streamList[ch] = new Array();
@@ -112,73 +93,135 @@ function Stream(videoId, config) {
         for (var i in  this.config.dayRange) {
             jQuery('label#load-' + ch).text('0');
             jQuery('label#load').text('0');
-            this._getDayData(ch, this.config.dayRange[i], update);
+            this.chDayData(ch, this.config.dayRange[i], update);
+
             var target = jQuery('label#' + ch).css('color', 'yellow');
         }
     };
 
-    this._selectChannelBtn = function (ch) {
-        var el = jQuery('#btn_' + ch);
-        //el.show('fold', 1000);
+    this.chClick = function (ch, nogoto) {
+        this.logger('- chClick:' + ch);
+        this.currentChannel = ch;
+        this.chSwitch(ch);
+        this.chLoadData(ch, 0);
+        if (nogoto)
+            return;
+        this.goToByScroll('program_box');
+    };
 
+    this.chSwitch = function (ch) {
+        //el.show('fold', 1000);
         var load = jQuery('#loadbar_' + ch);
         load.attr('aria-valuenow', 0);
         load.css('width', 0);
 
+        var ch_button = jQuery('#btn_' + ch);
         if (ch == this.currentChannel) {
-            if (el.parent()) {
-                // remove active class from all buttons
-                el.parent().find('button').each(function () {
-                        $(this).removeClass('active')
-                    }
-                );
-            }
-            el.find('button').addClass('active');
+            // remove active class from all buttons
+            ch_button.parent().find('button').each(function () {
+                    $(this).removeClass('active')
+                }
+            );
+            ch_button.addClass('active');
         }
     };
 
 
-    this._getDayData = function (ch, day, update) {
+    this.chDayRender = function (day, ch) {
+
+        var target = jQuery('#' + day + ' .program_list');
+        target.fadeIn();
+
+        jQuery('#' + day + ' .loader').hide();
+
+        stream = this;
+
+        var dayList = this.streamList[ch][day];
+
+        for (var idP in dayList) {
+            var data = dayList[idP];
+
+
+            var program_row = jQuery('<li>', {
+                id: idP,
+                class: 'program w3-card-4'
+            });
+            $(program_row).data('ch', ch);
+            $(program_row).data('day', day);
+
+            var program_title = jQuery('<header>', {
+                class: 'w3-container w3-blue'
+            }).html('<h1>' + data.time + ' -- ' + data.title + '</h1>');
+
+            var program_description = jQuery('<div>', {
+                class: 'w3-container'
+            }).html(data.description);
+
+            program_title.appendTo(program_row)
+            program_description.appendTo(program_row)
+
+            if (data.video_urls.length == 0) {
+                program_row.addClass('error');
+                this.logger('-- No Data Url');
+            }
+            else {
+                program_row.click((function () {
+                    stream._playProgram(this);
+                }));
+            }
+
+            // row.hoverIntent((function () {
+            //         jQuery(this).find('.description').fadeIn()
+            //     }),
+            //     (function () {
+            //         jQuery(this).find('.description').fadeOut(1200);
+            //     })
+            // );
+            program_row.appendTo(target);
+        }
+    };
+
+    this.chDayData = function (ch, day, update) {
         this.logger('- Get(' + ch + ',' + day + ',' + update + ')');
         var target = jQuery('#' + day);
 
         if (ch == this.currentChannel) {
             target.find('.program_list').html('');
-            jQuery('#' + day + ' .loader').show();
-            jQuery('#' + day + ' .program_list').hide();
+            jQuery('.' + day + ' .loader').show();
+            jQuery('.' + day + ' .program_list').hide();
             var today = new Date(day);
 //            var cDate = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
             var label = jQuery('#' + day + ' button label').text(ch + ' - ' + today.toDateString());
         }
 
         if (update) {
-            this._ajaxDataDay(ch, day, 1);
+            this._chDayDataAjax(ch, day, 1);
         }
         else {
             if (this.streamList[ch] && this.streamList[ch][day]) {
-                this._processDayData(ch, day, this.streamList[ch][day]);
+                this._chDayDataProcess(ch, day, this.streamList[ch][day]);
             }
             else {
-                this._ajaxDataDay(ch, day, 0);
+                this._chDayDataAjax(ch, day, 0);
             }
         }
     };
 
-    this._processDayData = function (ch, day, data) {
+    this._chDayDataProcess = function (ch, day, data) {
         // add Day Data
         if (!this.streamList[ch])
             this.streamList[ch] = new Array();
         if (day && data)
             this.streamList[ch][day] = data;
         if (ch == this.currentChannel) {
-            this._setDayHtml(day, ch);
+            this.chDayRender(day, ch);
 
         }
         this._loaderIncreaseOneDay(ch);
     };
 
-    this._ajaxDataDay = function (ch, day, update) {
-        var callback = this._processDayData;
+    this._chDayDataAjax = function (ch, day, update) {
+        var callback = this._chDayDataProcess;
         var data = {ch: ch, day: day};
 
         if (update)
@@ -203,61 +246,6 @@ function Stream(videoId, config) {
         )
     };
 
-    this._setDayHtml = function (day, ch) {
-        var target = jQuery('#' + day + ' .program_list');
-        target.fadeIn();
-        jQuery('#' + day + ' .loader').hide();
-        stream = this;
-
-        var dayList = this.streamList[ch][day];
-
-        for (var idP in dayList) {
-            var data = dayList[idP];
-
-
-            var program_row = jQuery('<li>', {
-                id: idP,
-                class: 'program w3-card-4'
-            }).html(data.time + ' -- ' + data.title);
-
-            var program_title = jQuery('<header>', {
-                class: 'w3-container w3-blue'
-            }).html('<h1>' + data.time + ' -- ' + data.title + '</h1>');
-
-            var program_description = jQuery('<div>', {
-                class: 'w3-container'
-            }).html(data.description);
-
-            program_title.appendTo(program_row)
-            program_description.appendTo(program_row)
-
-            if (data.video_urls.length == 0) {
-                program_row.addClass('error');
-                this.logger('-- No Data Url');
-            }
-            else {
-                program_row.click((function () {
-                    stream._setVideo(this);
-                }));
-            }
-
-            // row.hoverIntent((function () {
-            //         jQuery(this).find('.description').fadeIn()
-            //     }),
-            //     (function () {
-            //         jQuery(this).find('.description').fadeOut(1200);
-            //     })
-            // );
-            program_row.appendTo(target);
-        }
-    };
-
-
-    this.getDataById = function (prog_id) {
-        var ch = this.currentChannel;
-        var day = jQuery('#' + prog_id).parents('.day').attr('id');
-        return this.streamList[ch][day][prog_id];
-    };
 
     this._loaderIncreaseOneDay = function (ch) {
 
@@ -289,6 +277,7 @@ function Stream(videoId, config) {
         loadBarCh.css('width', (perc) + '%');
         loadBarCh.text(Math.ceil(perc));
     };
+
 
     this.goToByScroll = function (elId) {
         // var el;
