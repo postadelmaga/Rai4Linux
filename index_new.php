@@ -1,4 +1,6 @@
 <?php
+define('ROOT', getcwd());
+
 include_once('./includes/Core.php');
 $stream = new Stream();
 
@@ -34,22 +36,23 @@ $stream = new Stream();
     <?php include('app/blocks/week.phtml') ?>
 </div>
 
-<script>
-    // Script to open and close sidebar
-    function w3_open() {
-        document.getElementById("mySidebar").style.display = "block";
-    }
-
-    function w3_close() {
-        document.getElementById("mySidebar").style.display = "none";
-    }
-</script>
-
-
 <script type="text/javascript">
     Stream.logCounter = 0;
     var stream = new Stream('videoElement', <?php echo json_encode($stream->getJsonConfig()); ?>);
 </script>
+
+
+<!--<script>-->
+<!--    // Script to open and close sidebar-->
+<!--    function w3_open() {-->
+<!--        document.getElementById("mySidebar").style.display = "block";-->
+<!--    }-->
+<!---->
+<!--    function w3_close() {-->
+<!--        document.getElementById("mySidebar").style.display = "none";-->
+<!--    }-->
+<!--</script>-->
+
 
 </body>
 </html>

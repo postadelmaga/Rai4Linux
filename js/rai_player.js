@@ -13,7 +13,6 @@ function Stream(videoId, config) {
 
         this.logger('- Init Player');
         this.player = new MediaElementPlayer('videoElement', {
-
                 /**
                  * YOU MUST SET THE TYPE WHEN NO SRC IS PROVIDED AT INITIALISATION
                  * (This one is not very well documented.. If one leaves the type out, the success event will never fire!!)
@@ -32,23 +31,19 @@ function Stream(videoId, config) {
             }
         );
 
-        this.logger('- Init Channels');
         var chList = this.config.channelList;
+        this.selectChannel(chList[0]);
+
         for (var i in  chList) {
             var ch = chList[i];
+            this.logger('- Init Channel: ' + ch);
             this.loader.createLoader(ch, this.chClick, this);
-            this.loadChannel(ch, false);
+            this.loadChannel(ch);
         }
-
-        this.chSwitch(chList[0]);
-
-        // this.player;
-
     };
 
     this._playProgram = function (el) {
         var data = this.streamList[$(el).data('ch')][$(el).data('day')][el.id];
-
         // only one resolution
         if (this.player) {
             this.player.setSrc(data.video_urls[0]);
@@ -58,20 +53,19 @@ function Stream(videoId, config) {
         }
     };
 
+    this.chClick = function (ch, nogoto = 0) {
+        this.selectChannel(ch);
+        this.loadChannel(ch);
 
-    this.chClick = function (ch, nogoto) {
-
-        this.logger('- chClick:' + ch);
-        this.chSwitch(ch);
-        
-        this.loadChannel(ch, 0);
-
-        if (nogoto)
-            return;
-        this.goToByScroll('program_box');
+        if (!nogoto) {
+            this.goToByScroll('program_box');
+        }
     };
 
-    this.chSwitch = function (ch) {
+    this.selectChannel = function (ch) {
+        this.logger('- Select: ' + ch);
+
+        jQuery(page_title).html(ch);
         this.currentChannel = ch;
         //el.show('fold', 1000);
         this.loader.resetLoader(ch);
@@ -86,8 +80,7 @@ function Stream(videoId, config) {
     };
 
 
-    this.loadChannel = function (ch, update) {
-
+    this.loadChannel = function (ch, update = 0) {
         this.streamList[ch] = new Array();
         this.loader.showLoader(ch);
 
@@ -108,11 +101,10 @@ function Stream(videoId, config) {
 
             jQuery('label#' + ch).css('color', 'yellow');
             this.updateDay(ch, date, 1, update);
-
         }
     };
 
-    this.updateDay = function (ch, day, first = 0, update = 0,) {
+    this.updateDay = function (ch, day, first = 0, update = 0) {
 
         if (!first) {
             if (this.streamList[ch] && this.streamList[ch][day]) {
@@ -134,13 +126,12 @@ function Stream(videoId, config) {
                 data: params,
                 context: this,
                 success: function (data) {
-                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-OK');
+                    this.logger('- Data_OK [' + ch + ' - ' + day + ', ' + update + ']');
                     // callback.call(this, ch, day, data);
 
                     if (!this.streamList[ch]) {
                         this.streamList[ch] = new Array();
                     }
-
                     this.streamList[ch][day] = data;
 
                     // UPDATE CURRENT DAY HTML
@@ -149,11 +140,10 @@ function Stream(videoId, config) {
                     }
 
                     this.loader.up(ch);
-
                 },
                 error: function (data) {
                     // jQuery('#' + day + ' .loader').hide();
-                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-FAIL');
+                    this.logger('- Data_NO [' + ch + ' - ' + day + ', ' + update + ']');
                     this.loader.up(ch);
                 }
             });
@@ -161,49 +151,56 @@ function Stream(videoId, config) {
     };
 
     this.renderDay = function (day) {
-        var stream = this;
 
+        var stream = this;
+        var ch = this.currentChannel;
+
+        this.logger('- Render [' + day + ']');
         var target = jQuery('#' + day + ' .program_list');
         target.fadeIn().html('');
 
-        var ch = this.currentChannel;
-        var dayList = this.streamList[ch][day];
+        var program_list = this.streamList[ch][day];
 
-        for (var idP in dayList) {
-            var data = dayList[idP];
-
-            this.logger('- Render [Channel:' + ch + ' - Date: ' + day + ']');
-
-            var program_row = jQuery('<li>', {
-                id: idP,
-                class: 'program w3-card-4'
+        var i = 0;
+        for (var prog_id in program_list) {
+            if (i % 3 == 0) {
+                var current_row = jQuery('<div>', {
+                    class: 'program w3-card-4 w3-cell-row'
+                });
+            }
+            var program_cell = jQuery('<div>', {
+                id: prog_id,
+                class: 'program w3-card-4 w3-cell'
             });
+            // Set data
+            $(program_cell).data('ch', ch);
+            $(program_cell).data('day', day);
+
+            var data = program_list[prog_id];
+
+            var title = data.title;
+            var desc = data.description;
+            var time = data.time;
 
             // Title
             jQuery('<header>', {
                 class: 'w3-container w3-blue'
             })
-                .html('<h1>' + data.time + ' -- ' + data.title + '</h1>')
-                .appendTo(program_row);
+                .html('<h6>' + time + ' -- ' + title + '</h6>')
+                .appendTo(program_cell);
 
             // Description
             jQuery('<div>', {
                 class: 'w3-container'
-            })
-                .html(data.description)
-                .appendTo(program_row);
-
-            // Set data
-            $(program_row).data('ch', ch);
-            $(program_row).data('day', day);
-
+            }).html('<p>' + data.description + '</p>')
+                .appendTo(program_cell);
 
             if (data.video_urls.length == 0) {
-                program_row.addClass('error');
-                this.logger('-- No Data Url');
+                program_cell.addClass('error');
+                this.logger('-- No Video - Program: ' + prog_id);
             }
             else {
-                program_row.click((function () {
+                program_cell.click((function () {
                     stream._playProgram(this);
                 }));
             }
@@ -216,7 +213,9 @@ function Stream(videoId, config) {
             //     })
             // );
 
-            program_row.appendTo(target);
+            program_cell.appendTo(current_row);
+            current_row.appendTo(target);
+            i++;
         }
 
         jQuery('#' + day + ' .loader').hide();
