@@ -11,6 +11,7 @@ class streamAjax extends Varien_Object
 
 $ch = isset($_POST['ch']) ? $_POST['ch'] : null;
 $day = isset($_POST['day']) ? $_POST['day'] : null;
+
 $update = isset($_POST['up']) ? $_POST['up'] : null;
 $videoUrl = isset($_POST['sd']) ? $_POST['sd'] : null;
 $videoUrlHq = isset($_POST['hq']) ? $_POST['hq'] : null;
@@ -42,12 +43,10 @@ if ($update) {
 
 // Single Day Request
 if ($ch && $day) {
-
     $json = $stream->updateDay($ch, $day);
 //    echo json_encode(array('OK'));
     echo $json;
     return;
-
 }
 
 if ($ch) {

@@ -1,12 +1,29 @@
 function Stream(videoId, config) {
 
     this.streamList = new Array();
-    this.config = JSON.parse(config);
     this.videoId = videoId;
 
+    this.config = JSON.parse(config);
     this.config.debug = true;
 
     this.init = function () {
+
+        this.vm = new Vue({
+            el: '#app',
+            data: {
+                channels: {
+                    list: this.config.channels,
+                    current: 1,
+                },
+            });
+
+        Vue.component('my-component', {
+            // The todo-item component now accepts a
+            // "prop", which is like a custom attribute.
+            // This prop is called todo.
+            props: ['channels'],
+            template: '<li>{{ ch.text }}</li>'
+        });
 
         this.logger('- Create Loader');
         this.loader = new Loader('loadbar');
@@ -31,16 +48,33 @@ function Stream(videoId, config) {
             }
         );
 
-        var chList = this.config.channelList;
+        this.logger('- Init Channels');
+        this.initChannels();
+
+
+    };
+
+    this.initChannels = function () {
+        var self = this;
+        var chList = this.config.channels;
+
         for (var i in  chList) {
-            var self = this;
-            var ch = chList[i];
+            var ch_id = chList[i].name.toLowerCase();
+            var ch_name = chList[i].name;
+            var ch_class = chList[i]['class'];
 
-            this.logger('- Init Channel: ' + ch);
-            this.loader.createLoader(chList[i]);
+            this.logger('- Init ' + ch_name);
+            this.loader.createLoader(ch_id);
 
-            var chButton = jQuery('<a>', {'id': 'btn_' + ch, 'class': "w3-bar-item w3-button", 'href': "#"}).html(ch);
-            chButton.data('ch', ch);
+            var chButton = jQuery('<a>', {
+                'id': 'btn_' + ch_id,
+                'class': "w3-bar-item w3-button " + ch_class,
+                'href': "#",
+                'onClick': "return false;"
+            }).html(ch_name);
+
+            chButton.data('ch', ch_id);
+
             chButton.click(
                 function (event) {
                     self.chClick(event);
@@ -48,7 +82,7 @@ function Stream(videoId, config) {
             ).mousedown(function (event) {
                 switch (event.which) {
                     case 3:
-                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
+                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch_name + '?')) {
                             self.loadChannel(ch, 1);
                         }
                         break;
@@ -57,10 +91,10 @@ function Stream(videoId, config) {
             });
 
             chButton.appendTo(jQuery('.channel_list'));
-
-            this.loadChannel(ch);
         }
+
         this.selectChannel(chList[0]);
+        this.loadChannel(chList[0].name.toLowerCase());
 
     };
 
@@ -86,25 +120,31 @@ function Stream(videoId, config) {
     };
 
     this.selectChannel = function (ch) {
-        this.logger('- Select: ' + ch);
+        var name = ch.name;
+        var id = ch.id;
 
-        jQuery(page_title).html(ch);
-        this.currentChannel = ch;
+        this.logger('- Select: ' + name);
+
+        // jQuery('page_title').html(ch);
+
+        this.vm.channels.current = id;
         //el.show('fold', 1000);
-        this.loader.resetLoader(ch);
+        this.loader.resetLoader(id);
 
-        var ch_button = jQuery('#btn_' + ch);
+        var ch_button = jQuery('#btn_' + id);
         // Remove active class from all buttons
         ch_button.parent().find('a').each(function (el) {
-                jQuery(this).removeClass('w3-green')
+                jQuery(this).removeClass(ch['class'])
             }
         );
-        ch_button.addClass('w3-green');
+
+        ch_button.addClass(ch['class']);
     };
 
 
     this.loadChannel = function (ch, update = 0) {
         this.streamList[ch] = new Array();
+        this.loader.resetLoader(ch);
         this.loader.showLoader(ch);
 
         var days = this.config.dayRange;
@@ -114,7 +154,7 @@ function Stream(videoId, config) {
 
             var date = days[i];
 
-            if (ch == this.currentChannel) {
+            if (ch == this.vm.channels.current) {
                 jQuery('.' + date + ' .loader').show();
                 jQuery('.' + date + ' .program_list').hide();
                 var today = new Date(date);
@@ -132,7 +172,7 @@ function Stream(videoId, config) {
         if (!first) {
             if (this.streamList[ch] && this.streamList[ch][day]) {
                 // UPDATE DAY
-                if (ch == this.currentChannel) {
+                if (ch == this.vm.channels.current) {
                     this.renderDay(day);
                 }
                 this.loader.up(ch);
@@ -158,7 +198,7 @@ function Stream(videoId, config) {
                     this.streamList[ch][day] = data;
 
                     // UPDATE CURRENT DAY HTML
-                    if (ch == this.currentChannel) {
+                    if (ch == this.vm.channels.current) {
                         this.renderDay(day);
                     }
 
@@ -176,7 +216,7 @@ function Stream(videoId, config) {
     this.renderDay = function (day) {
 
         var stream = this;
-        var ch = this.currentChannel;
+        var ch = this.vm.channels.current;
 
         this.logger('- Render [' + day + ']');
         var target = jQuery('#' + day + ' .program_list');

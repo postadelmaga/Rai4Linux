@@ -6,19 +6,19 @@ body, h1, h2, h3, h4, h5, h6 {
     padding: 20px
 }
 
-#btn_RaiUno .active {
+.raiuno {
     background-color: #002a80 !important;
 }
 
-#btn_RaiDue .active {
+.raidue {
     background-color: darkred !important;
 }
 
-#btn_RaiTre .active {
+.raitre {
     background-color: #028200 !important;
 }
 
-#btn_RaiCinque .active {
+.raicinque {
     background-color: #fe6500 !important;
 }
 

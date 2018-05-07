@@ -30,7 +30,7 @@ class Stream
     {
         $config = array(
             'ajaxUrl' => 'ajax.php',
-            'channelList' => array_values($this->getChannelList()),
+            'channels' => $this->getChannelList(),
             'dayRange' => $this->getDayRange(),
             'qualityUrlType' => $this->getQualityType(),
             'debug' => isset($_GET['debug']) && $_GET['debug'] == 1
@@ -40,7 +40,28 @@ class Stream
 
     public function getChannelList()
     {
-        $ch = array(1 => 'RaiUno', 2 => 'RaiDue', 3 => 'RaiTre', 31 => 'RaiCinque');
+        $ch = array(
+            array(
+                'id' => 1,
+                'name' => 'RaiUno',
+                'lass' => 'w3-blu',
+            ),
+            array(
+                'id' => 2,
+                'name' => 'RaiDue',
+                'class' => 'w3-red',
+            ),
+            array(
+                'id' => 3,
+                'name' => 'RaiTre',
+                'class' => 'w3-green',
+            ),
+            array(
+                'id' => 31,
+                'name' => 'RaiCinque',
+                'class' => 'w3-orange',
+            ),
+        );
         return $ch;
     }
 
