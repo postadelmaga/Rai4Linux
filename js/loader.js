@@ -36,31 +36,14 @@ function Loader(loader_id) {
         loadBarCh.text(Math.ceil(perc));
     };
 
-    this.createLoader = function (ch, clickCallback, stream) {
-
-        var chbtn = jQuery('<a>', {'id': 'btn_' + ch, 'class': "w3-button", 'href': "#"})
-            .text(ch)
-            .click(function (e) {
-                stream.chClick(ch);
-            }).mousedown(function (event) {
-                switch (event.which) {
-                    case 3:
-                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
-                            stream.chLoadData(ch, true);
-                        }
-                        break;
-                    default:
-                }
-            }).appendTo(jQuery('.channel_list'));
-
-
+    this.createLoader = function (ch) {
+        var chbtn = jQuery('#btn_' + chbtn);
         jQuery('<div>', {'class': 'progress progress-striped active'}).append(
             jQuery('<div>', {
                 'id': 'loadbar_' + ch,
                 'class': 'bar',
                 'aria-valuenow': 0
             })).appendTo(chbtn);
-
     };
 
     this.showLoader = function (ch) {

@@ -23,7 +23,7 @@ $stream = new Stream();
     </div>
 </div>
 
-<div class="w3-bar w3-border w3-round channel_list"></div>
+<div class="w3-bar w3-mobile w3-border w3-round channel_list"></div>
 
 
 <div class="w3-container channel-wrapper w3-black">

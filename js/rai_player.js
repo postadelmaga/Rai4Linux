@@ -32,14 +32,36 @@ function Stream(videoId, config) {
         );
 
         var chList = this.config.channelList;
-        this.selectChannel(chList[0]);
-
         for (var i in  chList) {
+            var self = this;
             var ch = chList[i];
+
             this.logger('- Init Channel: ' + ch);
-            this.loader.createLoader(ch, this.chClick, this);
+            this.loader.createLoader(chList[i]);
+
+            var chButton = jQuery('<a>', {'id': 'btn_' + ch, 'class': "w3-bar-item w3-button", 'href': "#"}).html(ch);
+            chButton.data('ch', ch);
+            chButton.click(
+                function (event) {
+                    self.chClick(event);
+                }
+            ).mousedown(function (event) {
+                switch (event.which) {
+                    case 3:
+                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
+                            self.loadChannel(ch, 1);
+                        }
+                        break;
+                    default:
+                }
+            });
+
+            chButton.appendTo(jQuery('.channel_list'));
+
             this.loadChannel(ch);
         }
+        this.selectChannel(chList[0]);
+
     };
 
     this._playProgram = function (el) {
@@ -53,7 +75,8 @@ function Stream(videoId, config) {
         }
     };
 
-    this.chClick = function (ch, nogoto = 0) {
+    this.chClick = function (event, nogoto = 0) {
+        var ch = jQuery(event.currentTarget).data('ch');
         this.selectChannel(ch);
         this.loadChannel(ch);
 
@@ -72,11 +95,11 @@ function Stream(videoId, config) {
 
         var ch_button = jQuery('#btn_' + ch);
         // Remove active class from all buttons
-        ch_button.parent().find('button').each(function () {
-                jQuery(this).removeClass('active')
+        ch_button.parent().find('a').each(function (el) {
+                jQuery(this).removeClass('w3-green')
             }
         );
-        ch_button.addClass('active');
+        ch_button.addClass('w3-green');
     };
 
 
@@ -184,7 +207,7 @@ function Stream(videoId, config) {
 
             // Title
             jQuery('<header>', {
-                class: 'w3-container w3-blue'
+                class: 'w3-container w3-rex'
             })
                 .html('<h6>' + time + ' -- ' + title + '</h6>')
                 .appendTo(program_cell);
