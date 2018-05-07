@@ -7,36 +7,41 @@ function Stream(videoId, config) {
     this.config.debug = true;
 
     this.init = function () {
-        this.currentChannel = this.config.channelList[0];
-        this.logger('- Init() Stream obj');
 
+        this.logger('- Create Loader');
+        this.loader = new Loader('loadbar');
 
-        for (var i in this.config.channelList) {
-            this.chInit(this.config.channelList[i]);
-            this.chLoadData(this.config.channelList[i], false);
-        }
-
-
-        this.chSwitch(this.currentChannel);
-
+        this.logger('- Init Player');
         this.player = new MediaElementPlayer('videoElement', {
+
                 /**
                  * YOU MUST SET THE TYPE WHEN NO SRC IS PROVIDED AT INITIALISATION
                  * (This one is not very well documented.. If one leaves the type out, the success event will never fire!!)
                  **/
                 type: ["video/mp4"],
                 features: ['playpause', 'progress', 'current', 'duration', 'tracks', 'volume'],
-
+                mediaElementInitialized: false,
                 //more options here..
 
                 success: function (mediaElement, domObject) {
-                    mediaElementInitialized = true;
+                    this.mediaElementInitialized = true;
                 },
                 error: function (e) {
                     alert(e);
                 }
             }
         );
+
+        this.logger('- Init Channels');
+        var chList = this.config.channelList;
+        for (var i in  chList) {
+            var ch = chList[i];
+            this.loader.createLoader(ch, this.chClick, this);
+            this.loadChannel(ch, false);
+        }
+
+        this.chSwitch(chList[0]);
+
         // this.player;
 
     };
@@ -50,115 +55,148 @@ function Stream(videoId, config) {
             this.player.load();
             this.player.play();
             this.logger('Set Url: ' + data.video_urls[0]);
-
         }
     };
 
-    this.chInit = function (ch) {
-        var stream = this;
-
-        var chbtn = jQuery('<a>', {'id': 'btn_' + ch, 'class': "w3-button", 'href': "#"})
-            .text(ch)
-            .click(function (e) {
-                stream.chClick(ch);
-            }).mousedown(function (event) {
-                switch (event.which) {
-                    case 3:
-                        if (confirm('Vuoi scaricare nuovamente la lista per ' + ch + '?')) {
-                            stream.chLoadData(ch, true);
-                        }
-                        break;
-                    default:
-                }
-            })
-            .appendTo(jQuery('.channel_list'));
-
-        var loader = jQuery('<div>', {'class': 'progress progress-striped active'}).append(
-            jQuery('<div>', {
-                'id': 'loadbar_' + ch,
-                'class': 'bar',
-                'aria-valuenow': 0
-            })).appendTo(chbtn);
-
-        return this;
-    };
-
-    this.chLoadData = function (ch, update) {
-
-        if (update) {
-            this.streamList[ch] = new Array();
-            jQuery('#channel_list').find('#btn_' + ch + ' .progress').show();
-        }
-
-        for (var i in  this.config.dayRange) {
-            jQuery('label#load-' + ch).text('0');
-            jQuery('label#load').text('0');
-            this.chDayData(ch, this.config.dayRange[i], update);
-
-            var target = jQuery('label#' + ch).css('color', 'yellow');
-        }
-    };
 
     this.chClick = function (ch, nogoto) {
+
         this.logger('- chClick:' + ch);
-        this.currentChannel = ch;
         this.chSwitch(ch);
-        this.chLoadData(ch, 0);
+        
+        this.loadChannel(ch, 0);
+
         if (nogoto)
             return;
         this.goToByScroll('program_box');
     };
 
     this.chSwitch = function (ch) {
+        this.currentChannel = ch;
         //el.show('fold', 1000);
-        var load = jQuery('#loadbar_' + ch);
-        load.attr('aria-valuenow', 0);
-        load.css('width', 0);
+        this.loader.resetLoader(ch);
 
         var ch_button = jQuery('#btn_' + ch);
-        if (ch == this.currentChannel) {
-            // remove active class from all buttons
-            ch_button.parent().find('button').each(function () {
-                    $(this).removeClass('active')
-                }
-            );
-            ch_button.addClass('active');
-        }
+        // Remove active class from all buttons
+        ch_button.parent().find('button').each(function () {
+                jQuery(this).removeClass('active')
+            }
+        );
+        ch_button.addClass('active');
     };
 
 
-    this.chDayRender = function (day, ch) {
+    this.loadChannel = function (ch, update) {
+
+        this.streamList[ch] = new Array();
+        this.loader.showLoader(ch);
+
+        var days = this.config.dayRange;
+        for (var i in days) {
+            jQuery('label#load-' + ch).text('0');
+            jQuery('label#load').text('0');
+
+            var date = days[i];
+
+            if (ch == this.currentChannel) {
+                jQuery('.' + date + ' .loader').show();
+                jQuery('.' + date + ' .program_list').hide();
+                var today = new Date(date);
+                // var cDate = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+                // var label = jQuery('#' + date + ' button label').text(ch + ' - ' + today.toDateString());
+            }
+
+            jQuery('label#' + ch).css('color', 'yellow');
+            this.updateDay(ch, date, 1, update);
+
+        }
+    };
+
+    this.updateDay = function (ch, day, first = 0, update = 0,) {
+
+        if (!first) {
+            if (this.streamList[ch] && this.streamList[ch][day]) {
+                // UPDATE DAY
+                if (ch == this.currentChannel) {
+                    this.renderDay(day);
+                }
+                this.loader.up(ch);
+            }
+        }
+        else {
+            // var callback = this._updateDay;
+            var params = {up: update, ch: ch, day: day};
+
+            jQuery.ajax({
+                type: 'POST',
+                url: this.config.ajaxUrl,
+                dataType: 'json',
+                data: params,
+                context: this,
+                success: function (data) {
+                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-OK');
+                    // callback.call(this, ch, day, data);
+
+                    if (!this.streamList[ch]) {
+                        this.streamList[ch] = new Array();
+                    }
+
+                    this.streamList[ch][day] = data;
+
+                    // UPDATE CURRENT DAY HTML
+                    if (ch == this.currentChannel) {
+                        this.renderDay(day);
+                    }
+
+                    this.loader.up(ch);
+
+                },
+                error: function (data) {
+                    // jQuery('#' + day + ' .loader').hide();
+                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-FAIL');
+                    this.loader.up(ch);
+                }
+            });
+        }
+    };
+
+    this.renderDay = function (day) {
+        var stream = this;
 
         var target = jQuery('#' + day + ' .program_list');
-        target.fadeIn();
+        target.fadeIn().html('');
 
-        jQuery('#' + day + ' .loader').hide();
-
-        stream = this;
-
+        var ch = this.currentChannel;
         var dayList = this.streamList[ch][day];
 
         for (var idP in dayList) {
             var data = dayList[idP];
 
+            this.logger('- Render [Channel:' + ch + ' - Date: ' + day + ']');
 
             var program_row = jQuery('<li>', {
                 id: idP,
                 class: 'program w3-card-4'
             });
+
+            // Title
+            jQuery('<header>', {
+                class: 'w3-container w3-blue'
+            })
+                .html('<h1>' + data.time + ' -- ' + data.title + '</h1>')
+                .appendTo(program_row);
+
+            // Description
+            jQuery('<div>', {
+                class: 'w3-container'
+            })
+                .html(data.description)
+                .appendTo(program_row);
+
+            // Set data
             $(program_row).data('ch', ch);
             $(program_row).data('day', day);
 
-            var program_title = jQuery('<header>', {
-                class: 'w3-container w3-blue'
-            }).html('<h1>' + data.time + ' -- ' + data.title + '</h1>');
-
-            var program_description = jQuery('<div>', {
-                class: 'w3-container'
-            }).html(data.description);
-
-            program_title.appendTo(program_row)
-            program_description.appendTo(program_row)
 
             if (data.video_urls.length == 0) {
                 program_row.addClass('error');
@@ -177,107 +215,12 @@ function Stream(videoId, config) {
             //         jQuery(this).find('.description').fadeOut(1200);
             //     })
             // );
+
             program_row.appendTo(target);
         }
+
+        jQuery('#' + day + ' .loader').hide();
     };
-
-    this.chDayData = function (ch, day, update) {
-        this.logger('- Get(' + ch + ',' + day + ',' + update + ')');
-        var target = jQuery('#' + day);
-
-        if (ch == this.currentChannel) {
-            target.find('.program_list').html('');
-            jQuery('.' + day + ' .loader').show();
-            jQuery('.' + day + ' .program_list').hide();
-            var today = new Date(day);
-//            var cDate = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
-            var label = jQuery('#' + day + ' button label').text(ch + ' - ' + today.toDateString());
-        }
-
-        if (update) {
-            this._chDayDataAjax(ch, day, 1);
-        }
-        else {
-            if (this.streamList[ch] && this.streamList[ch][day]) {
-                this._chDayDataProcess(ch, day, this.streamList[ch][day]);
-            }
-            else {
-                this._chDayDataAjax(ch, day, 0);
-            }
-        }
-    };
-
-    this._chDayDataProcess = function (ch, day, data) {
-        // add Day Data
-        if (!this.streamList[ch])
-            this.streamList[ch] = new Array();
-        if (day && data)
-            this.streamList[ch][day] = data;
-        if (ch == this.currentChannel) {
-            this.chDayRender(day, ch);
-
-        }
-        this._loaderIncreaseOneDay(ch);
-    };
-
-    this._chDayDataAjax = function (ch, day, update) {
-        var callback = this._chDayDataProcess;
-        var data = {ch: ch, day: day};
-
-        if (update)
-            data = {up: 1, ch: ch, day: day};
-
-        jQuery.ajax({
-                type: 'POST',
-                url: this.config.ajaxUrl,
-                dataType: 'json',
-                data: data,
-                context: this,
-                success: function (data) {
-                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-OK');
-                    callback.call(this, ch, day, data);
-                },
-                error: function (data) {
-                    jQuery('#' + day + ' .loader').hide();
-                    this.logger('( ' + ch + ', ' + day + ', ' + update + ') - END-FAIL');
-                    this._loaderIncreaseOneDay(ch);
-                }
-            }
-        )
-    };
-
-
-    this._loaderIncreaseOneDay = function (ch) {
-
-        // Main Load Bar
-        var loadBar = jQuery('#loadbar');
-        var perc = parseFloat(loadBar.attr('aria-valuenow'));
-        perc = Math.round((perc + (1 / 28 * 100)) * 10) / 10; // round number (*10/10)
-
-        if (perc >= 100) {
-            perc = 100;
-            loadBar.parent().fadeOut();
-        }
-        loadBar.attr('aria-valuenow', perc);
-        loadBar.css('width', (perc) + '%');
-        //loadBar.text(Math.ceil(perc));
-
-        // Ch Bar
-        var loadBarCh = jQuery('#loadbar_' + ch);
-        perc = parseFloat(loadBarCh.attr('aria-valuenow'));
-        perc = Math.round((perc + (1 / 7 * 100)) * 10) / 10; // round number (*10/10)
-
-        if (perc >= 100) {
-            perc = 100;
-            loadBarCh.css('width', '0px');
-            loadBarCh.attr('aria-valuenow', 0);
-            loadBarCh.parent().hide();//removeClass('bar');
-        }
-        loadBarCh.attr('aria-valuenow', perc);
-        loadBarCh.css('width', (perc) + '%');
-        loadBarCh.text(Math.ceil(perc));
-    };
-
 
     this.goToByScroll = function (elId) {
         // var el;
@@ -297,6 +240,6 @@ function Stream(videoId, config) {
         }
     };
 
-    // Init
+    // INIT
     this.init();
 }

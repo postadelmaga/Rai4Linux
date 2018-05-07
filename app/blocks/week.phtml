@@ -1,0 +1,15 @@
+<?php foreach ($days as $day): ?>
+    <div class="w3-card w3-cell-row" id="<?php echo $day ?>">
+        <header class="w3-container w3-blue">
+            <h1><?php echo $day ?></h1>
+            <div class="loader"></div>
+        </header>
+        <div class="w3-container program_list"></div>
+    </div>
+
+    <?php $i++; ?>
+    <!--    --><?php //if (count($days) == $i || ($i > 0 && $i % 3 == 0)): ?>
+    <!--        </div>-->
+    <!--    --><?php //endif; ?>
+
+<?php endforeach; ?>
