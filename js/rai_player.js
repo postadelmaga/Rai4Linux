@@ -186,14 +186,15 @@ function Stream(videoId, config) {
 
         var i = 0;
         for (var prog_id in program_list) {
-            if (i % 3 == 0) {
+            if (i % 2 == 0) {
                 var current_row = jQuery('<div>', {
                     class: 'program w3-card-4 w3-cell-row'
                 });
             }
             var program_cell = jQuery('<div>', {
                 id: prog_id,
-                class: 'program w3-card-4 w3-cell'
+                class: 'program w3-card-4 w3-cell',
+                style: 'width:50%'
             });
             // Set data
             $(program_cell).data('ch', ch);
@@ -207,7 +208,7 @@ function Stream(videoId, config) {
 
             // Title
             jQuery('<header>', {
-                class: 'w3-container w3-rex'
+                class: 'w3-container w3-red'
             })
                 .html('<h6>' + time + ' -- ' + title + '</h6>')
                 .appendTo(program_cell);

@@ -115,7 +115,7 @@ class Stream
     public function updateDay($ch, $date, $forceDownload = false)
     {
         $fileName = $ch . "-" . $date . ".json";
-        $filePath =  self::FILE_BASE . $fileName;
+        $filePath = self::FILE_BASE . $fileName;
 
         if (!file_exists($filePath) || $forceDownload) {
 
@@ -148,7 +148,9 @@ class Stream
                     'title' => $info['t'],
                     'description' => $info['d'],
                     'video_urls' => $this->_getVideoUrls($info),
-                    'str' => $info['urlrisorsasottotitoli']
+                    'str' => $info['urlrisorsasottotitoli'],
+                    'image' => $info['image'],
+                    'image-big' => $info['image-big']
                 );
             }
 
