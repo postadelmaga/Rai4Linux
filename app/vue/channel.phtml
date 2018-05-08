@@ -1,5 +1,5 @@
-<ch-list v-for="(channel, index) in channels"
-         v-bind:id="index"
-         v-bind:channel="channel" inline-template>
-    <a class="w3-bar-item w3-button" v-bind:id="id" v-on:click="this.$parent.select">{{channel.title}}</a>
+<ch-list inline-template v-for="(channel, index) in channels"
+         :id="index"
+         :channel="channel">
+    <a class="w3-bar-item w3-button" :id="id" @click="click">{{channel.title}}</a>
 </ch-list>

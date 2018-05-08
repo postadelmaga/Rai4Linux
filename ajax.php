@@ -12,7 +12,7 @@ class Request extends Varien_Object
 {
     public function __construct(array $data = array())
     {
-        self::__construct($data);
+        parent::__construct($data);
     }
 }
 
@@ -40,14 +40,10 @@ if ($request->getData('up')) {
         $stream->updateAllStreams();
         $json = json_encode(array('Update All End'));
     }
-} elseif ($ch) {
+} elseif ($ch !== null && $day !== null) {
+    $json = $stream->updateDay($ch, $day);
+} elseif ($ch !== null && !$day) {
     $json = json_encode($stream->getChannel($ch));
-} else {
-    // Single Day Request
-    if ($ch && $day) {
-        $json = $stream->updateDay($ch, $day);
-//    echo json_encode(array('OK'));
-    }
 }
 
 echo $json;

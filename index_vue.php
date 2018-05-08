@@ -15,23 +15,33 @@ $app = new Vue();
     var data = JSON.parse('<?php echo $app->getJsonConfig() ?>');
     var vm = new Vue({
         data: data,
+        beforeMount: function () {
+            this.selectCh(1);
+        },
         methods: {
-            select: function (event) {
-                // now we have access to the native event
-                if (event) event.preventDefault();
-                this.$emit('SwitchChannel', event.target.id);
-            }
+            selectCh: function (ch_id) {
+                var ch = this.getDataByChId(ch_id);
+                this.chcurrent = ch;
+            },
+            getDataByChId: function (ch_id) {
+                var i;
+                for (i in this.channels) {
+                    if (this.channels[i].id == ch_id) {
+                        return this.channels[i];
+                    }
+                }
+            },
         },
         created() {
             var self = this;
-            this.$on('SwitchChannel', section => {
-                self.current = section;
+            this.$on('SwitchChannel', ch_id => {
+                this.selectCh(ch_id);
+                console.log(ch_id);
             });
         }
     })
 </script>
 <div id="app">
-
 
     <?php include('app/vue/header.phtml'); ?>
 
@@ -41,7 +51,8 @@ $app = new Vue();
         <?php include('app/vue/channel.phtml'); ?>
     </div>
 
-    <?php include('app/vue/programs.phtml'); ?>
+    <?php include('app/vue/days.phtml'); ?>
+
 </div>
 
 <script>
