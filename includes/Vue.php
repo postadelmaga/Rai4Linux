@@ -6,10 +6,8 @@ class Vue extends App
         $config = array(
             'channels' => $this->getChannelInfo(),
             'days' => $this->getDayRange(),
-            'current' => '1',
-            'chcurrent' => '',
-            'current_src' => 0,
-            'current_title' => 'RaiUno',
+            'ch_current' => '',
+            'src_current' => '',
         );
 
         return json_encode($config);
@@ -22,25 +20,25 @@ class Vue extends App
                 'id' => 1,
                 'title' => 'RaiUno',
                 'lass' => 'w3-blu',
-                'programs' => array(),
+                'days' => array(),
             ),
             array(
                 'id' => 2,
                 'title' => 'RaiDue',
                 'class' => 'w3-red',
-                'programs' => array()
+                'days' => array()
             ),
             array(
                 'id' => 3,
                 'title' => 'RaiTre',
                 'class' => 'w3-green',
-                'programs' => array()
+                'days' => array()
             ),
             array(
                 'id' => 31,
                 'title' => 'RaiCinque',
                 'class' => 'w3-orange',
-                'programs' => array()
+                'days' => array()
             ),
         );
         return $ch;

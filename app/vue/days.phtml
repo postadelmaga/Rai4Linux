@@ -1,31 +1,33 @@
-<ch-days inline-template v-for="(day,index) in days"
-         :day="day"
-         :key="index"
-         :chcurrent="chcurrent">
+<ch-days inline-template
+         v-for="day in days"
+         :day="day">
 
-    <day inline-template
-         :day="day"
-         :chcurrent="chcurrent">
-
-        <div class="w3-container" :id="day" :chcurrent="chcurrent">
-            <header class="w3-container w3-blue">
-                <h1>{{day}}</h1>
-                <div class="loader"></div>
-            </header>
-            <div class="w3-container program_list">
-                <!--                <program inline-template>-->
-                <!---->
-                <!--                </program>-->
-            </div>
-        </div>
-    </day>
-
+    <div class="w3-container day">
+        <header class="w3-container w3-blue">
+            <h1>{{day}}</h1>
+        </header>
+        <!--        <ch-d v-for="(day_data ,i) in this.daylist"-->
+        <!--              :ch_current="ch_current"-->
+        <!--              :daylist="daylist"-->
+        <!--              :day_data="day_data">-->
+        <!--            :i="i">-->
+        <!--            <div>{i}</div>-->
+        <!--        </ch-d>-->
+    </div>
 
 </ch-days>
 
+<!---->
 
-<!--<ch_programs-->
-<!--        v-for="program in channels"-->
-<!--        v-bind:key="program.id"-->
-<!--        v-bind:program="program">-->
-<!--</ch_programs>-->
+
+<!--
+<!---->
+<!--            <div class="w3-container program_list">-->
+<!--                <ch_program inline-template-->
+<!--                            v-for="pro_data in this.day_data"-->
+<!--                            :ch_current="ch_current"-->
+<!--                            :data="pro_data">-->
+<!--                    <div>{{data.title}}</div>-->
+<!--                </ch_program>-->
+<!--            </div>-->
+<!--        </ch_day_program>-->

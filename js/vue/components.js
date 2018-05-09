@@ -1,5 +1,5 @@
 Vue.component('ch-title', {
-    props: ['chcurrent'],
+    props: ['ch_current'],
 });
 
 Vue.component('ch-list', {
@@ -13,35 +13,28 @@ Vue.component('ch-list', {
     },
 });
 
-Vue.component('ch-days', {
-    props: ['day', 'chcurrent'],
-});
-
-Vue.component('day', {
-    props: ['day', 'chcurrent'],
-    mounted: function () {
-        var self = this;
-
-        $.ajax({
-            url: './ajax.php',
-            method: 'POST',
-            data: {day: self.day, ch: self.chcurrent.title},
-            success: function (data) {
-                var ch_data = self.chcurrent;
-                ch_data.programs[self.day] = data;
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    }
-});
-
 Vue.component('video-player', {
     props: ['current_src'],
 });
 
-Vue.component('ch-programs', {
-    props: ['program'],
-    template: `<a class="w3-bar-item w3-button">{{program.title}}</a>`
+
+Vue.component('ch-days', {
+    props :['day'],
+    data: function () {
+        return {days: this.$parent.ch_current.days}
+    },
+});
+
+Vue.component('ch_day_program', {
+    props: ['ch_current', 'dayList'],
+
+    data: function () {
+        return {daylist: this.$parent.ch_current['days']}
+    }
+
+});
+Vue.component('ch_program', {
+    data: function () {
+        return {day_data: this.$parent}
+    }
 });

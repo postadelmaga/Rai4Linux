@@ -16,14 +16,40 @@ $app = new Vue();
     var vm = new Vue({
         data: data,
         beforeMount: function () {
+            this.loadChannels();
             this.selectCh(1);
         },
         methods: {
-            selectCh: function (ch_id) {
-                var ch = this.getDataByChId(ch_id);
-                this.chcurrent = ch;
+            loadChannels: function () {
+                for (var c in this.channel) {
+                    for (var i in this.days) {
+                        this.loadDayChannel(this.channel[c].id, this.days[i]);
+                    }
+                }
             },
-            getDataByChId: function (ch_id) {
+            loadDayChannel: function (ch_id, day) {
+                var channel = this.getChById(ch_id);
+                var title = channel.title;
+                $.ajax({
+                    url: './ajax.php',
+                    method: 'POST',
+                    data: {day: day, ch: title},
+                    success: function (data) {
+                        var days = channel.days;
+                        days.push({title: day, programs: JSON.parse(data)});
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            },
+
+            selectCh: function (ch_id) {
+                var ch = this.getChById(ch_id);
+                this.ch_current = ch;
+            },
+
+            getChById: function (ch_id) {
                 var i;
                 for (i in this.channels) {
                     if (this.channels[i].id == ch_id) {
