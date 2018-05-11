@@ -11,7 +11,8 @@ class Core_App extends Varien_Object
         try {
             if ($code == 'ajax') {
                 $ajax = new Video_Ajax();
-                echo $ajax->getResponse();
+                $json = $ajax->getResponse();
+                echo $json;
             } else {
                 $this->getBlockHtml('page');
             }
@@ -19,7 +20,7 @@ class Core_App extends Varien_Object
         } catch (Exception $e) {
             die($e->getMessage());
         }
-
+        return;
     }
 
     public function getBlockHtml($id)

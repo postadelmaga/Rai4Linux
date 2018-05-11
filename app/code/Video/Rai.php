@@ -147,44 +147,53 @@ class Video_Rai extends Core_App
     public function getDayJson($ch_id, $date, $forceDownload = false)
     {
         $fileName = $date . '_' . $ch_id . ".json";
-        $filePath = Vue::getRoot() . '/data/' . $fileName;
+        $filePath = MAGENTO_ROOT . '/data/' . $fileName;
 
         if (!file_exists($filePath) || $forceDownload) {
+            try {
+                if ($content = $this->_getStreamContent($ch_id, $date)) {
+                    $content = json_encode($content);
+                    file_put_contents($filePath, $content);
+                    return $content;
+                }
+                return false;
 
-            $content = $this->_getDayList($ch_id, $date);
-            if ($content != "") {
-                $content = json_encode($content);
-                file_put_contents($filePath, $content);
-                return $content;
+            } catch (Exception $e) {
+                return false;
             }
-            return false;
         }
+
         return file_get_contents($filePath);
     }
 
-    protected function _getVideoUrls($info)
+    protected function _prepareVideoUrls($data)
     {
         $videoUrls = array();
+        $data = new Varien_Object($data);
 
         foreach ($this->getQualityType() as $type) {
-            if (isset($info[$type]) && $info[$type] != '' && !in_array($info[$type], $videoUrls)) {
-                $videoUrls[] = $info[$type];
+            $key = str_replace('', 'h264', $type);
+
+            if ($url = $data->getData($type)) {
+                if (array_search($url, $videoUrls)) {
+                    $videoUrls[$key] = $url;
+                }
             }
         }
-        if (count($videoUrls) == 0 && isset($info['h264']) && $info['h264'] != '') {
-            $videoUrls[] = $info['h264'];
+        if (count($videoUrls) == 0) {
+            if ($url = $data->getData('h264'))
+                $videoUrls['only'] = $url;
         }
 
-        if (count($videoUrls) > 1) {
-            $videoUrls = array($videoUrls[0], $videoUrls[count($videoUrls) - 1]);
-        }
+        // Decode Url
         foreach ($videoUrls as $k => $url) {
             if ($direct_video = $this->_getVideoUrl($url)) {
-                $videoUrls[$k] = $this->_getVideoUrl($url);
+                $videoUrls[$k] = $direct_video;
             } else {
                 unset($videoUrls[$k]);
             }
         }
+
         return $videoUrls ? $videoUrls : array();
     }
 
@@ -284,7 +293,7 @@ class Video_Rai extends Core_App
         file_put_contents($filename, $current, FILE_APPEND);
     }
 
-    protected function _getDayList($ch_id, $day, $iteration = 0)
+    protected function _getStreamContent($ch_id, $day, $iteration = 0)
     {
         $programs = array();
         $channels = $this->getChannelList();
@@ -297,7 +306,10 @@ class Video_Rai extends Core_App
             $data = json_decode($json, TRUE);
 
             $data_day = $data[$ch_id][$day];
+            $count = 0;
             foreach ($data_day as $time => $info) {
+                if ($count > 1) continue;
+                $count++;
                 $programs[] = array(
                     'program_id' => $info['i'],
                     'title' => $info['t'],
@@ -305,14 +317,14 @@ class Video_Rai extends Core_App
                     'description' => $info['d'],
                     'image' => $info['image'],
                     'image_big' => $info['image-big'],
-                    'video_urls' => $this->_getVideoUrls($info),
+                    'video_urls' => $this->_prepareVideoUrls($info),
                     'str' => $info['urlrisorsasottotitoli'],
                 );
             }
 
         } catch (Exception $e) {
             if ($iteration < 20) {
-                return $this->_getDayList($ch_id, $day, $iteration + 1);
+                return $this->_getStreamContent($ch_id, $day, $iteration + 1);
             } else {
                 Stream::log($url . "FAIL-I:$iteration| -- $chanel_name-$day --" . $e->getMessage() . '-- Line: ' . $e->getLine() . $json);
                 return false;
