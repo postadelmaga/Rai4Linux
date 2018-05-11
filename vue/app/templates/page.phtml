@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <title>Template</title>
@@ -8,19 +7,13 @@
     <link rel="stylesheet" href="css/w3.css">
     <link rel="stylesheet" href="css/style.css">
     <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">-->
-
-    <script src="js/jquery-2.0.3.min.js"></script>
-    <script src="js/player/build/mediaelement-and-player.js"></script>
-
     <!-- Add any other renderers you need; see Use Renderers for more information -->
-    <link rel="stylesheet" href="js/player/src/css/mediaelementplayer.css"/>
+    <link rel="stylesheet" href="js/lib/player/src/css/mediaelementplayer.css"/>
 
-    <!-- data-main attribute tells require.js to load
-                 scripts/main.js after require.js loads. -->
-    <!--    <script data-main="scripts/main" src="scripts/require.js"></script>-->
-
-    <script src="js/vue/vue.js"></script>
-    <script src="js/vue/app.js"></script>
+    <script data-main="js/main" src="js/lib/jquery.js"></script>
+    <script data-main="js/main" src="js/lib/vue.js"></script>
+    <script data-main="js/main" src="js/lib/player/build/mediaelement-and-player.js"></script>
+    <script data-main="js/main" src="js/app/player.js"></script>
 </head>
 
 <body>
@@ -54,7 +47,11 @@
         beforeMount: function () {
             this.loadChannels();
             this.selectCh(1);
+            self = this;
+            self.testdata = Object.assign({}, self.testdata, {test: 1});
         },
+
+
         methods: {
             loadChannels: function () {
                 for (var c in this.channel) {
@@ -94,7 +91,7 @@
                 }
             },
         },
-        created() {channels
+        created() {
             var self = this;
             this.$on('SwitchChannel', ch_id => {
                 this.selectCh(ch_id);
@@ -102,7 +99,9 @@
             });
         }
     });
+
     vm.$mount('#app');
+
 
 
     var player = new MediaElementPlayer('videoElement', {

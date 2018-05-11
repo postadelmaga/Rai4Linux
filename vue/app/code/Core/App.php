@@ -9,7 +9,6 @@ class Core_App extends Varien_Object
     public function run($code = null)
     {
         try {
-
             $this->getBlockHtml('page');
 
         } catch (Exception $e) {

@@ -19,7 +19,7 @@ Vue.component('video-player', {
 
 
 Vue.component('ch-days', {
-    props :['day'],
+    props: ['day'],
     data: function () {
         return {days: this.$parent.ch_current.days}
     },
@@ -39,7 +39,4 @@ Vue.component('ch_program', {
         return {day_data: this.$parent}
     }
 });
-
-
-
 
