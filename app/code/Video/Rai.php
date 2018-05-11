@@ -306,10 +306,7 @@ class Video_Rai extends Core_App
             $data = json_decode($json, TRUE);
 
             $data_day = $data[$ch_id][$day];
-            $count = 0;
             foreach ($data_day as $time => $info) {
-                if ($count > 1) continue;
-                $count++;
                 $programs[] = array(
                     'program_id' => $info['i'],
                     'title' => $info['t'],
