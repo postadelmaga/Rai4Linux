@@ -16,7 +16,6 @@ class Core_App extends Varien_Object
                 $this->getBlockHtml('page');
             }
 
-
         } catch (Exception $e) {
             die($e->getMessage());
         }
