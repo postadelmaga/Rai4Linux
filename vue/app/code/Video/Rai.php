@@ -28,6 +28,7 @@ class Video_Rai extends Core_App
             'days' => $this->getDayRange(),
             'ch_current' => '',
             'src_current' => '',
+            'ajaxurl' => '?ajax=1',
         );
 
         return json_encode($config);
@@ -46,7 +47,7 @@ class Video_Rai extends Core_App
 
     public function getChannelInfo()
     {
-        $ch = array(
+        $channels = array(
             array(
                 'id' => 1,
                 'title' => 'RaiUno',
@@ -72,7 +73,7 @@ class Video_Rai extends Core_App
                 'days' => array()
             ),
         );
-        return $ch;
+        return $channels;
     }
 
     public function getQualityType()

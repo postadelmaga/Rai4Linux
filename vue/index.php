@@ -20,5 +20,9 @@ umask(0);
 ?>
 
 <?php
-Vue::run();
+if (isset($_GET['ajax'])) {
+    Vue::run('ajax');
+} else {
+    Vue::run();
+}
 ?>

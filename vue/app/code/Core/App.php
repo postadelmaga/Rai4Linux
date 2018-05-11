@@ -9,7 +9,13 @@ class Core_App extends Varien_Object
     public function run($code = null)
     {
         try {
-            $this->getBlockHtml('page');
+            if ($code == 'ajax') {
+                $ajax = new Video_Ajax();
+                echo $ajax->getResponse();
+            } else {
+                $this->getBlockHtml('page');
+            }
+
 
         } catch (Exception $e) {
             die($e->getMessage());
