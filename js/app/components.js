@@ -1,9 +1,6 @@
 Vue.component('player', {
     props: ['src_current'],
     template: '#player',
-    data: function () {
-        return {src: this.$parent.src_current}
-    }
 });
 
 // Vue.component('header', {
@@ -15,9 +12,7 @@ Vue.component('channels', {
     data: function () {
         self = this;
         return {
-            days: self.$parent.days,
             channels: self.$parent.channels,
-            ajaxurl: self.$parent.ajaxurl,
         };
     },
     mounted: function () {
@@ -100,17 +95,9 @@ Vue.component('channels', {
 
 Vue.component('daylist', {
     template: '#daylist',
-    props: ['day'],
-    data: function () {
-        return {days: this.$parent.ch_current.days}
-    },
 });
 
 Vue.component('program', {
-    props: ['ch_current', 'dayList'],
-    data: function () {
-        return {daylist: this.$parent.ch_current.days}
-    }
 
 });
 
