@@ -1,49 +1,8 @@
 <?php
 
-class Video_Rai extends Core_App
+class Video_Rai extends Varien_Object
 {
-    public function __construct()
-    {
-        date_default_timezone_set('Europe/Rome');
-
-        error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-//        set_error_handler(self::DEFAULT_ERROR_HANDLER, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-
-        if (!file_exists(Vue::getRoot())) {
-            mkdir(Vue::getRoot(), 0777, true);
-        }
-
-        if (!file_exists(self::LOG_DIR)) {
-            mkdir(self::LOG_DIR, 0777, true);
-        }
-
-        // tmp disabled
-//        $this->cleanOldStreamSource();
-    }
-
-    public function getJsonConfig()
-    {
-        $config = array(
-            'channels' => $this->getChannelInfo(),
-            'days' => $this->getDayRange(),
-            'ch_current' => '',
-            'src_current' => '',
-            'ajaxurl' => '?ajax=1',
-        );
-
-        return json_encode($config);
-    }
-
-
-    public function getChannelList()
-    {
-        $channels = array();
-        foreach ($this->getChannelInfo() as $ch) {
-            $channels[$ch['id']] = $ch['title'];
-        }
-
-        return $channels;
-    }
+    const URL_BASE = "http://www.rai.it/dl/portale/html/palinsesti/replaytv/static/";
 
     public function getChannelInfo()
     {
@@ -101,8 +60,34 @@ class Video_Rai extends Core_App
 
             $range[] = $prevDay;
         }
-        return $range;
+        return array_reverse($range);
     }
+
+
+    public function getJsonConfig()
+    {
+        $config = array(
+            'channels' => $this->getChannelInfo(),
+            'days' => $this->getDayRange(),
+            'ch_current' => '',
+            'src_current' => '',
+            'ajaxurl' => '?ajax=1',
+        );
+
+        return json_encode($config);
+    }
+
+
+    public function getChannelList()
+    {
+        $channels = array();
+        foreach ($this->getChannelInfo() as $ch) {
+            $channels[$ch['id']] = $ch['title'];
+        }
+
+        return $channels;
+    }
+
 
     /*
     * Remove old streamSource
@@ -144,7 +129,7 @@ class Video_Rai extends Core_App
         return $msg;
     }
 
-    public function getDayJson($ch_id, $date, $forceDownload = false)
+    public function requestDay($ch_id, $date, $forceDownload = false)
     {
         $fileName = $date . '_' . $ch_id . ".json";
         $filePath = MAGENTO_ROOT . '/data/' . $fileName;
@@ -197,8 +182,63 @@ class Video_Rai extends Core_App
         return $videoUrls ? $videoUrls : array();
     }
 
-    public function downloadFile($url)
+
+    protected function _getVideoUrl($url)
     {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+
+        $header = "Location: ";
+        $pos = strpos($response, $header);
+        $pos += strlen($header);
+        $redirect_url = substr($response, $pos, strpos($response, "\r\n", $pos) - $pos);
+
+        return ($redirect_url != '' && $redirect_url != "00 OK") ? $redirect_url : false;
+    }
+
+    protected function _getStreamContent($ch_id, $day, $iteration = 0)
+    {
+        try {
+            //            $context = stream_context_create(array('http' => array('timeout' => 2500)));
+            $programs = array();
+            $json = $this->_doRequest($ch_id, $day);
+            $data = json_decode($json, TRUE);
+
+            $data_day = $data[$ch_id][$day];
+            foreach ($data_day as $time => $info) {
+                $programs[] = array(
+                    'program_id' => $info['i'],
+                    'title' => $info['t'],
+                    'time' => $time,
+                    'description' => $info['d'],
+                    'image' => $info['image'],
+                    'image_big' => $info['image-big'],
+                    'video_urls' => $this->_prepareVideoUrls($info),
+                    'str' => $info['urlrisorsasottotitoli'],
+                );
+            }
+
+        } catch (Exception $e) {
+            if ($iteration < 20) {
+                return $this->_getStreamContent($ch_id, $day, $iteration + 1);
+            } else {
+                Stream::log("FAIL - [$ch_id - $day]--" . $e->getMessage() . '-- Line: ' . $e->getLine());
+                return false;
+            }
+        }
+        return $programs;
+    }
+
+    protected function _doRequest($ch_id, $day)
+    {
+        $channels = $this->getChannelList();
+        $chanel_name = $channels[$ch_id];
+        $url = self::URL_BASE . $chanel_name . '_' . str_replace('-', '_', $day);
+
         $options = array(
             CURLOPT_RETURNTRANSFER => true, // return web page
             CURLOPT_HEADER => false, // don't return headers
@@ -230,49 +270,6 @@ class Video_Rai extends Core_App
         return $content;
     }
 
-    protected function _getUrlByChannelDay($ch, $day)
-    {
-        $url = self::URL_BASE . $ch . '_' . str_replace('-', '_', $day);
-        return $url;
-    }
-
-    protected function _getVideoUrl($url)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-
-        $header = "Location: ";
-        $pos = strpos($response, $header);
-        $pos += strlen($header);
-        $redirect_url = substr($response, $pos, strpos($response, "\r\n", $pos) - $pos);
-
-        return ($redirect_url != '' && $redirect_url != "00 OK") ? $redirect_url : false;
-    }
-
-//    protected function _extractContent($date, $json)
-//    {
-//        $dayList = array();
-//
-//        $jsonIterator = new RecursiveIteratorIterator(
-//            new RecursiveArrayIterator(json_decode($json, TRUE)),
-//            RecursiveIteratorIterator::SELF_FIRST);
-//
-//        $is = false;
-//
-//        foreach ($jsonIterator as $key => $val) {
-//            if ($key == $date || $is) {
-//                if (is_array($val) && $is) {
-//                    $dayList[$key] = $val;
-//                }
-//                $is = true;
-//            }
-//        }
-//        return json_encode($dayList);
-//    }
 
     public function debug()
     {
@@ -293,40 +290,25 @@ class Video_Rai extends Core_App
         file_put_contents($filename, $current, FILE_APPEND);
     }
 
-    protected function _getStreamContent($ch_id, $day, $iteration = 0)
-    {
-        $programs = array();
-        $channels = $this->getChannelList();
-        $chanel_name = $channels[$ch_id];
-        $url = $this->_getUrlByChannelDay($chanel_name, $day);
+    //    protected function _extractContent($date, $json)
+//    {
+//        $dayList = array();
+//
+//        $jsonIterator = new RecursiveIteratorIterator(
+//            new RecursiveArrayIterator(json_decode($json, TRUE)),
+//            RecursiveIteratorIterator::SELF_FIRST);
+//
+//        $is = false;
+//
+//        foreach ($jsonIterator as $key => $val) {
+//            if ($key == $date || $is) {
+//                if (is_array($val) && $is) {
+//                    $dayList[$key] = $val;
+//                }
+//                $is = true;
+//            }
+//        }
+//        return json_encode($dayList);
+//    }
 
-        try {
-//            $context = stream_context_create(array('http' => array('timeout' => 2500)));
-            $json = $this->downloadFile($url);
-            $data = json_decode($json, TRUE);
-
-            $data_day = $data[$ch_id][$day];
-            foreach ($data_day as $time => $info) {
-                $programs[] = array(
-                    'program_id' => $info['i'],
-                    'title' => $info['t'],
-                    'time' => $time,
-                    'description' => $info['d'],
-                    'image' => $info['image'],
-                    'image_big' => $info['image-big'],
-                    'video_urls' => $this->_prepareVideoUrls($info),
-                    'str' => $info['urlrisorsasottotitoli'],
-                );
-            }
-
-        } catch (Exception $e) {
-            if ($iteration < 20) {
-                return $this->_getStreamContent($ch_id, $day, $iteration + 1);
-            } else {
-                Stream::log($url . "FAIL-I:$iteration| -- $chanel_name-$day --" . $e->getMessage() . '-- Line: ' . $e->getLine() . $json);
-                return false;
-            }
-        }
-        return $programs;
-    }
 }

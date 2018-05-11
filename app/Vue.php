@@ -1,5 +1,9 @@
 <?php
 
+date_default_timezone_set('Europe/Rome');
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+//        set_error_handler(self::DEFAULT_ERROR_HANDLER, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+
 define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(__FILE__)));
@@ -28,6 +32,8 @@ Varien_Autoload::register();
  */
 final class Vue
 {
+    const LOG_DIR = "log";
+
     /**
      * Registry collection
      *
@@ -69,7 +75,6 @@ final class Vue
      * @var Varien_Object_Cache
      */
     static private $_objects;
-
 
     /**
      * Set all my static data to defaults
@@ -230,6 +235,13 @@ final class Vue
     public static function app($code = '', $type = 'store', $options = array())
     {
         if (null === self::$_app) {
+            if (!file_exists(Vue::getRoot())) {
+                mkdir(Vue::getRoot(), 0777, true);
+            }
+            if (!file_exists(self::LOG_DIR)) {
+                mkdir(self::LOG_DIR, 0777, true);
+            }
+
             self::$_app = new Core_App();
             self::setRoot();
         }
@@ -280,4 +292,3 @@ final class Vue
         }
     }
 }
-

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/w3.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">-->
     <!-- Add any other renderers you need; see Use Renderers for more information -->
     <link rel="stylesheet" href="js/lib/player/src/css/mediaelementplayer.css"/>
@@ -13,28 +15,26 @@
     <script data-main="js/main" src="js/lib/jquery.js"></script>
     <script data-main="js/main" src="js/lib/vue.js"></script>
     <script data-main="js/main" src="js/lib/player/build/mediaelement-and-player.js"></script>
-    <script data-main="js/main" src="js/app/player.js"></script>
+    <script data-main="js/main" src="js/app/components.js"></script>
 </head>
 
 <body>
 <div id="app">
-
-    <div class="content">
-        <header>
-            <?php Vue::app()->getBlockHtml('page/header') ?>
-            <?php Vue::app()->getBlockHtml('page/video') ?>
-
-            <div class="w3-bar w3-mobile w3-border w3-round channel_list">
-                <?php Vue::app()->getBlockHtml('page/channel') ?>
-            </div>
-
-        </header>
-        <article>
-            <?php Vue::app()->getBlockHtml('page/days') ?>
-        </article>
-
+    <div class="w3-container w3-amber">
+        <h3>{{ch_current.title}}</h3>
     </div>
 
+    <div class="content">
+        <?php Vue::app()->getBlockHtml('page/header') ?>
+        <?php Vue::app()->getBlockHtml('page/player') ?>
+
+        <div class="w3-bar w3-mobile w3-border w3-round channel_list">
+            <?php Vue::app()->getBlockHtml('page/channel') ?>
+        </div>
+
+        <?php Vue::app()->getBlockHtml('page/program') ?>
+
+    </div>
 
 </div>
 
@@ -44,12 +44,9 @@
 
     var vm = new Vue({
         data: data,
-
-
     });
 
     vm.$mount('#app');
-
 
 
     var player = new MediaElementPlayer('videoElement', {

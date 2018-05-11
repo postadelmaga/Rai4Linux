@@ -1,5 +1,5 @@
-<ch-list inline-template v-for="(channel, index) in channels"
+<channels inline-template v-for="(channel, index) in channels"
          :id="index"
          :channel="channel">
     <a class="w3-bar-item w3-button" :id="id" @click="click">{{channel.title}}</a>
-</ch-list>
+</channels >

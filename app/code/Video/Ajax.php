@@ -7,10 +7,16 @@ class Video_Ajax extends Varien_Object
         parent::__construct($_POST);
     }
 
-    public function getResponse()
+    public function getResponseJson()
     {
-        $json = $this->_getRaiChannel();
-        return $json;
+        $result = $this->_getRaiChannel();
+
+        $data = array(
+            'success' => 1,
+            'data' => $result
+        );
+
+        return json_encode($data);
     }
 
     protected function _getRaiChannel()
@@ -24,7 +30,7 @@ class Video_Ajax extends Varien_Object
 
         if ((int)$update === 2) {
             $rai->updateAllStreams();
-            return json_encode(array('Update All End'));
+            return array('Update All End');
         }
 
         if ($ch && $day) {

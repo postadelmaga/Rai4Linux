@@ -2,8 +2,6 @@
 
 class Core_App extends Varien_Object
 {
-    const LOG_DIR = "log";
-    const URL_BASE = "http://www.rai.it/dl/portale/html/palinsesti/replaytv/static/";
     const DEFAULT_ERROR_HANDLER = 'coreErrorHandler';
 
     public function run($code = null)
@@ -11,7 +9,7 @@ class Core_App extends Varien_Object
         try {
             if ($code == 'ajax') {
                 $ajax = new Video_Ajax();
-                $json = $ajax->getResponse();
+                $json = $ajax->getResponseJson();
                 echo $json;
             } else {
                 $this->getBlockHtml('page');
