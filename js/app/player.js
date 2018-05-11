@@ -12,47 +12,57 @@ Vue.component('ch-list', {
             ajaxurl: self.$parent.ajaxurl,
         };
     },
-    beforeMount: function () {
-        this.loadChannels();
-        this.selectCh(1);
+    mounted: function () {
+        this.setCurrentChannel(1);
     },
     methods: {
         click: function (event) {
             // now we have access to the native event
             if (event) event.preventDefault();
 
-            this.selectCh(this.channel.id);
+            this.setCurrentChannel(this.channel.id);
             // this.$emit('SwitchChannel', this.channel.id);
         },
 
         loadChannels: function () {
-            for (var c in this.channels) {
-                for (var i in this.days) {
-                    this.loadDayChannel(this.channels[c].id, this.days[i]);
-                }
+            for (var i in this.channels) {
+                this.loadChannel(this.channels[c]);
             }
         },
-        loadDayChannel: function (ch_id, day) {
-            var channel = this.getChById(ch_id);
-            var title = channel.title;
-            var url = this.ajaxurl;
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: {day: day, ch: title},
-                success: function (data) {
-                    var days = channel.days;
-                    days.push({title: day, programs: JSON.parse(data)});
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
+
+        loadChannel: function (c) {
+            for (var i in this.days) {
+                this.getChannelDayList(c, this.days[i]);
+            }
         },
 
-        selectCh: function (ch_id) {
-            var ch = this.getChById(ch_id);
-            this.ch_current = ch;
+        getChannelDayList: function (channel, day) {
+            var id = channel.id;
+            var url = this.ajaxurl;
+
+            if (channel.days.length == 0) {
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {day: day, ch: id},
+                    success: function (data) {
+                        var days = channel.days;
+                        channel.daysb = JSON.parse(data);
+                        days.push({title: day, programs: JSON.parse(data)});
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+            ;
+
+
+        },
+        setCurrentChannel(ch_id) {
+            var c = this.getChById(ch_id);
+            this.loadChannel(c);
+            this.$parent.ch_current = c;
         },
 
         getChById: function (ch_id) {

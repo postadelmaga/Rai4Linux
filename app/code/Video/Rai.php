@@ -38,8 +38,8 @@ class Video_Rai extends Core_App
     public function getChannelList()
     {
         $channels = array();
-        foreach ($this->getChannelList() as $ch) {
-            $channels[$ch['id']] = $ch['name'];
+        foreach ($this->getChannelInfo() as $ch) {
+            $channels[$ch['id']] = $ch['title'];
         }
 
         return $channels;
@@ -144,14 +144,14 @@ class Video_Rai extends Core_App
         return $msg;
     }
 
-    public function updateDay($ch, $date, $forceDownload = false)
+    public function getDayJson($ch_id, $date, $forceDownload = false)
     {
-        $fileName = $ch . "-" . $date . ".json";
-        $filePath = Vue::getRoot() . $fileName;
+        $fileName = $date . '_' . $ch_id . ".json";
+        $filePath = Vue::getRoot() . '/data/' . $fileName;
 
         if (!file_exists($filePath) || $forceDownload) {
 
-            $content = $this->_getStreamContent($ch, $date);
+            $content = $this->_getStreamContent($ch_id, $date);
             if ($content != "") {
                 $content = json_encode($content);
                 file_put_contents($filePath, $content);
@@ -284,38 +284,39 @@ class Video_Rai extends Core_App
         file_put_contents($filename, $current, FILE_APPEND);
     }
 
-    protected function _getStreamContent($ch, $day, $iteration = 0)
+    protected function _getStreamContent($ch_id, $day, $iteration = 0)
     {
-        $url = $this->_getUrlByChannelDay($ch, $day);
-        $data_clean = array();
+        $programs = array();
+        $channels = $this->getChannelList();
+        $chanel_name = $channels[$ch_id];
+        $url = $this->_getUrlByChannelDay($chanel_name, $day);
+
         try {
 //            $context = stream_context_create(array('http' => array('timeout' => 2500)));
             $json = $this->downloadFile($url);
             $data = json_decode($json, TRUE);
-            $key = array_search($ch, $this->getChannelList());
 
-            foreach ($data[$key][$day] as $time => $info) {
-
-                $data_clean[$info['i']] = array(
-                    'time' => $time,
-                    'program_id' => $info['t'],
+            foreach ($data[$ch_id][$day] as $time => $info) {
+                $programs[] = array(
+                    'program_id' => $info['i'],
                     'title' => $info['t'],
+                    'time' => $time,
                     'description' => $info['d'],
+                    'image' => $info['image'],
+                    'image_big' => $info['image-big'],
                     'video_urls' => $this->_getVideoUrls($info),
                     'str' => $info['urlrisorsasottotitoli'],
-                    'image' => $info['image'],
-                    'image-big' => $info['image-big']
                 );
             }
 
         } catch (Exception $e) {
             if ($iteration < 20) {
-                return $this->_getStreamContent($ch, $day, $iteration + 1);
+                return $this->_getStreamContent($ch_id, $day, $iteration + 1);
             } else {
                 Stream::log($url . "FAIL-I:$iteration| -- $ch-$day --" . $e->getMessage() . '-- Line: ' . $e->getLine() . $json);
                 return false;
             }
         }
-        return $data_clean;
+        return $programs;
     }
 }
