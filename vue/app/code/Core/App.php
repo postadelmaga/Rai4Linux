@@ -3,7 +3,6 @@
 class Core_App extends Varien_Object
 {
     const LOG_DIR = "log";
-    const FILE_BASE = "data/";
     const URL_BASE = "http://www.rai.it/dl/portale/html/palinsesti/replaytv/static/";
     const DEFAULT_ERROR_HANDLER = 'coreErrorHandler';
 

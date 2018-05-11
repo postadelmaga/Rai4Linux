@@ -1,17 +1,16 @@
 <?php
 
-class Video_Rai extends Core_Vue
+class Video_Rai extends Core_App
 {
     public function __construct()
     {
-        $this->_base_path = '';
         date_default_timezone_set('Europe/Rome');
 
         error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 //        set_error_handler(self::DEFAULT_ERROR_HANDLER, E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
-        if (!file_exists(self::FILE_BASE)) {
-            mkdir(self::FILE_BASE, 0777, true);
+        if (!file_exists(Vue::getRoot())) {
+            mkdir(Vue::getRoot(), 0777, true);
         }
 
         if (!file_exists(self::LOG_DIR)) {
@@ -117,7 +116,7 @@ class Video_Rai extends Core_Vue
             }
         }
 
-        if ($handle = opendir(self::FILE_BASE)) {
+        if ($handle = opendir(Vue::getRoot())) {
             /* This is the correct way to loop over the directory. */
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != "." && $entry != "..") {
@@ -125,7 +124,7 @@ class Video_Rai extends Core_Vue
                     if ($key !== false) {
                         unset($allowed[$key]);
                     } else {
-                        unlink(self::FILE_BASE . $entry);
+                        unlink(Vue::getRoot() . $entry);
                     }
                 }
             }
@@ -147,7 +146,7 @@ class Video_Rai extends Core_Vue
     public function updateDay($ch, $date, $forceDownload = false)
     {
         $fileName = $ch . "-" . $date . ".json";
-        $filePath = self::FILE_BASE . $fileName;
+        $filePath = Vue::getRoot() . $fileName;
 
         if (!file_exists($filePath) || $forceDownload) {
 

@@ -13,6 +13,10 @@ if (!file_exists($coreFilename)) {
 }
 require MAGENTO_ROOT . '/app/bootstrap.php';
 require_once $coreFilename;
+
+ini_set('display_errors', 1);
+
+umask(0);
 ?>
 
 <?php
