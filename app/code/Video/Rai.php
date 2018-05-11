@@ -151,7 +151,7 @@ class Video_Rai extends Core_App
 
         if (!file_exists($filePath) || $forceDownload) {
 
-            $content = $this->_getStreamContent($ch_id, $date);
+            $content = $this->_getDayList($ch_id, $date);
             if ($content != "") {
                 $content = json_encode($content);
                 file_put_contents($filePath, $content);
@@ -284,7 +284,7 @@ class Video_Rai extends Core_App
         file_put_contents($filename, $current, FILE_APPEND);
     }
 
-    protected function _getStreamContent($ch_id, $day, $iteration = 0)
+    protected function _getDayList($ch_id, $day, $iteration = 0)
     {
         $programs = array();
         $channels = $this->getChannelList();
@@ -296,7 +296,8 @@ class Video_Rai extends Core_App
             $json = $this->downloadFile($url);
             $data = json_decode($json, TRUE);
 
-            foreach ($data[$ch_id][$day] as $time => $info) {
+            $data_day = $data[$ch_id][$day];
+            foreach ($data_day as $time => $info) {
                 $programs[] = array(
                     'program_id' => $info['i'],
                     'title' => $info['t'],
@@ -311,9 +312,9 @@ class Video_Rai extends Core_App
 
         } catch (Exception $e) {
             if ($iteration < 20) {
-                return $this->_getStreamContent($ch_id, $day, $iteration + 1);
+                return $this->_getDayList($ch_id, $day, $iteration + 1);
             } else {
-                Stream::log($url . "FAIL-I:$iteration| -- $ch-$day --" . $e->getMessage() . '-- Line: ' . $e->getLine() . $json);
+                Stream::log($url . "FAIL-I:$iteration| -- $chanel_name-$day --" . $e->getMessage() . '-- Line: ' . $e->getLine() . $json);
                 return false;
             }
         }
