@@ -48,7 +48,7 @@ Vue.component('ch-list', {
                     success: function (data) {
                         var days = channel.days;
                         channel.daysb = JSON.parse(data);
-                        days.push({title: day, programs: JSON.parse(data)});
+                        days.push({date: day, programs: JSON.parse(data)});
                     },
                     error: function (error) {
                         console.log(error);
