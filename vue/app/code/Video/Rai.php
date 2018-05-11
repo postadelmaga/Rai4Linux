@@ -38,7 +38,7 @@ class Video_Rai extends Core_App
     public function getChannelList()
     {
         $channels = array();
-        foreach ($this->getChannelInfo() as $ch) {
+        foreach ($this->getChannelList() as $ch) {
             $channels[$ch['id']] = $ch['name'];
         }
 
