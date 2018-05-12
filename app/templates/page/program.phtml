@@ -1,13 +1,11 @@
-<template id="daylist" v-for="day in days" :day="day">
-    <div class="w3-container day">
+
+
+<template id="daylist">
+    <div class="w3-container day" v-for="day in days" :day="day">
         <header class="w3-container w3-blue">
             <h1>{{day}}</h1>
         </header>
-        <template id="program">
-            <div>{{day}}</div>
-        </template>
+        <button-counter></button-counter>
+        <program></program>
     </div>
 </template>
-
-
-

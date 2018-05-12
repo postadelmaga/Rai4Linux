@@ -41,7 +41,6 @@
 <script>
     <?php $rai = new Video_Rai() ?>
     var data = JSON.parse('<?php echo $rai->getJsonConfig() ?>');
-
     var vm = new Vue({
         data: data,
     });

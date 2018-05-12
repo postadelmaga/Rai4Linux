@@ -15,7 +15,7 @@ Vue.component('channels', {
             channels: self.$parent.channels,
         };
     },
-    mounted: function () {
+    before: function () {
         this.setCurrentChannel(1);
     },
     methods: {
@@ -98,7 +98,22 @@ Vue.component('daylist', {
 });
 
 Vue.component('program', {
+    data: function () {
+        return {
+            time: this.$parent.day,
+        }
+    },
+    template: '<div>{{ time }} times.</div>'
+});
 
+// Define a new component called button-counter
+Vue.component('button-counter', {
+    data: function () {
+        return {
+            count: 0
+        }
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
 });
 
 
