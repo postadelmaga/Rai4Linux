@@ -1,0 +1,139 @@
+.products-grid .configurable-swatch-list li, {
+.configurable-swatch-list-extra li,
+    margin: 1px;
+}
+
+.products-grid .configurable-swatch-list li .swatch-link.has-image,
+.configurable-swatch-list-extra li .swatch-link.has-image {
+    padding: 1px;
+    border-radius: 50%;
+}
+.products-grid .configurable-swatch-list li .swatch-link.has-image .swatch-label,
+.configurable-swatch-list-extra li .swatch-link.has-image .swatch-label{
+    border-radius: 50%;
+}
+
+.products-grid .configurable-swatch-list li .swatch-link.has-image img,
+.configurable-swatch-list-extra li .swatch-link.has-image img {
+    border-radius: 50%;
+}
+
+#narrow-by-list dd .swatch-link.has-image {
+    float: left;
+    padding: 0px;
+}
+
+#narrow-by-list dd .swatch-link.has-image .swatch-label {
+    border-radius: 50%;
+    float: left;
+}
+
+#narrow-by-list dd .configurable-swatch-list li {
+    width: inherit;
+}
+
+.currently .swatch-current .swatch-link .swatch-label {
+    border-radius: 50%;
+}
+
+.currently .swatch-current .swatch-link {
+    border-radius: 50%;
+}
+
+/** related/slider **/
+.configurable-swatch-list-extra:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.configurable-swatch-list-extra {
+    margin-left: -3px;
+    zoom: 1;
+    clear: both;
+    -webkit-transform: translateZ(0px);
+}
+
+.configurable-swatch-list-extra li {
+    float: left;
+    zoom: 1;
+    margin: 0 0 0 3px;
+}
+
+.products-grid .configurable-swatch-list-extra li {
+    display: inline-block;
+    float: none;
+    margin: 0;
+    vertical-align: top;
+}
+
+.configurable-swatch-list-extra .not-available .x {
+    display: block;
+}
+
+.configurable-swatch-list-extra .not-available .swatch-link {
+    border-color: #ededed;
+    position: relative;
+}
+
+.configurable-swatch-list-extra .not-available .swatch-link.has-image img {
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+.configurable-swatch-list-extra .not-available .swatch-label {
+    color: #aaa;
+    background: #fff;
+}
+
+.configurable-swatch-list-extra .wide-swatch .swatch-label {
+    padding: 0 6px;
+}
+
+.configurable-swatch-list-extra .not-available a:focus {
+    outline: 0;
+}
+.configurable-swatch-list-extra .selected .swatch-link, .swatch-link:hover {
+    border-color: #000;
+}
+
+.products-grid .product-image:before, .products-grid .product-image:after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+.products-grid .product-image:before {
+    background-color: white;
+    opacity: 0.8;
+    z-index: 2;
+}
+.products-grid .product-image:after {
+    background-image: url("../images/opc-ajax-loader.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 3;
+}
+.products-grid .product-image.loading {
+    position: relative;
+}
+.products-grid .product-image.loading:before, .products-grid .product-image.loading:after {
+    display: block;
+}
+
+
+.searchautocomplete .searchautocomplete-placeholder ul.configurable-swatch-search{
+    padding: 0;
+    -webkit-box-shadow:none;
+    box-shadow:none;
+}
+
+.searchautocomplete .searchautocomplete-placeholder ul.configurable-swatch-search li{
+    border:none;
+}
+.configurable-swatch-search .swatch-link:hover{
+    border-color: #cccccc;
+}

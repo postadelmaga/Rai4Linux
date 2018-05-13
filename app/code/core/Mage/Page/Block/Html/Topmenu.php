@@ -56,7 +56,7 @@ class Mage_Page_Block_Html_Topmenu extends Mage_Core_Block_Template
         /*
         * setting cache to save the topmenu block
         */
-        $this->setCacheTags(array(Mage_Catalog_Model_Category::CACHE_TAG));
+//        $this->setCacheTags(array(Mage_Catalog_Model_Category::CACHE_TAG));
         $this->setCacheLifetime(false);
     }
 

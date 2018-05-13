@@ -1,0 +1,45 @@
+
+img.ui-datepicker-trigger {
+    cursor: pointer;
+    display: inline;
+    position: relative;
+    top: 5px;
+    left: 8px;
+}
+
+#date-picker {
+    cursor: pointer;
+    height: 30px !important;
+    min-height: 0px !important;
+}
+
+#checkout-step-shipping_method .input-text.hasDatepicker {
+    width: 45%;
+    max-width: 150px;
+    padding: 5px 5px;
+}
+
+#checkout-step-shipping_method select.time-range {
+    max-width: 220px;
+    padding: 5px 0;
+}
+
+#checkout-step-shipping_method select.time-range:disabled {
+    background: #dddddd;
+}
+
+/*OSC Integrated*/
+#one-step-checkout-shipping-method .input-text.hasDatepicker {
+    width: 93%;
+}
+
+#one-step-checkout-shipping-method select.time-range {
+    max-width: 100%;
+    padding: 5px 0;
+}
+
+#date-picker:hover {
+    border: 1px solid #3399cc;
+    outline-offset: -2px;
+    outline: -webkit-focus-ring-color auto 5px;
+}

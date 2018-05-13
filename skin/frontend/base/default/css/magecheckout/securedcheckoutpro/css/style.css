@@ -1,0 +1,64 @@
+/*Survey Style*/
+.securedcheckout-survey.input-box #one-step-checkout-survey {
+    margin-top: 10px;
+}
+
+/*======Integration========*/
+/*Magegiant GiftCard*/
+#one-step-checkout-order-review .summary-collapse {
+    position: relative;
+}
+
+#one-step-checkout-order-review .summary-collapse:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: block;
+    border-right: 7px solid transparent;
+    border-left: 7px solid transparent;
+    border-top: 7px solid #3399cc;
+    border-bottom: none;
+    position: static;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+#one-step-checkout-order-review .show-details .summary-collapse:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: block;
+    border-right: 7px solid transparent;
+    border-left: 7px solid transparent;
+    border-bottom: 7px solid #3399cc;
+    border-top: none;
+    position: static;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.one-step-checkout-payment-methods .sp-methods dt input.checkbox {
+    margin: 0 10px 0 0;
+}
+
+/*Magestore Reward Points*/
+#magecheckout-one-step-checkout #reward_sales_point.input-text {
+    width: 49px;
+    text-align: center;
+}
+
+.rewardpoints-slider-input .input-point {
+    clear: both;
+    text-align: left;
+}
+
+/*Magestore Gift Card*/
+#giftvoucher_ajaxload img {
+    width: 25px;
+}
+
+#giftvoucher_wait img {
+    width: 25px;
+}

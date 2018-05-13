@@ -91,6 +91,37 @@
                 <Mage_Core/>
             </depends>
         </Mage_Directory>
+        <Mage_Cms>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Uploader/>
+            </depends>
+        </Mage_Cms>
+        <Mage_Customer>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Eav/>
+                <Mage_Dataflow/>
+                <Mage_Directory/>
+            </depends>
+        </Mage_Customer>
+        <Mage_Dataflow>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Dataflow>
+        <Mage_Uploader>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Uploader>
+
         <!--<Mage_Rule>-->
             <!--<active>true</active>-->
             <!--<codePool>core</codePool>-->
@@ -99,15 +130,7 @@
             <!--</depends>-->
         <!--</Mage_Rule>-->
 
-        <!--<Mage_Customer>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Eav/>-->
-                <!--<Mage_Dataflow/>-->
-                <!--<Mage_Directory/>-->
-            <!--</depends>-->
-        <!--</Mage_Customer>-->
+
         <!--<Mage_Catalog>-->
             <!--<active>true</active>-->
             <!--<codePool>core</codePool>-->
@@ -275,13 +298,7 @@
                 <!--<Mage_Catalog/>-->
             <!--</depends>-->
         <!--</Mage_Tag>-->
-        <!--<Mage_Cms>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Uploader/>-->
-            <!--</depends>-->
-        <!--</Mage_Cms>-->
+
         <!--<Mage_Reports>-->
             <!--<active>true</active>-->
             <!--<codePool>core</codePool>-->
@@ -368,13 +385,7 @@
                 <!--<Mage_Core/>-->
             <!--</depends>-->
         <!--</Mage_Contacts>-->
-        <!--<Mage_Dataflow>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Core/>-->
-            <!--</depends>-->
-        <!--</Mage_Dataflow>-->
+
         <!--<Mage_Rss>-->
             <!--<active>false</active>-->
             <!--<codePool>core</codePool>-->
@@ -401,12 +412,6 @@
                 <!--<Mage_Core/>-->
             <!--</depends>-->
         <!--</Mage_Index>-->
-        <!--<Mage_Uploader>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Core/>-->
-            <!--</depends>-->
-        <!--</Mage_Uploader>-->
+
     </modules>
 </config>

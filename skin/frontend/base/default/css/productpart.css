@@ -1,0 +1,42 @@
+.related_fitments .vehicle_years li, .related_child_fitments.vehicle_years li {
+    display: inline-block;
+    float: none;
+    margin: 0;
+    vertical-align: top;
+}
+
+.vehicle_make_name {
+    text-align: center;
+    font-size: 18px;
+    margin: 4px;
+    padding-top: 6px;
+}
+
+.vehicle_model {
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+    margin: 2px;
+    padding-bottom: 4px;
+}
+
+.vehicle_years {
+    width: 92%;
+    margin: 0 auto;
+}
+
+.vehicle_years_label :hover {
+    border-color: #000;
+}
+
+.vehicle_years_label {
+    background: #f4f4f4;
+    border: 1px solid #cccccc;
+    border-radius: 0;
+    display: block;
+    float: left;
+    line-height: 1.5em;
+    margin: 1px;
+    padding: 0 2px;
+    white-space: nowrap;
+}

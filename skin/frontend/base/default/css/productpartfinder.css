@@ -1,0 +1,43 @@
+.pfinder {
+    border: 1px solid #C4C1BC;
+    background: #F8F7F5;
+}
+
+.pfinder_select_wrapper {
+    margin: 4px;
+    margin-left: 12px;
+    display: inline-block;
+}
+
+.pfinder_select_wrapper .dw-title {
+    font-weight: 700
+}
+
+.pfinder_btn_wrapper {
+    margin: 4px;
+    margin-left: 12px;
+    display: none;
+}
+
+.finder-vertical .dropdown-element {
+    padding-bottom: 4px
+}
+
+.p_header {
+    text-align: right;
+    padding: 4px;
+    /*background-color: #656565;*/
+}
+
+.p_header_lbl {
+    margin-right: 4px;
+}
+
+.p_header_button {
+    line-height: 24px;
+    padding: 0px 12px;
+}
+
+.p_header .ic-close {
+    margin: 0 2px;
+}

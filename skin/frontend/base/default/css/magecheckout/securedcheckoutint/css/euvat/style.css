@@ -1,0 +1,12 @@
+.vat-success{
+    color: green;
+}
+.vat-error{
+    color: red;
+}
+#validated-vat-msg{
+    margin-left: 5px;
+}
+.text-under-vat{
+    float: left;
+}
