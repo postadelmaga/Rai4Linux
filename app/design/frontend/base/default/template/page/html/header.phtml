@@ -29,23 +29,31 @@
 ?>
 <div class="header-container w3-container w3-teal">
     <div class="header">
-        <div>
-            <?php if ($this->getIsHomePage()): ?>
-                <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>"
-                   class="logo"><img src="<?php echo $this->getLogoSrc() ?>"
-                                     alt="<?php echo $this->getLogoAlt() ?>"/></a></h3>
-            <?php else: ?>
-                <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>"
-                   class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>"/></a>
-            <?php endif ?>
-            <div class="quick-access">
+            <div class="logo" style="display: inline-block;">
+
+                <?php if ($this->getIsHomePage()): ?>
+                    <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>"
+                       class="logo"><img height="32px" src="<?php echo $this->getLogoSrc() ?>"
+                                         alt="<?php echo $this->getLogoAlt() ?>"/></a></h3>
+                <?php else: ?>
+                    <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>"
+                       class="logo">ll<img src="<?php echo $this->getLogoSrc() ?>"
+                                           alt="<?php echo $this->getLogoAlt() ?>"/></a>
+                <?php endif ?>
+            </div>
+            <div class="quick-access" style="display: inline-block;/*vertical-align: bottom;*/position: absolute;right:0">
                 <?php echo $this->getChildHtml('topSearch') ?>
-                <!--                <p class="welcome-msg">--><?php //echo $this->getChildHtml('welcome') ?><!---->
+                <a href="#">
+                    <div class="icon-item-container" style="height: 28px;">
+                        <icons-image><i class="material-icons" style="font-size:32px;">person</i></icons-image>
+                    </div>
+                </a>
+                <!--                <p class="welcome-msg">-->
+                <?php //echo $this->getChildHtml('welcome') ?><!---->
                 <?php //echo $this->getAdditionalHtml() ?><!--</p>-->
-                <?php echo $this->getChildHtml('topLinks') ?>
+                <!--                --><?php //echo $this->getChildHtml('topLinks') ?>
                 <?php echo $this->getChildHtml('store_language') ?>
             </div>
             <?php echo $this->getChildHtml('topContainer'); ?>
         </div>
-    </div>
     <?php echo $this->getChildHtml('topMenu') ?>
