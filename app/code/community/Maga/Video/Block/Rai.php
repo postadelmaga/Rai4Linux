@@ -1,6 +1,6 @@
 <?php
 
-class Maga_Video_Blockl_Rai extends Mage_Core_Block_Template
+class Maga_Video_Block_Rai extends Mage_Core_Block_Template
 {
     public function getJsonConfig()
     {

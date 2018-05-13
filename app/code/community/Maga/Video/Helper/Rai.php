@@ -1,6 +1,6 @@
 <?php
 
-class Maga_Video_Rai extends Mage_Core_Helper_Abstract
+class Maga_Video_Helper_Rai extends Mage_Core_Helper_Abstract
 {
     public function getChannelList()
     {

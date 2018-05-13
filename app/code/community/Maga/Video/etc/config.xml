@@ -24,9 +24,9 @@
             <video_resource>
                 <class>Maga_Video_Model_Resource</class>
                 <entities>
-                    <video_rai>
+                    <rai>
                         <table>video_rai</table>
-                    </video_rai>
+                    </rai>
                 </entities>
             </video_resource>
         </models>
