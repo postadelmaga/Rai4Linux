@@ -132,7 +132,7 @@ class Maga_Video_Model_Rai extends Varien_Object
     public function requestDay($ch_id, $date, $forceDownload = false)
     {
         $fileName = $date . '_' . $ch_id . ".json";
-        $filePath = MAGENTO_ROOT . '/data/' . $fileName;
+        $filePath = Mage::getBaseDir('media') . DS . 'video' . DS . 'rai' . DS . $fileName;
 
         if (!file_exists($filePath) || $forceDownload) {
             try {
