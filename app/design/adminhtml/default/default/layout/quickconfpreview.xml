@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <HANDLE_QUICKCONF_PREVIEW>
+        <reference name="before_body_end">
+            <block type="burnout_quickconfpreview/adminhtml_script" name="script"></block>
+        </reference>
+    </HANDLE_QUICKCONF_PREVIEW>
+
+    <adminhtml_catalog_product_configurable_new>
+        <update handle="HANDLE_QUICKCONF_PREVIEW"/>
+    </adminhtml_catalog_product_configurable_new>
+
+    <adminhtml_catalog_product_configurable>
+        <update handle="HANDLE_QUICKCONF_PREVIEW"/>
+    </adminhtml_catalog_product_configurable>
+
+
+    <adminhtml_catalog_product_configurable_multi_part_new>
+        <update handle="HANDLE_QUICKCONF_PREVIEW"/>
+    </adminhtml_catalog_product_configurable_multi_part_new>
+
+    <adminhtml_catalog_product_configurable_multi_part>
+        <update handle="HANDLE_QUICKCONF_PREVIEW"/>
+    </adminhtml_catalog_product_configurable_multi_part>
+</layout> 
+

@@ -1,0 +1,41 @@
+<?php
+$countOrders = $this->getOrderCount();
+if ($countOrders>0):
+$customerOrders = $this->getLastOrders();
+$orderLimit = $this->getOrderLimit();
+$orderLimit = ($countOrders<$orderLimit) ? $countOrders : $orderLimit; // for display consistancy
+?>
+<div class="entry-edit-head collapseable">
+    <a href="#" name="histo_customer_orders_link" 
+       onclick="javascript:hideDisplayBlock(this, 'customerOrders_fieldset');"
+       class="close" ><?php echo $this->__('Orders').' ('.$countOrders.')' ?></a>
+</div>
+<div id="customerOrders_fieldset" class="fieldset" style="display: none;">
+    <table class="form-list" id="customer-last-orders">        
+        <tr>
+            <td>
+                <b><?php echo $this->__('Last %s orders on %s', $orderLimit, $countOrders); ?></b><br/>
+                <?php
+                 foreach ($customerOrders as $cOrder){
+                     echo '<a href="'.$this->getOrderUrl($cOrder).'" target="_blank">'.$this->getOrderMainInfos($cOrder).'</a> '.$this->getOrderAdditionnalInfos($cOrder).'<br/>';
+                 }
+                ?>
+            </td>
+        </tr>
+
+       
+        <?php $customerProducts = $this->getLastProducts(); ?>
+        <tr>
+            <td>
+                <br/><b><?php echo $this->__('Last products ordered'); ?></b><br/>
+                <?php
+                 foreach ($customerProducts as $result){
+                     echo '<a href="'.$this->getProductUrl($result['product_id']).'" target="_blank">'.$result['nb_ordered'].'x '.$this->getProductInfo($result['product_id']).'</a><br/>';
+                 }
+                ?>
+            </td>
+        </tr>
+
+    </table>
+</div>
+<?php endif; ?>

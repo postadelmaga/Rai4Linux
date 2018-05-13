@@ -1,0 +1,198 @@
+<script type="text/javascript">
+    editForm = new varienForm('edit_form', '');
+
+    function hideDisplayBlock(parent, div_name){
+      var e = document.getElementById(div_name);     
+      if(e.style.display == 'block') {
+        e.style.display = 'none';
+        parent.className = 'close';
+      }else{
+        e.style.display ='block';
+        parent.className = 'open';
+      }      
+    }
+
+    
+
+    function postNewMessage()
+    {
+      //prevent multiple accidental click and so multiple useless messages sent
+      document.getElementById('send_message_button').disabled=true;
+
+      //mark as sent to differenciate from save action
+      document.getElementById('send_email').value=1;
+
+      //Send the message
+      document.getElementById('edit_form').submit();
+    }
+
+    function setDefaultReplyInCurrentMessageAtCursor(value){
+        var ed = tinyMCE.get('ctm_content');     
+        var range = ed.selection.getRng().startOffset;
+        alert(range);
+    }
+
+    function setDefaultReplyInCurrentMessage(value)
+    {
+      if(value){
+
+        var replaceString = ' ';
+
+        var defaultReply = decodeURIComponent(value);
+        defaultReply = defaultReply.replace(/\+/g, replaceString); //replace + by space
+
+        var isTinyMCEIsLoaded = document.getElementsByClassName("mceEditor").length;
+
+        if(isTinyMCEIsLoaded){
+          replaceString = '<br/>';
+        }else{
+          replaceString = String.fromCharCode(13);
+        }
+
+        if(isTinyMCEIsLoaded){
+          defaultReply = defaultReply.replace(/[\n]/g, replaceString);// \n + by <br/>
+        }
+
+        var initialMessage = '';
+        if(isTinyMCEIsLoaded){
+          initialMessage = tinyMCE.get('ctm_content').getContent();
+        }else{
+          initialMessage = document.getElementById('ctm_content').value;
+        }
+
+        var finalMessage = defaultReply + replaceString + initialMessage;
+
+        if(isTinyMCEIsLoaded){
+          tinyMCE.get('ctm_content').setContent(finalMessage);
+        }else{
+          document.getElementById('ctm_content').value = finalMessage;
+        }
+      }
+    }
+
+    function toggleObjectSelection()
+    {
+        div = $('objectSelection');
+        display = div.style.display;
+        if(display == 'block')
+            div.style.display = 'none';
+        else
+            div.style.display = 'block';
+    }
+
+    function switchResponseFormPosition()
+    {
+      var history = document.getElementById('history_block');
+      var messageField = document.getElementById('message_block');
+      var blockRight = history.parentNode
+      if(blockRight){
+        if(history.nextSibling == messageField){
+          blockRight.insertBefore(messageField, history);
+        }else{
+          blockRight.insertBefore(history,messageField);
+        }
+      }
+    }
+
+    //send ajax request to update object datas
+    function refreshObject(objectId)
+    {
+        if(objectId == '')
+        {
+            alert('No object selected');
+            return;
+        }
+
+        var url = '<?php echo $this->getPopupObjectUrl(); ?>' + 'object_id/' + objectId;
+
+        var request = new Ajax.Request(
+            url,
+            {
+                method: 'get',
+                onSuccess: function onSuccess(transport)
+                {
+                    var response = transport.responseText;
+                    $('ticket_object').innerHTML = response;
+                },
+                onFailure: function onFailure(transport)
+                {
+                    $('ticket_object').innerHTML = 'Erreur...';
+                }
+            }
+        );
+    }
+  
+    //send ajax request to add/delete tag
+    function tagActionAjax(url)
+    {        
+        var updater = new Ajax.Updater('ticket_tags', url, {method: 'get'});
+    }
+
+    //refresh the message list in ajax
+    function refreshTicketMessagesAjax(checkLastMessage){
+        
+        var url = '<?php echo $this->getRefreshMessageListUrl(); ?>';
+
+        if(checkLastMessage){
+            var lastMessageId = document.getElementById('last_message_id').value;
+            if(lastMessageId.length>0){
+                url = url + 'last_message_id/' + lastMessageId;
+            }
+        }
+
+        var request = new Ajax.Request(
+            url,
+            {
+                method: 'get',
+                onSuccess: function onSuccess(transport)
+                {
+                    var response = transport.responseText;                    
+                    if(response.length>0){
+                        $('history_fieldset').innerHTML = response;
+                    }
+                    
+                },
+                onFailure: function onFailure(transport)
+                {
+                   alert(transport.responseText);
+                }
+            }
+        );
+    }
+
+    function deleteMessageAjax(url){
+
+        var request = new Ajax.Request(
+            url,
+            {
+                method: 'get',
+                onSuccess: function onSuccess(transport)
+                {
+                    refreshTicketMessagesAjax(false);                    
+                },
+                onFailure: function onFailure(transport)
+                {
+                    alert(transport.responseText);
+                }
+            }
+        );        
+    }
+
+    function markAsSpamAjax(url){
+        var request = new Ajax.Request(
+            url,
+            {
+                method: 'get',
+                onSuccess: function onSuccess(transport)
+                {
+                    //nothing
+                },
+                onFailure: function onFailure(transport)
+                {
+                    alert(transport.responseText);
+                }
+            }
+        );
+    }
+
+</script>

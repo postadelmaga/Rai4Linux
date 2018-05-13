@@ -1,0 +1,64 @@
+<?php
+$baseCurrency = Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE);
+$ptp_order_id = $this->getOrder()->getpo_num();?>
+<?php $type = $this->getCurrentSupplierInvoice()->getpsi_type();
+  $type = ($type=='invoice' ? 0 : 1);?>
+<?php $paymentList = Mage::helper('paymentmanagement')->getAllowedPaymentList(); ?>
+<?php $validDateErr = Mage::helper("purchase")->__("Please enter valid date."); ?>
+<?php $json = Mage::helper('core')->jsonEncode($paymentList);?>
+<button style="float:right; margin:5px 0 5px 5px;" onclick="savePayment()" type="button"><?php echo $this->__('Save')?></button>
+<button style="float:right; margin:5px 0;" type="button" onclick='addNewRow("<?php echo Mage::helper('purchase')->__('Delete');?>",<?php echo $json; ?>,"<?php echo $validDateErr; ?>")'><?php echo Mage::helper("purchase")->__("Add new row");?></button>
+<input type="hidden" id="ptp_order_id" name="ptp_order_id" value="<?php echo $ptp_order_id;?>">
+<input type="hidden" id="deleted_paymentmethod_id" name="deleted_paymentmethod_id" value="">
+<input type="hidden" id="new_row_count" name="new_row_count" value="1">
+<input type="hidden" id="changed_paymentmethod_id" name="changed_paymentmethod_id" value="">
+<div class="grid">
+  <div id="custom-messages" style="display:none;"><ul class="messages"><li class="notice-msg"><?php echo Mage::helper('purchase')->__('Save is required, else you deleted does not delete.');?></li></ul></div>
+<table id="paymentmethod" class="data" style="width:100%" border="1">
+  <thead>
+  <tr class="headings">
+     <th><?php echo Mage::helper('purchase')->__('Payment method');?></th>
+     <th><?php echo Mage::helper('purchase')->__('Date');?></th>
+     <th><?php echo Mage::helper('purchase')->__('Amount')." (".$baseCurrency.")";?></th>
+     <th><?php echo Mage::helper('purchase')->__('Action');?></th>
+  </tr>
+  </thead>
+  <tbody>
+  	<?php $collection = Mage::helper('paymentmanagement')->getPaymentCollection($ptp_order_id,$this->getCurrentSupplierInvoice()->getId());?>
+  	<?php if(count($collection)>0):?>
+  	<tr id="no_payment_method_tr" style="text-align:center;display: none;">
+          <td  class="a-center" colspan="4"><?php echo Mage::helper("purchase")->__("No Payment method");?></td>
+     </tr>
+     <?php foreach($collection as $payment):?>
+        <tr>
+          <td class="a-center">
+             <select style="width: 160px;" onchange="return isChange(<?php echo $payment->getid();?>)" name="old[<?php echo $payment->getid();?>][ptp_method]">
+                <?php foreach ($paymentList as $key => $value) { 
+                  if($value == $payment->getptp_method()){?>
+                        <option value="<?php echo $value; ?>" selected><?php echo $key ?></option>
+                  <?php }else{?>
+                        <option value="<?php echo $value; ?>"><?php echo $key ?></option>
+                  <?php } ?>
+                <?php } ?>
+             </select>
+          </td>
+          <td class="a-center">
+             <input type="date" class="ptp_date" id="ptp_date_<?php echo $payment->getid();?>" size="10" class="textfield" name="old[<?php echo $payment->getid();?>][ptp_date]" onkeypress="return isUpdate(this,event,<?php echo $payment->getid();?>);" value="<?php echo $payment->getptp_date(); ?>"/><br>
+             <span class="error paymenterror" style="float: inherit;display:none;"><?php echo Mage::helper("purchase")->__("Please enter valid date.");?></span>
+          </td>
+          <td class="a-center">
+             <input type="text" size="10" class="textfield" name="old[<?php echo $payment->getid();?>][ptp_amount]" onkeypress="return isUpdate(event,<?php echo $payment->getid();?>);" value="<?php echo $payment->getptp_amount(); ?>" />
+          </td>
+          <td class="a-center" style="vertical-align: middle;padding: 5px;">
+            <button class="scalable delete" onclick="if(confirm('<?php echo Mage::helper("purchase")->__("Are you sure?");?>')) deleteRecord(this,<?php echo $payment->getid();?>);" type="button"><span style="background-repeat:no-repeat;height:10px"></span></button>
+          </td>
+        </tr>
+  <?php endforeach;?>
+  <?php else: ?>
+        <tr id="no_payment_method_tr" style="text-align:center;">
+          <td colspan="5"><?php echo Mage::helper("purchase")->__("No Payment method");?></td>
+        </tr> 
+  <?php endif;?>
+  </tbody>
+</table> 
+</div>

@@ -1,0 +1,10 @@
+<?php /* -------------------------- PRIVATE COMMENT ----------------------------------------------------------------------------------- */ ?>
+
+<?php if (Mage::getStoreConfig('crmticket/ticket_data/allow_private_comment_on_ticket')): ?>
+<div class="entry-edit-head collapseable">
+    <a href="#" name="private_link" onclick="javascript:hideDisplayBlock(this, 'private_fieldset');" class="close" ><?php echo $this->__('Private comments'); ?></a>
+</div>
+<div id="private_fieldset" class="fieldset" style="display: none;">
+    <textarea cols="100%" rows="5" name="ticket[ct_private_comments]" id="ct_private_comments"><?php echo trim($this->getTicket()->getct_private_comments()); ?></textarea>
+</div>
+<?php endif; ?>

@@ -1,0 +1,75 @@
+ <?php /* -------------------------- CUSTOMER DETAILS ----------------------------------------------------------------------------------- */ ?>
+<div id="customer_fieldset" class="fieldset">
+
+       <input type="hidden" name="ticket[ct_customer_id]" id="ct_customer_id" value="<?php echo $this->getCustomerId(); ?>" />
+       <input type="hidden" name="ticket[ct_customer_guest_id]" id="ct_customer_guest_id" value="<?php echo $this->getCustomerGuestId(); ?>" />
+
+        <table class="form-list" id="customer-infos">
+            <tr>
+                <td class="label" ><?php echo $this->__('Name'); ?></td>
+                <td class="value" colspan='2'>
+                    <?php if($this->getCustomer()): ?>
+                        <?php if(!$this->getTicket()->isCustomerIsGuest()): ?>
+                            <?php echo $this->getCustomer()->getName(); ?> <a href="<?php echo $this->getCustomerUrl(); ?>"><?php echo $this->getCustomer()->getEmail(); ?></a>
+                            <?php
+                            $groups = $this->getCustomerGroups();
+                            if ($groups){
+                                echo ' ( '.$groups.' )';
+                            }
+                            ?>
+                        <?php else: ?>
+                            <?php echo $this->getCustomer()->getName();?> - <a href="<?php echo $this->getCustomerGuestUrl(); ?>"><?php echo $this->getCustomer()->getEmail().'</a> ('.$this->__('Guest').')' ?>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <?php echo $this->__('No customer found'); ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+
+            <?php if(!$this->getTicket()->isCustomerIsGuest()): ?>
+                <?php
+                $phones = $this->getCustomerPhones();
+                if ($phones): ?>
+                    <tr>
+                        <td class="label"><?php echo $this->__('Phone'); ?></td>
+                        <td class="value" colspan='2'><?php echo $phones; ?></td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php
+                    $billingAddress = $this->getBillingAddress();
+                    $shippingAddress = $this->getShippingAddress();
+                ?>
+
+                <?php if ($billingAddress || $shippingAddress): ?>
+                    <tr>
+                        <td class="label"><?php echo $this->__('Adresses'); ?></td>
+                        <?php
+                        if ($billingAddress): ?>
+                            <td class="value"><strong><?php echo $this->__('Billing address'); ?></strong><br/>
+                                <?php echo $billingAddress; ?>
+                            </td>
+                        <?php endif; ?>
+                        <?php
+                        if ($shippingAddress): ?>
+                            <td class="value"><strong><?php echo $this->__('Delivery address'); ?></strong><br/>
+                                <?php echo $shippingAddress; ?>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                <?php endif; ?>
+
+                <tr>
+                    <td class="label" ><?php $this->__('Sales'); ?></td>
+                    <td class="value">
+                        <?php echo $this->__('Orders (Complete/Total)').' : <b>'.$this->getCustomerCompletedOrderCount().'/'.$this->getCustomerTotalOrderCount().'</b>'; ?>
+                    </td>
+                     <td class="value">
+                        <?php echo $this->__('Total invoiced').' : <b>'.$this->getCustomerOrderTotalInvoiced().'</b>'; ?>
+                    </td>
+                </tr>
+                
+            <?php endif; ?>
+        </table>
+      <p><?php echo $this->getCustomContent(); ?></p>
+</div>

@@ -1,0 +1,154 @@
+<?php
+$report = $this->getReport();
+
+$found_ids = $report->getData('found_ids');
+$missing_ids = $report->getData('missing_ids');
+$updated_info = $report->getData('updated_info');
+$deleted_info = $report->getData('deleted_info');
+?>
+<style>
+    h2 {
+        color: red;
+    }
+</style>
+<h1 style="text-align:center">Feed: <?php echo $this->getTitle() ?></h1>
+<div style="font-size: 20px">
+    <div>Date: <?php echo date('d/m/Y') ?></div>
+    <div>Processed in: <?php echo $report->getData('time') ?> sec.</div>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th colspan="2">Products: <?php echo count($found_ids) ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Updated:</td>
+            <td><?php echo count($updated_info) ?> </td>
+        </tr>
+        <tr>
+            <td>Deleted:</td>
+            <td><?php echo count($deleted_info) ?></td>
+        </tr>
+        <tr>
+            <td>Missing:</td>
+            <td><?php echo count($missing_ids) ?></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <?php if (count($deleted_info)): ?>
+        <div>
+            <h2 style="text-align:center">Product deleted:</h2>
+            <table>
+                <thead>
+                <th>Product ID</th>
+                <th>Sku</th>
+                <th>Name</th>
+                </thead>
+                <tbody>
+                <?php foreach ($deleted_info as $product_id => $data) : ?>
+                    <tr style="background: #d1efd1">
+                        <td style="padding: 6px"><?php echo $product_id ?></td>
+                        <td style="padding: 6px"><?php echo $data['sku'] ?></td>
+                        <td style="padding: 6px"><?php echo $data['name'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php if (count($updated_info)): ?>
+        <div>
+            <h2 style="text-align:center">Product Changes</h2>
+            <?php $i = 0; ?>
+            <?php foreach ($updated_info as $product_id => $data) : ?>
+                <?php $i++; ?>
+                <div>
+                    <hr>
+                    <table style="font-size:22px;width:100%;padding:6px">
+                        <caption style="background: black;color: white;font-size: 18px;">
+                            #<?php echo $i ?> ID:<?php echo $product_id ?> | SKU: <?php echo $data['info']['sku'] ?> |
+                            Name: <?php echo $data['info']['name'] ?>
+                        </caption>
+                        <thead style="background-color: #3b86a0;">
+                        <tr>
+                            <th style="padding:6px">Attribute</th>
+                            <th style="padding:6px">Before</th>
+                            <th style="padding:6px">After</th>
+                        </tr>
+                        </thead>
+                        <tbody style="text-align:right">
+                        <?php if (isset($data['stock'])): ?>
+                            <?php foreach ($data['stock'] as $attribute_code => $mod_data) : ?>
+                                <tr style="background: #d1efd1">
+                                    <td style="padding:6px;text-align:left;font-size: 22px"><?php echo $attribute_code ?></td>
+                                    <td style="padding:6px;font-size:22px"><?php echo $mod_data['before'] ?></td>
+                                    <td style="padding:6px;font-size:22px"><?php echo $mod_data['after'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($data['attribute'])): ?>
+                            <?php foreach ($data['attribute'] as $attribute_code => $mod_data): ?>
+                                <tr style="background: #d1efd1">
+                                    <td style="padding:6px;text-align:left;font-size:22px"><?php echo $attribute_code ?></td>
+                                    <td style="padding:6px;font-size:22px"><?php echo $mod_data['before'] ?></td>
+                                    <td style="padding:6px;font-size:22px"><?php echo $mod_data['after'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (count($found_ids)): ?>
+
+        <div>
+            <h2 style="text-align:center">Product Found Summary</h2>
+            <div>
+                <hr>
+                <table style="font-size:22px;width:100%;padding:6px">
+                    <thead style="background-color: #3b86a0;">
+                    <tr>
+                        <th style="padding:6px">#</th>
+                        <th style="padding:6px">ID</th>
+                        <th style="padding:6px">Name</th>
+                        <th style="padding:6px">Updated</th>
+                    </tr>
+                    </thead>
+                    <tbody style="text-align:right">
+                    <?php $i = 0; ?>
+                    <?php foreach ($found_ids as $product_id) : ?>
+                        <?php
+                        $i++;
+                        $name = '';
+                        $was_updated = isset($updated_info[$product_id]);
+                        if ($was_updated) {
+                            $name = $updated_info[$product_id]['info']['name'];
+                        }
+                        ?>
+                        <tr style="background: #d1efd1">
+                            <td style="padding:6px;text-align:left;font-size:22px"><?php echo $i ?></td>
+                            <td style="padding:6px;text-align:left;font-size:22px"><?php echo $product_id ?></td>
+                            <td style="padding:6px;font-size:22px"><?php echo $name ?></td>
+                            <td style="padding:6px;font-size:22px"><?php echo (int)$was_updated ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    <?php endif; ?>
+</div>
+
+
+
+
+

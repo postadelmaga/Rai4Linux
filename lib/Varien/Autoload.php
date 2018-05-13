@@ -34,10 +34,10 @@ class Varien_Autoload
     static protected $_instance;
     static protected $_scope = 'default';
 
-    protected $_isIncludePathDefined= null;
-    protected $_collectClasses      = false;
-    protected $_collectPath         = null;
-    protected $_arrLoadedClasses    = array();
+    protected $_isIncludePathDefined = null;
+    protected $_collectClasses = false;
+    protected $_collectPath = null;
+    protected $_arrLoadedClasses = array();
 
     /**
      * Class constructor
@@ -47,8 +47,8 @@ class Varien_Autoload
         register_shutdown_function(array($this, 'destroy'));
         $this->_isIncludePathDefined = defined('COMPILER_INCLUDE_PATH');
         if (defined('COMPILER_COLLECT_PATH')) {
-            $this->_collectClasses  = true;
-            $this->_collectPath     = COMPILER_COLLECT_PATH;
+            $this->_collectClasses = true;
+            $this->_collectPath = COMPILER_COLLECT_PATH;
         }
         self::registerScope(self::$_scope);
     }
@@ -85,12 +85,12 @@ class Varien_Autoload
             $this->_arrLoadedClasses[self::$_scope][] = $class;
         }
         if ($this->_isIncludePathDefined) {
-            $classFile =  COMPILER_INCLUDE_PATH . DIRECTORY_SEPARATOR . $class;
+            $classFile = COMPILER_INCLUDE_PATH . DIRECTORY_SEPARATOR . $class;
         } else {
             $classFile = str_replace(' ', DIRECTORY_SEPARATOR, ucwords(str_replace('_', ' ', $class)));
         }
-        $classFile.= '.php';
-        //echo $classFile;die();
+        $classFile .= '.php';
+        //echo $classFile;die();\m
         return include $classFile;
     }
 
@@ -105,7 +105,7 @@ class Varien_Autoload
     {
         self::$_scope = $code;
         if (defined('COMPILER_INCLUDE_PATH')) {
-            @include COMPILER_INCLUDE_PATH . DIRECTORY_SEPARATOR . self::SCOPE_FILE_PREFIX.$code.'.php';
+            @include COMPILER_INCLUDE_PATH . DIRECTORY_SEPARATOR . self::SCOPE_FILE_PREFIX . $code . '.php';
         }
     }
 
@@ -147,7 +147,7 @@ class Varien_Autoload
         }
 
         foreach ($this->_arrLoadedClasses as $scope => $classes) {
-            $file = $this->_collectPath.DIRECTORY_SEPARATOR.$scope.'.csv';
+            $file = $this->_collectPath . DIRECTORY_SEPARATOR . $scope . '.csv';
             $data = array();
             if (file_exists($file)) {
                 $data = explode("\n", file_get_contents($file));
@@ -155,10 +155,10 @@ class Varien_Autoload
                     $class = explode(':', $class);
                     $searchIndex = array_search($class[0], $classes);
                     if ($searchIndex !== false) {
-                        $class[1]+=1;
+                        $class[1] += 1;
                         unset($classes[$searchIndex]);
                     }
-                    $data[$index] = $class[0].':'.$class[1];
+                    $data[$index] = $class[0] . ':' . $class[1];
                 }
             }
             foreach ($classes as $class) {
@@ -168,113 +168,4 @@ class Varien_Autoload
         }
         return $this;
     }
-}
-
-
-function __autoload($class_name)
-{
-    if (count(explode('_', $class_name)) > 1) {
-        $arr = explode('_', $class_name);
-        $n1 = './' . 'app' . '/' . $arr[0] . '/' . $arr[1] . '.php';
-    } else
-        $n1 = './' . 'app' . '/' . $class_name . '/' . $class_name . '.php';
-    $n2 = './' . 'app' . '/' . $class_name . '.php';
-    $n3 = './' . $class_name . '.php';
-
-    $test_names = array($n1, $n2, $n3);
-
-    foreach ($test_names as $fileName) {
-
-        if (file_exists($fileName)) {
-            include $fileName;
-            return;
-        }
-    }
-}
-
-function coreErrorHandler($errno, $errstr, $errfile, $errline)
-{
-    if (strpos($errstr, 'DateTimeZone::__construct') !== false) {
-// there's no way to distinguish between caught system exceptions and warnings
-        return false;
-    }
-
-    $errno = $errno & error_reporting();
-    if ($errno == 0) {
-        return false;
-    }
-    if (!defined('E_STRICT')) {
-        define('E_STRICT', 2048);
-    }
-    if (!defined('E_RECOVERABLE_ERROR')) {
-        define('E_RECOVERABLE_ERROR', 4096);
-    }
-    if (!defined('E_DEPRECATED')) {
-        define('E_DEPRECATED', 8192);
-    }
-
-// PEAR specific message handling
-    if (stripos($errfile . $errstr, 'pear') !== false) {
-// ignore strict and deprecated notices
-        if (($errno == E_STRICT) || ($errno == E_DEPRECATED)) {
-            return true;
-        }
-// ignore attempts to read system files when open_basedir is set
-        if ($errno == E_WARNING && stripos($errstr, 'open_basedir') !== false) {
-            return true;
-        }
-    }
-
-    $errorMessage = '';
-
-    switch ($errno) {
-        case E_ERROR:
-            $errorMessage .= "Error";
-            break;
-        case E_WARNING:
-            $errorMessage .= "Warning";
-            break;
-        case E_PARSE:
-            $errorMessage .= "Parse Error";
-            break;
-        case E_NOTICE:
-            $errorMessage .= "Notice";
-            break;
-        case E_CORE_ERROR:
-            $errorMessage .= "Core Error";
-            break;
-        case E_CORE_WARNING:
-            $errorMessage .= "Core Warning";
-            break;
-        case E_COMPILE_ERROR:
-            $errorMessage .= "Compile Error";
-            break;
-        case E_COMPILE_WARNING:
-            $errorMessage .= "Compile Warning";
-            break;
-        case E_USER_ERROR:
-            $errorMessage .= "User Error";
-            break;
-        case E_USER_WARNING:
-            $errorMessage .= "User Warning";
-            break;
-        case E_USER_NOTICE:
-            $errorMessage .= "User Notice";
-            break;
-        case E_STRICT:
-            $errorMessage .= "Strict Notice";
-            break;
-        case E_RECOVERABLE_ERROR:
-            $errorMessage .= "Recoverable Error";
-            break;
-        case E_DEPRECATED:
-            $errorMessage .= "Deprecated functionality";
-            break;
-        default:
-            $errorMessage .= "Unknown error ($errno)";
-            break;
-    }
-
-    $errorMessage .= ": {$errstr}  in {$errfile} on line {$errline}";
-    Stream::log($errorMessage);
 }

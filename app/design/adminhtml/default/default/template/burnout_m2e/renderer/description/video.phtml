@@ -1,0 +1,35 @@
+<?php $data = $this->getData(); ?>
+
+<style type="text/css">
+
+    .m2e-videogallery  {
+        display: block;
+        text-align: center;
+    <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?><?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+    }
+
+    .m2e-videogallery .gallery-video {
+        /*margin: 5px;*/
+        border: 1px solid #ccc;
+        /*float: left;*/
+        /*width: 500px;*/
+    }
+
+    .m2e-videogallery  .gallery-video:hover {
+        border: 1px solid #777;
+    }
+
+</style>
+
+<div class="m2e-videogallery">
+
+    <?php foreach ($data['videos_model'] as $video_model): ?>
+        <div class="gallery-video preview">
+            <?php echo $video_model->getMobileEmbedCode(480, 400); ?>
+        </div>
+    <?php endforeach; ?>
+
+</div>
+
+
+

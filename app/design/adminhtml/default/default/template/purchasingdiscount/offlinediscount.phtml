@@ -1,0 +1,30 @@
+<div class="entry-edit">
+    <div class="entry-edit-head">
+	    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper("purchasingdiscount")->__("Offline Discount levels")?></h4>
+	    <div class="form-buttons"></div>
+	</div>
+	<div class="fieldset " id="offlinediscount_form">
+	    <div class="hor-scroll">
+	        <table class="form-list" cellspacing="0">
+	            <tbody>
+	                <tr>
+					    <td class="label"><label for="sup_offline_discount_base"><?php echo Mage::helper("purchasingdiscount")->__("Base discount")?></label></td>
+					    <td class="value"><input id="sup_offline_discount_base" name="sup_offline_discount_base" value="<?php echo $this->getSupOfflineDiscountBase(); ?>" class="required-entry validate-digits-range digits-range-0-100 input-text" type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="sup_offline_discount_additional"><?php echo Mage::helper("purchasingdiscount")->__("Additionnal discount")?></label></td>
+					    <td class="value"><input id="sup_offline_discount_additional" name="sup_offline_discount_additional" value="<?php echo $this->getSupOfflineDiscountAdditional(); ?>" class="required-entry validate-digits-range digits-range-0-100 input-text" type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="sup_offline_discount_additional2"><?php echo Mage::helper("purchasingdiscount")->__("Additionnal2 discount")?></label></td>
+					    <td class="value"><input id="sup_offline_discount_additional2" name="sup_offline_discount_additional2" value="<?php echo $this->getSupOfflineDiscountAdditional2(); ?>" class="required-entry validate-digits-range digits-range-0-100 input-text" type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="sup_offline_discount_cash"><?php echo Mage::helper("purchasingdiscount")->__("Cash discount")?></label></td>
+					    <td class="value"><input id="sup_offline_discount_cash" name="sup_offline_discount_cash" value="<?php echo $this->getSupOfflineDiscountCash(); ?>" class="required-entry validate-digits-range digits-range-0-100 input-text" type="text">%</td>
+				    </tr>
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+</div>

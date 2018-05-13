@@ -1,0 +1,17 @@
+<?php $_code=$this->getMethodCode() ?>
+<ul id="payment_form_<?php echo $_code ?>" style="display:none">
+    <table border="0">
+        <?php for($i=0;$i<4;$i++): ?>
+            <tr>
+                <td>#<?php echo $i; ?></td>
+                <td><?php echo $this->getMethodsDropDownMenu($i); ?></td>
+                <td><input type="text" class="input-text" id="payment[<?php echo $_code ?>][amount][<?php echo $i; ?>]" name="payment[<?php echo $_code ?>][amount][<?php echo $i; ?>]" onchange="updateMultiplePaymentTotal()" /></td>
+            </tr>
+        <?php endfor; ?>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="right"><?php echo $this->__('Total :'); ?></td>
+            <td align="right" id="multiple_payment_total"></td>
+        </tr>
+    </table>
+</ul>

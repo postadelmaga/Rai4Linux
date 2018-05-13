@@ -1,0 +1,67 @@
+<div >
+    <table class="form-list" style="width: 100%;">
+        <tbody>
+            <tr>
+                <td class="label"><?php echo $this->__('Subject'); ?> <span class="required">*</span></td>
+                <td class="value" colspan="3">
+                  <?php  if (Mage::getStoreConfig('crmticket/ticket_data/edit_subject')): ?>
+                    <input class="input-text required-entry" type="text"
+                           name="ticket[ct_subject]" id="ct_subject"
+                           value="<?php echo $this->htmlEscape($this->getTicket()->getct_subject()); ?>"
+                           style="width: 99%;" />
+                  <?php else: ?>
+                    <p name="ticket[ct_subject]" id="ct_subject"><b><?php echo $this->htmlEscape($this->getTicket()->getct_subject()); ?></b><p/>
+                  <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><?php echo $this->__('Status'); ?> <span class="required">*</span></td>
+                <td class="value">
+                    <select class="required-entry select" name="ticket[ct_status]" id="ct_status" >
+                        <?php foreach (mage::getModel('CrmTicket/Ticket')->getStatuses() as $k => $v) : ?>
+                            <option <?php if ($this->getTicket()->getct_status() == $k) echo 'selected';?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+
+                <td class="label"><?php echo $this->__('Manager'); ?> <span class="required">*</span></td>
+                <td class="value">
+                    <select class="required-entry select" name="ticket[ct_manager]" id="ct_manager">
+                        <?php foreach ($this->getManagers() as $manager) : ?>
+                            <option <?php if ($this->getTicket()->getct_manager() == $manager->getId()) echo "selected" ?> value="<?php echo $manager->getId(); ?>"><?php echo $manager->getusername(); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><?php echo $this->__('Category'); ?> <span class="required">*</span></td>
+                <td class="value">
+                    <?php
+                    $block = $this->getLayout()->createBlock('CrmTicket/Admin_Category_Select');
+                    echo $block->getHtmlMenu($this->getTicket()->getct_category_id(), 'ticket[ct_category_id]', 'required-entry select', 0, null, true);
+                    ?>
+                </td>
+
+                <td class="label"><?php echo $this->__('Store'); ?></td>
+                <td class="value">
+                    <select name="ticket[ct_store_id]" name="ct_store_id">
+                        <?php foreach ($this->getWebsiteCollection() as $website): ?>
+                            <optgroup label="<?php echo $website->getName(); ?>">
+                            <?php foreach ($this->getGroupCollection($website) as $group): ?>
+                                <?php if ($group->getWebsiteId() != $website->getId()) continue; ?>
+                                <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $group->getName(); ?>">
+                                <?php foreach ($this->getStoreCollection($group) as $store): ?>
+                                    <?php if ($store->getGroupId() != $group->getId()) continue; ?>
+                                        <option value="<?php echo $store->getId(); ?>" <?php echo ($this->getTicket()->getct_store_id() == $store->getId() ? ' selected="selected"' : ''); ?>>&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $store->getName(); ?></option>
+                                <?php endforeach; ?>
+                                </optgroup>
+                            <?php endforeach; ?>
+                            </optgroup>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>

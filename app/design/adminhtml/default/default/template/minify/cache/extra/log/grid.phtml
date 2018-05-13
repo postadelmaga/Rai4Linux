@@ -1,0 +1,60 @@
+<?php
+/**
+ * @var $this BurnOut_Minify_Block_Adminhtml_Cache_Extra_Log_Grid
+ */
+?>
+<?php $logs = $this->getCollection(); ?>
+<?php if (count($logs)): ?>
+    <div class="grid">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="data" id="cache_grid_table">
+                <colgroup>
+                    <col>
+                    <col width="80">
+                    <col width="260">
+                    <col width="220">
+                </colgroup>
+                <thead>
+                <tr class="headings">
+                    <th class=" no-link"><span class="nobr">Filename</span></th>
+                    <th class=" no-link"><span class="nobr">File Size</span></th>
+                    <th class=" no-link"><span class="nobr">Last Mod.</span></th>
+                    <th class=" no-link"><span class="nobr">Action</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($logs as $fileinfo): ?>
+                    <tr title="" class="even">
+                        <td class="a-left "><?php echo $fileinfo->getFilename() ?></td>
+                        <td class="a-right ">
+                            <?php echo $fileinfo->getSize() ?>
+                        </td>
+                        <td class="a-center">
+                            <?php echo $fileinfo->getModDate() ?>
+                        </td>
+                        <td class="a-center last">
+                            <?php
+                            $onClick = 'window.open(\'' . $this->getViewLogUrl($fileinfo->getFilename()) . '\', \'_blank\')';
+                            echo $this->getButtonHtml(Mage::helper('adminhtml')->__('View'), $onClick);
+                            ?>
+                            <?php
+                            $onClick = 'setLocation(\'' . $this->getDownloadLogUrl($fileinfo->getFilename()) . '\')';
+                            echo $this->getButtonHtml(Mage::helper('adminhtml')->__('Download'), $onClick);
+                            ?>
+                            <?php
+                            $onClick = 'setLocation(\'' . $this->getDeleteLogUrl($fileinfo->getFilename()) . '\')';
+                            echo $this->getButtonHtml(Mage::helper('adminhtml')->__('Delete'), $onClick, 'delete');
+                            ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!---->
+<?php else: ?>
+    <div class="grid">
+        <h3><?php echo $this->getEmptyText() ?></h3>
+    </div>
+<?php endif; ?>

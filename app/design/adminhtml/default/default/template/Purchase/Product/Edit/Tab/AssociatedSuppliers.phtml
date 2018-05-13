@@ -1,0 +1,102 @@
+<div id="div_associated_suppliers">
+
+    <script>
+
+        var linkSupplierUrl = '<?php echo $this->getUrl('adminhtml/Purchase_Products/LinkSupplier', array('product_id' => 'XXX', 'supplier_id' => 'YYY')); ?>';
+        var refreshSupplierUrl = '<?php echo $this->getUrl('adminhtml/Purchase_Products/AjaxSuppliers', array('product_id' => $this->getProduct()->getId())) ?>';
+        var removeSupplierUrl = '<?php echo $this->getUrl('adminhtml/Purchase_Products/DeleteAssociatedSupplier', array('pps_id' => 'XXX')); ?>';
+        var loadSupplierUrl = '<?php echo $this->getUrl('adminhtml/Purchase_Products/GetSupplierInformation', array('pps_id' => 'XXX','product_id' => $this->getProduct()->getId())); ?>';
+        var saveSupplierUrl = '<?php echo $this->getUrl('adminhtml/Purchase_Products/SaveAssociatedSupplier',array('product_id' => $this->getProduct()->getId())); ?>';
+
+    </script>
+
+    <div class="entry-edit">
+
+        <div class="grid">
+            <table cellspacing="0" class="data" width="100%">
+                <thead>
+                    <tr class="headings">
+                        <th><?php echo $this->__('Name') ?></th>
+                        <th class="a-center">Date</th>
+                        <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_unit_price')): ?>
+                            <th class="a-center"><?php echo $this->__('Buying price') ?></th>
+                            <th class="a-center"><?php echo $this->__('Buying price<br>(supplier currency)') ?></th>
+                        <?php endif; ?>
+                        <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_last_price')): ?>
+                            <th class="a-center"><?php echo $this->__('Buying price + cost') ?></th>
+                        <?php endif; ?>
+                        <th class="a-center"><?php echo $this->__('Stock') ?></th>
+                        <th class="a-center"><?php echo $this->__('Dropship') ?></th>
+                        <th class="a-center"><?php echo $this->__('Favorite<br>supplier') ?></th>
+                        <th class="a-center"><?php echo $this->__('Ref') ?></th>
+                        <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_discount')): ?>
+                            <th class="a-center"><?php echo $this->__('Discount') ?></th>
+                        <?php endif; ?>
+                        <th class="a-center"><?php echo $this->__('Action') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $Suppliers = $this->getSuppliers();
+                    foreach ($Suppliers as $Supplier) {
+                        echo '<tr>';
+                        echo '<td><a href="' . $this->getUrl('adminhtml/Purchase_Suppliers/Edit') . 'sup_id/' . $Supplier->getpps_supplier_num() . '" target="_blanck">' . $Supplier->getsup_name() . '</a></td>';
+                        echo '<td class="a-center">' . $Supplier->getpps_last_order_date() . '&nbsp;</td>';
+                        if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_unit_price'))
+                        {
+                            echo '<td class="a-center">';
+                            if ($Supplier->getpps_last_unit_price() > 0)
+                                echo $Supplier->getpps_last_unit_price()." ".$this->getDefaultCurrency()->getCode();
+                            echo '&nbsp;</td>';
+                            echo '<td class="a-center">';
+                            if ($Supplier->getpps_last_unit_price_supplier_currency() > 0)
+                                echo $Supplier->getpps_last_unit_price_supplier_currency()." ".$this->getSupplierCurrency($Supplier)->getCode();
+                            echo '&nbsp;</td>';
+                        }
+                        if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_last_price'))
+                        {
+                            echo '<td class="a-center">';
+                            if ($Supplier->getpps_last_price() > 0)
+                                echo $Supplier->getpps_last_price()." ".$this->getDefaultCurrency()->getCode();
+                            echo '&nbsp;</td>';
+                        }
+                        
+                        echo '<td class="a-center">';
+                        if ($Supplier->getpps_quantity_product() != null)
+                            echo $Supplier->getpps_quantity_product();
+                        echo '&nbsp;</td>';
+                        echo '<td class="a-center">' . ($Supplier->getpps_can_dropship() ? 'X' : '') . '</td>';
+                        echo '<td class="a-center">' . ($Supplier->getpps_is_default_supplier() ? 'X' : '') . '</td>';
+
+                        echo '<td class="a-center">' . $Supplier->getpps_reference() . '&nbsp;</td>';
+                        
+                        if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/display_discount'))
+                            echo '<td class="a-center">' . $Supplier->getpps_discount_level() . '%&nbsp;</td>';
+                        
+                        echo '<td class="a-center">';
+                        if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/edit'))
+                            echo '<a  href="javascript:loadSupplier(' . $Supplier->getpps_num() . ', \''.addslashes($this->__('Edit supplier / product association')).'\');">' . $this->__('Edit') . '</a>';
+                        echo ' - ';
+                        if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/delete'))
+                            echo '<a href="javascript:removeSupplier(' . $Supplier->getpps_num() . ');">' . $this->__('Delete') . '</a></td>';
+                        echo '</tr>';
+                    }
+                    ?>
+                </tbody>
+                <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/products/view/suppliers/add')): ?>
+                    <thead>
+                        <tr class="headings">
+                            <th class="a-center" colspan="11"><?php echo $this->__('Add Supplier') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="a-center" colspan="11"><?php echo $this->getNonLinkedSuppliersAsCombo(); ?> <input type="button" value="<?php echo $this->__('Add') ?>" onclick="linkSupplier();"></td>
+                        </tr>
+                    </tbody>
+                <?php endif; ?>
+            </table>
+        </div>
+    </div>
+</div>
+

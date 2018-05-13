@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Automatic Configurables Extension
+ *
+ * @category   QS
+ * @package    QS_Quickconfigurables
+ * @author     Quart-soft Magento Team <magento@quart-soft.com> 
+ * @copyright  Copyright (c) 2010 Quart-soft Ltd http://quart-soft.com
+ */
+-->
+
+<layout>
+	<default>
+		<reference name="head">
+			<action method="addJs"><script>qs/adminhtml/quick_configurables.js</script></action>
+		</reference>
+	</default>
+</layout>

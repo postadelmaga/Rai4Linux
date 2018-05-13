@@ -1,0 +1,37 @@
+<div class="entry-edit" >
+    <div class="content-header">
+        <table cellspacing="0" class="grid-header">
+            <tr>
+                <td><h3><?php echo $this->__('Tickets'); ?></h3></td>
+                <td align="right">
+                    <button onclick="processNewMails('<?php echo $this->getUrlProcessNewMail(); ?>');" class="scalable save" type="button"><span><?php echo $this->__('Get new mails') ?></span></button>
+                </td>
+            </tr>
+            </tr>            
+        </table>
+    </div>
+
+    <!-- Enable the tooptip to don't be cutted by the grid that have by default overflow: hidden; -->
+    <style>.hor-scroll {overflow: inherit !important; }</style>
+
+    <?php echo $this->getGridParentHtml(); ?>
+</div>
+
+<?php if($this->isRefreshEnabled()): ?>
+<script>
+var gridAutoRefresh = new autorefresh('<?php echo $this->getRefreshRate(); ?>', '<?php echo $this->isRefreshEnabled(); ?>');
+
+setInterval(function () {
+    gridAutoRefresh.last_user_action++;
+    gridAutoRefresh.refreshCheck();
+}, 1000);
+
+window.addEventListener("focus", gridAutoRefresh.windowHasFocus, false);
+window.addEventListener("blur", gridAutoRefresh.windowLostFocus, false);
+window.addEventListener("click", gridAutoRefresh.reset, false);
+window.addEventListener("mousemove", gridAutoRefresh.reset, false);
+window.addEventListener("keypress", gridAutoRefresh.reset, false);
+window.onkeyup = gridAutoRefresh.keydown;
+
+</script>
+<?php endif; ?>

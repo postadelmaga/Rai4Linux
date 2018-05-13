@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<layout version="1.0.0">
+    <HANDLE_GALLERY_FIX>
+        <reference name="head">
+            <action method="addItem">
+                <type>js</type>
+                <name>burnout_configurableswatches/adminhtml/product_gallery_fix.js</name>
+            </action>
+        </reference>
+    </HANDLE_GALLERY_FIX>
+
+    <HANDLE_GALLERY_BURNOUT_SWATCHES>
+        <reference name="head">
+            <action method="addCss">
+                <stylesheet>burnout_configurableswatches.css</stylesheet>
+            </action>
+            <action method="addItem">
+                <type>js</type>
+                <name>burnout_configurableswatches/adminhtml/product-update.js</name>
+            </action>
+        </reference>
+    </HANDLE_GALLERY_BURNOUT_SWATCHES>
+
+    <adminhtml_catalog_product_simple_new>
+        <update handle="HANDLE_GALLERY_FIX"/>
+    </adminhtml_catalog_product_simple_new>
+
+    <adminhtml_catalog_product_simple>
+        <update handle="HANDLE_GALLERY_FIX"/>
+    </adminhtml_catalog_product_simple>
+
+    <adminhtml_catalog_product_configurable_new>
+        <update handle="HANDLE_GALLERY_FIX"/>
+        <update handle="HANDLE_GALLERY_BURNOUT_SWATCHES"/>
+    </adminhtml_catalog_product_configurable_new>
+
+    <adminhtml_catalog_product_configurable>
+        <update handle="HANDLE_GALLERY_FIX"/>
+        <update handle="HANDLE_GALLERY_BURNOUT_SWATCHES"/>
+    </adminhtml_catalog_product_configurable>
+
+    <adminhtml_catalog_product_attribute_edit>
+        <reference name="attribute_edit_tabs">
+            <block type="burnout_configurableswatches/adminhtml_attribute_edit_tab_swatches"
+                   as="attribute_tab_swatches" name="attribute_tab_swatches_name">
+            </block>
+            <action method="addTabAfter">
+                <tab_id>attribute_burnout_configurableswatches</tab_id>
+                <block_name>attribute_tab_swatches</block_name>
+                <after>labels</after>
+            </action>
+        </reference>
+    </adminhtml_catalog_product_attribute_edit>
+</layout>

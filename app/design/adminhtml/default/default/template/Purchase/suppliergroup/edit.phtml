@@ -1,0 +1,120 @@
+<script>
+function openMyPopup()
+{
+	document.getElementById('suppliergroup-popoup-container').style.display="block";
+	document.getElementById('suppliergroup-popup-overlay').style.display="block";
+	document.getElementById("ppg_name").value = '';
+	var element =  document.getElementById('form_id_field');
+	if (typeof(element) != 'undefined' && element != null)
+	{
+	  element.remove();
+	}
+}
+function closeMyPopup(){
+	var error = document.getElementById('supplier_group_error');
+	if (error != null){
+		document.getElementById('supplier_group_error').remove();
+	}
+	document.getElementById('suppliergroup-popoup-container').style.display="none";
+	document.getElementById('suppliergroup-popup-overlay').style.display="none";
+}
+function editGroup(id, name)
+{
+	document.getElementById('suppliergroup-popoup-container').style.display="block";
+	document.getElementById('suppliergroup-popup-overlay').style.display="block";
+	document.getElementById("ppg_name").value = name;
+	var element =  document.getElementById('form_id_field');
+	if (typeof(element) != 'undefined' && element != null)
+	{
+	  element.value = id; 
+	}
+	else
+	{
+		var input = document.createElement("input");
+		input.setAttribute("type", "hidden");
+		input.setAttribute("id", "form_id_field");
+		input.setAttribute("name", "id");
+		input.setAttribute("value", id);
+		document.getElementById("edit_form").appendChild(input);
+	}
+}
+function isEmpty(str){
+    return str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
+}
+function submitForm()
+{
+	if(isEmpty(document.getElementById('ppg_name').value)){
+		var request = new Ajax.Request("<?php echo $this->getUrl("*/*/save");?>",
+		    {
+		        method:'post',
+		        onSuccess: function onSuccess(transport)
+		        			{
+		        				if(transport.responseJSON.error == 1){
+	        						var error = document.getElementById('supplier_group_error');
+		        					if (error == null){
+										var error = document.createElement('div');
+										error.id = "supplier_group_error";
+									    error.className = 'validation-advice';
+									}
+		        					var input = document.getElementById('ppg_name');
+								    error.innerHTML = transport.responseJSON.msg;
+								    input.parentNode.appendChild(error);
+		        				}
+		        				else
+		        				{
+									location.reload();
+		        				}
+		        			},
+		        onFailure: function onAddressFailure(res) 
+		        			{
+		        				var error = document.getElementById('supplier_group_error');
+		        				if (error == null){
+									var error = document.createElement('div');
+									error.id = "supplier_group_error";
+								    error.className = 'validation-advice';
+								}
+		        				var input = document.getElementById('ppg_name');
+							    error.innerHTML = transport.responseJSON.msg;
+							    input.parentNode.appendChild(error);
+		        			},
+	            parameters: Form.serialize(document.getElementById('edit_form'))
+		    }
+	    );
+	}
+	else{
+		var error = document.getElementById('supplier_group_error');
+		if (error == null){		
+			var error = document.createElement('div');
+			error.id = "supplier_group_error";
+		    error.className = 'validation-advice';
+		}
+		var input = document.getElementById('ppg_name');
+	    error.innerHTML = "<?php echo Mage::helper("purchase")->__('Please enter group name');?>";
+	    input.parentNode.appendChild(error);
+	}
+}
+</script>
+<style type="text/css">
+	.popoup-container {  margin: 0 auto;  max-width: 500px;  padding: 10px;  position: relative;  top: 50%;  transform: translateY(-70%);  z-index: 11; display: none;}	
+	.popoup-container .form-list .value .input-text {  width: 100%;}
+	.popoup-container .close-btn {  position: absolute;  right: 10px;  top: 10px;}
+	.popoup-container .close-btn .close {  padding: 3px 7px;}
+	.popup-overlay {  background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;  display: none;height: 100%;  left: 0;  position: fixed;  top: 0;  width: 100%;  z-index: 10;}
+</style>
+
+<div id="suppliergroupGrid">
+<?php 
+echo $this->getLayout()->createBlock("Purchase/adminhtml_suppliergroup")->toHtml();
+?>
+</div>
+
+<div id="suppliergroup-popoup-container" class="popoup-container">
+<?php echo $this->getLayout()->createBlock("Purchase/adminhtml_suppliergroup_edit_form")->toHtml();?>
+<div class="close-btn">
+<button class="close" onclick="closeMyPopup()">X</button>
+</div>	
+</div>
+<div class="popup-overlay" id="suppliergroup-popup-overlay">
+
+</div>
+

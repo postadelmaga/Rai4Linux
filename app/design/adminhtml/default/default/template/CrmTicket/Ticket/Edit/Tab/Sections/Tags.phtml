@@ -1,0 +1,23 @@
+<div id="ticket_tags">
+    <div id="tags_list" style="display: inline-block;">
+        <?php
+        $collection = $this->getTicket()->getTags();
+        if($collection){
+            foreach ($collection as $tag){
+                echo $tag->getRendering().' ';
+                echo "<img class=\"crm-tag-delete-button\" onclick=\"tagActionAjax('".$this->getTagDeleteLink($this->getTicket()->getId(),$tag->getId())."');\" src=\"".$this->getSkinUrl('images/cancel_icon.gif')."\" /> ";
+            }
+        }
+        ?>
+    </div>
+
+    <div id="tags_add" style="display: inline-block;">
+        <select class="select" name="add_tag_id" id="add_tag_id"
+                 onchange="tagActionAjax(<?php echo "'".$this->getTagAddLink($this->getTicket()->getId(),'').'ctg_id/'. "'"; ?> + this.options[this.selectedIndex].value)">';>
+            <option value="-1"><?php echo $this->__('Add tag'); ?></option>
+            <?php foreach ($this->getTicket()->getAddableTags() as $tag) : ?>
+                <option value="<?php echo $tag->getId(); ?>"><?php echo $tag->getName(); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<?php
+/**
+ * @see BurnOut_Translator_Block_Adminhtml_Config_Update
+ */
+?>
+
+<div>
+    <label for="up_from">From ID:</label>
+    <input id="up_from" style="width:70px;" type="text"/>
+    -
+    <label for="up_to">To ID:</label>
+    <input id="up_to" style="width:70px;" type="text"/>
+
+    <button title="Reset Filter" type="button" class="scalable" onclick="updStart()">
+        <span><span><span>Update</span></span></span>
+    </button>
+</div>
+
+<script type="text/javascript">
+    function updStart() {
+        var url = '<?php echo $this->getActionUrl(); ?>';
+
+            new Ajax.Request(url, {
+                method: 'post',
+                parameters: {
+                    from: $('up_from').value,
+                    to: $('up_to').value
+                },
+                requestHeaders: {Accept: 'application/json'},
+                onSuccess: function (transport) {
+                    location.reload();
+                }
+            });
+    }
+</script>

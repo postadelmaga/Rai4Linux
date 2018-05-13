@@ -1,0 +1,10 @@
+<?php
+$html = '';
+$tag = $this->getTag();
+if ($tag && $tag->getId() > 0) {
+    $html .= '<span id="tag-'.$tag->getId().'" class="crm-tag" style="' . $tag->getStyle() . '">';
+    $html .= $tag->getName();
+    $html .= '</span>';
+}
+echo $html;
+?>

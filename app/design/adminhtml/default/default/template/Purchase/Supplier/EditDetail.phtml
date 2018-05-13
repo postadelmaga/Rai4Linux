@@ -1,0 +1,87 @@
+<?php $supplier = $this->getSupplier();?>
+
+<fieldset>
+    <input type="hidden" id="pps_num" name="pps_num" value="<?php echo $supplier->getData('pps_num');?>">
+    <table border="0" width="100%">
+        <tr>
+            <td><?php echo $this->__('Supplier') ?></td>
+            <td><?php echo $supplier->getData('sup_name');?></td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Supplier Reference') ?></td>
+            <td><input type="text" id="pps_reference" name="pps_reference" value="<?php echo $supplier->getData('pps_reference');?>"></td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Supplier Product Name') ?></td>
+            <td><input type="text" id="pps_product_name" name="pps_product_name" value="<?php echo $supplier->getData('pps_product_name');?>"></td>
+        </tr>
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr>
+            <td><?php echo $this->__('Buying price (store currency)') ?></td>
+            <td><input type="text" id="pps_last_unit_price" name="pps_last_unit_price" size="6" value="<?php echo $supplier->getData('pps_last_unit_price');?>"> <?php echo Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE); ?></td>
+        </tr>
+        <tr>
+            <td><b><?php echo $this->__('Buying price (supplier currency)') ?></b></td>
+            <td nowrap><input type="text" id="pps_last_unit_price_supplier_currency" name="pps_last_unit_price_supplier_currency" size="6" value="<?php echo $supplier->getData('pps_last_unit_price_supplier_currency');?>"> <?php echo $supplier->getData('sup_currency');?></td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Buying price + landing costs') ?></td>
+            <td><input type="text" id="pps_last_price" name="pps_last_price" size="6" value="<?php echo $supplier->getData('pps_last_price');?>"> <?php echo Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE); ?></td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Default discount level') ?></td>
+            <td><input type="text" id="pps_discount_level" name="pps_discount_level" size="6" value="<?php echo $supplier->getData('pps_discount_level');?>"> %</td>
+        </tr>
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr>
+            <td><?php echo $this->__('Supplier stock qty') ?></td>
+            <td><input type="text" id="pps_quantity_product" name="pps_quantity_product" size="4" value="<?php echo $supplier->getData('pps_quantity_product');?>"></td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Dropship ?') ?></td>
+            <td>
+                <?php $pps_can_dropship =  $supplier->getData('pps_can_dropship');?>
+                <select id="pps_can_dropship" name="pps_can_dropship">
+                    <option value="0"><?php echo $this->__('No'); ?></option>
+                    <option value="1" <?php if($pps_can_dropship) echo "selected='selected'";?>><?php echo $this->__('Yes'); ?></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Supply delay') ?></td>
+            <td>
+                <?php $pps_supply_delay =  $supplier->getData('pps_supply_delay');?>
+                <select id="pps_supply_delay" name="pps_supply_delay">
+                    <option value=""></option>
+                    <?php for ($i = 1; $i < 365; $i++): ?>
+                        <option value="<?php echo $i; ?>" <?php if($pps_supply_delay ==$i) echo "selected='selected'";?> ><?php echo $i; ?></option>
+                    <?php endfor; ?>
+                </select>
+                &nbsp;<?php echo $this->__('days') ?>
+            </td>
+        </tr>
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr>
+            <td><?php echo $this->__('Is favorite supplier ?') ?></td>
+            <td>
+                <?php $pps_is_default_supplier =  $supplier->getData('pps_is_default_supplier');?>
+                <select id="pps_is_default_supplier" name="pps_is_default_supplier">
+                    <option value="0"><?php echo $this->__('No'); ?></option>
+                    <option value="1" <?php if($pps_is_default_supplier) echo "selected='selected'";?>><?php echo $this->__('Yes'); ?></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo $this->__('Comments') ?></td>
+            <td><textarea id="pps_comments" name="pps_comments" cols="50" rows="3"><?php echo $supplier->getData('pps_comments');?></textarea></td>
+        </tr>
+    </table>
+</fieldset>
+<style type="text/css">
+    #product_supplier_association_popup{position:relative;}
+    #product_supplier_association_popup li{ float:left;}
+    #product_supplier_association_popup li a.tab-item-link.active + div{ display:block!important; position:absolute; top:70px; width:95%; left:0; padding:15px;}
+    #product_supplier_association_popup li a.tab-item-link{ background: #e2e2e2; border-color: #cccccc; border-style: solid; border-width: 1px; display: block; float: left; margin: 5px; padding: 5px; text-align: center; width: 100px; min-height:35px;line-height:35px;}
+    #product_supplier_association_popup li a.tab-item-link span{background:none; min-height:35px;padding:0;}
+    #product_supplier_association_popup li a.tab-item-link.active{ background: #ffffff; border-color: #cccccc #cccccc #ffffff; border-style: solid; border-width: 1px; display: block; float: left; margin: 5px; padding: 5px; text-align: center; width: 100px; min-height:35px;}
+</style>

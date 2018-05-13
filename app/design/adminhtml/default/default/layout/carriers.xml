@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+ 
+   <adminhtml_sales_order_shipment_new> 
+       <reference name="shipment_tracking">
+           <action method="setTemplate">
+                <template>carriers/adminhtml/tracking.phtml</template>
+           </action>
+       </reference>
+   </adminhtml_sales_order_shipment_new> 
+   
+   <adminhtml_sales_order_shipment_addtrack>
+       <reference name="shipment_tracking">
+           <action method="setTemplate">
+                <template>carriers/adminhtml/tracking.phtml</template>
+           </action>
+       </reference>
+   </adminhtml_sales_order_shipment_addtrack>
+
+   <adminhtml_sales_order_shipment_removetrack>
+       <reference name="shipment_tracking">
+           <action method="setTemplate">
+                <template>carriers/adminhtml/tracking.phtml</template>
+           </action>
+       </reference>
+   </adminhtml_sales_order_shipment_removetrack>
+
+</layout>

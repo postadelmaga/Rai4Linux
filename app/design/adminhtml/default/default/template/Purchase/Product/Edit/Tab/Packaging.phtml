@@ -1,0 +1,127 @@
+<div class="entry-edit">
+
+<div class="entry-edit-head">
+	<h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Packaging'); ?></h4> 
+</div>
+
+	<div class="grid">
+		<table cellspacing="0" class="data" width="100%">
+
+			<?php $nbCol = (Mage::getStoreConfig('purchase/packaging/enable_by_supplier'))?5:4; ?>
+
+			<thead>
+				<tr class="headings">
+					<th class="a-center"><?php echo $this->__('Name')?></th>
+					<th class="a-center"><?php echo $this->__('Qty')?></th>
+					<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+						<th class="a-center"><?php echo $this->__('Supplier')?></th>
+					<?php endif; ?>
+					<th class="a-center"><?php echo $this->__('Default for purchase')?></th>
+					<th class="a-center"><?php echo $this->__('Delete')?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="a-center"><?php echo $this->__('None'); ?></td>
+					<td class="a-center">1</td>
+					<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+						<td class="a-center"> - </td>
+					<?php endif; ?>
+					<td class="a-center"><input type="radio"
+												name="packaging[none][pp_is_default]"
+												id="packaging[none][pp_is_default]"
+												value="1" <?php echo (!$this->hasDefaultPurchasePackage() ? ' checked ' : ""); ?>
+												<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+													onclick="unSelectOtherDefaultPurchaseForCurrentSupplier(this,0);"
+												<?php else: ?>
+													onclick="unselectOtherDefaultPurchase(this);"
+												<?php endif; ?>
+											>
+
+					</td>
+					<td class="a-center">&nbsp;</td>
+				</tr>
+
+				<?php foreach($this->getPackagingsSupplier() as $currentSupplierId): ?>
+
+					<?php if($currentSupplierId>0): ?>
+						<tr class="headings">
+							<th class="a-center" colspan="<?php echo $nbCol; ?>">
+								<?php echo $this->getSupplierName($currentSupplierId); ?>
+							</th>
+						</tr>
+					<?php endif; ?>
+
+					<?php foreach($this->getPackagings($currentSupplierId) as $packaging): ?>
+                        <?php $readOnly = $this->packagingIsReadOnly($packaging->getId()); ?>
+						<tr>
+							<td class="a-center">
+                                <input type="text" name="packaging[<?php echo $packaging->getId(); ?>][pp_name]" id="packaging[<?php echo $packaging->getId(); ?>][pp_name]" value="<?php echo $packaging->getpp_name(); ?>">
+                            </td>
+							<td class="a-center">
+                                <?php if (!$readOnly): ?>
+                                    <input type="text" name="packaging[<?php echo $packaging->getId(); ?>][pp_qty]" id="packaging[<?php echo $packaging->getId(); ?>][pp_qty]" value="<?php echo $packaging->getpp_qty(); ?>">
+                                <?php else: ?>
+                                    <input type="hidden" name="packaging[<?php echo $packaging->getId(); ?>][pp_qty]" id="packaging[<?php echo $packaging->getId(); ?>][pp_qty]" value="<?php echo $packaging->getpp_qty(); ?>">
+                                    <?php echo $packaging->getpp_qty(); ?>
+                                <?php endif; ?>
+                            </td>
+							<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+								<td class="a-center">
+                                    <?php if (!$readOnly): ?>
+                                        <?php echo $this->getSuppliersList('packaging['.$packaging->getId().'][pp_supplier_id]',$packaging->getpp_supplier_id()); ?>
+                                    <?php else: ?>
+                                        <input type="hidden" name="packaging[<?php echo $packaging->getId(); ?>][pp_supplier_id]" id="packaging[<?php echo $packaging->getId(); ?>][pp_supplier_id]" value="<?php echo $packaging->getpp_supplier_id(); ?>">
+                                        <?php echo $this->getSupplierName($currentSupplierId); ?>
+                                    <?php endif; ?>
+                                </td>
+							<?php endif; ?>
+							<td class="a-center">
+									<input type="radio"
+										   name="packaging[<?php echo $packaging->getId(); ?>][pp_is_default]"
+										   id="packaging[<?php echo $packaging->getId(); ?>][pp_is_default]"
+										   value="1" <?php echo (($packaging->getpp_is_default() == 1) ? ' checked ': ''); ?>
+									<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+										onclick="unSelectOtherDefaultPurchaseForCurrentSupplier(this,<?php echo $packaging->getpp_supplier_id(); ?>);"
+									<?php else: ?>
+										onclick="unselectOtherDefaultPurchase(this);"
+									<?php endif; ?>
+									>
+									</td>
+							<td class="a-center">
+                                <?php if (!$readOnly): ?>
+                                    <input type="checkbox" <?php echo ($readOnly ? 'disabled="disabled"':""); ?> name="packaging[<?php echo $packaging->getId(); ?>][delete]" id="packaging[<?php echo $packaging->getId(); ?>][delete]" value="1">
+                                <?php endif; ?>
+                            </td>
+						</tr>
+					<?php endforeach; ?>
+
+				<?php endforeach; ?>
+			</tbody>
+
+			<!-- NEW ---->
+			<thead>
+				<tr class="headings">
+					<th class="a-center" colspan="<?php echo $nbCol; ?>"><?php echo $this->__('Add new packaging')?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="a-center"><input type="text" name="packaging[new][pp_name]" id="packaging[new][pp_name]"></td>
+					<td class="a-center"><input type="text" name="packaging[new][pp_qty]" id="packaging[new][pp_qty]"></td>
+					<?php if(Mage::getStoreConfig('purchase/packaging/enable_by_supplier')): ?>
+						<td class="a-center"><?php
+							echo $this->getSuppliersList('packaging[new][pp_supplier_id]','');
+							?></td>
+					<?php endif; ?>
+					<td class="a-center"><input type="radio"
+												name="packaging[new][pp_is_default]"
+												id="packaging[new][pp_is_default]" value="1"></td>
+					<td class="a-center">&nbsp;</td>
+				</tr>
+			</tbody>
+			<!------>
+
+		</table>
+	</div>
+</div>

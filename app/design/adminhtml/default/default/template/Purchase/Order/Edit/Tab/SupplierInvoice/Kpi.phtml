@@ -1,0 +1,43 @@
+<style>
+
+    .kpi_table
+    {
+        width: 100%
+    }
+
+    .kpi_table th
+    {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #aaaaaa;
+        padding: 5px;
+        width: 25%;
+    }
+
+    .kpi_table td
+    {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #cccccc;
+        padding: 5px;
+        width: 25%;
+    }
+
+</style>
+
+<table class="kpi_table">
+    <tr>
+        <th><?php echo $this->__('Total'); ?></th>
+        <th><?php echo $this->__('Invoiced'); ?></th>
+        <th><?php echo $this->__('Not invoiced'); ?></th>
+    </tr>
+    <tr>
+        <td><?php echo $this->getPurchaseOrder()->getCurrency()->formatTxt($this->getPurchaseOrder()->getTotalTtc()); ?></td>
+        <td><?php echo $this->getPurchaseOrder()->getCurrency()->formatTxt($this->getPurchaseOrder()->getTotalInvoiced()); ?></td>
+        <td><?php echo $this->getPurchaseOrder()->getCurrency()->formatTxt($this->getPurchaseOrder()->getTotalTtc() - $this->getPurchaseOrder()->getTotalInvoiced()); ?></td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>

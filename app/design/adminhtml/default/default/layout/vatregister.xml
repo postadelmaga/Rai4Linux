@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <adminhtml_vat_vatregister_index>
+  	<reference name="head">
+        <action method="addJs" after="-">
+            <script>mdn/PurchaseOrder/Payment/SupplierInvoice.js</script>
+        </action>
+        <action method="addJs">
+            <script>mdn/paymentInvoice.js</script>
+        </action>
+        <action method="addJs">
+            <script>prototype/window.js</script>
+        </action>
+        <action method="addItem">
+            <type>js_css</type>
+            <name>prototype/windows/themes/default.css</name>
+        </action>
+        <action method="addItem">
+            <type>js_css</type>
+            <name>prototype/windows/themes/alphacube.css</name>
+        </action>
+        <action method="addCss">
+            <name>lib/prototype/windows/themes/magento.css</name>
+        </action>
+    </reference>
+	<reference name="content">
+	  <block type="vatregister/adminhtml_vatregister" name="vatregister" />
+	</reference>
+  </adminhtml_vat_vatregister_index>
+</layout>

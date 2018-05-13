@@ -1,0 +1,56 @@
+<?php
+/**
+ * @var $this Dull_Uploader_Block_Media_Uploader
+ */
+?>
+<?php echo $this->helper('adminhtml/media_js')->includeScript('burnout_uploader/uploader/jsuploader.js') ?>
+<?php echo $this->helper('adminhtml/media_js')->includeScript('burnout_uploader/uploader/uploader.js') ?>
+
+<style>
+    .dropbox {
+        padding: 5px;
+        line-height: 60px;
+        border: 2px dashed #06a;
+        text-align: center;
+        font-weight: bold;
+        font-size: medium;
+        color: #06a;
+        margin: 12px;
+    }
+
+    .dropbox.active {
+        background: #bdbbbb;
+    }
+</style>
+
+<div id="<?php echo $this->getHtmlId() ?>" class="uploader">
+    <div class="buttons">
+        <input type="file" id="<?php echo $this->getHtmlId() ?>-file" multiple name="image"/>
+        <?php echo $this->getUploadButtonHtml() ?>
+    </div>
+    <div class="clear"></div>
+    <div id="<?php echo $this->getHtmlId() ?>-dropbox" class="dropbox">Drag and Drop Files Here</div>
+    <div class="no-display" id="<?php echo $this->getHtmlId() ?>-template">
+        <div id="{{id}}" class="file-row">
+            <span class="file-info">{{name}} ({{size}})</span>
+            <span class="delete-button"><?php echo $this->getDeleteButtonHtml() ?></span>
+            <span class="progress-text"></span>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    maxUploadFileSizeInBytes = <?php echo $this->getDataMaxSizeInBytes() ?>;
+    maxUploadFileSize = '<?php echo $this->getDataMaxSize() ?>';
+
+    <?php echo $this->getJsObjectName() ?> = new JsUploader('<?php echo $this->getHtmlId() ?>', <?php echo $this->getConfigJson() ?>);
+    <?php echo $this->getJsObjectName() ?>.onFilesComplete = function(completedFiles){
+        completedFiles.each(function(file){
+            <?php echo $this->getJsObjectName() ?>.removeFile(file.id);
+        });
+        MediabrowserInstance.handleUploadComplete();
+    }
+    //]]>
+</script>

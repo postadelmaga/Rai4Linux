@@ -1,0 +1,154 @@
+
+<table class="kpi_table">
+    <tr>
+        <th><?php echo $this->__('Total'); ?></th>
+        <th><?php echo $this->__('Total applied'); ?></th>
+        <th><?php echo $this->__('Balance to apply'); ?></th>
+    </tr>
+    <tr>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getpsi_amount()); ?></td>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getpsi_total_applied()); ?></td>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getTotalNotApplied()); ?></td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<?php if ($this->getSupplierInvoice()->getTotalNotApplied() > 0): ?>
+
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend"><?php echo$this->__('Associate a new purchase order')?></h4>
+        </div>
+        <fieldset id="my-fieldset">
+            <center>
+                <div class="grid">
+                    <table cellspacing="0" class="data">
+                        <thead>
+                        <tr class="headings">
+                            <th class="a-center"><?php echo $this->__('Purchase order'); ?>
+                            </th><th class="a-center"><?php echo $this->__('Amount to apply'); ?> (<?php echo $this->getSupplierInvoice()->getCurrency()->getcurrency_code(); ?>)
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td align="center">
+
+                                <div id="div_select_po">
+                                    <a href="#" onclick="openSelectPoPopup('<?php echo $this->getSelectPoUrl(); ?>','<?php echo $this->__('Select purchase order'); ?>');">
+                                        <?php echo $this->__('Select purchase order').'...'; ?>
+                                    </a>
+                                </div>
+
+                                <input type="hidden" name="associatepo[psio_order_id]" id="associate_po_id">
+                            </td>
+                            <td align="center">
+                                <input type="text" name="associatepo[psio_amount_applied]" value="<?php echo $this->getSupplierInvoice()->getTotalNotApplied(); ?>">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </center>
+        </fieldset>
+    </div>
+
+<?php endif; ?>
+
+
+<?php foreach($this->getSupplierInvoice()->getPurchaseOrders() as $po): ?>
+
+    <p>&nbsp;</p>
+
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend"><?php echo$this->__('Purchase order')?> <a href="<?php echo $this->getPoUrl($po); ?>" target="_blank"><?php echo $po->getpo_order_id(); ?></a></h4>
+        </div>
+        <fieldset id="my-fieldset">
+            <center>
+                <div class="grid">
+                    <table cellspacing="0" class="data">
+                        <thead>
+                        <tr class="headings">
+                            </th><th class="a-center"><?php echo $this->__('Date'); ?>
+                            </th><th class="a-center"><?php echo $this->__('Supply date'); ?>
+                            </th><th class="a-center"><?php echo $this->__('Status'); ?>
+                            </th><th class="a-center"><?php echo $this->__('PO total'); ?>
+                            </th><th class="a-center"><?php echo $this->__('Total applied'); ?> (<?php echo $this->getSupplierInvoice()->getCurrency()->getcurrency_code(); ?>)
+                            </th><th class="a-center"><?php echo $this->__('Delete'); ?>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td align="center">
+                                    <?php echo $po->getpo_date(); ?>
+                                </td>
+                                <td align="center">
+                                    <?php echo $po->getpo_supply_date(); ?>
+                                </td>
+                                <td align="center">
+                                    <?php echo $po->getpo_status(); ?>
+                                </td>
+                                <td align="center">
+                                    <?php echo $po->getCurrency()->formatTxt($po->getTotalTtc()); ?>
+                                </td>
+                                <td align="center">
+                                    <input type="text" name="associatedpo[<?php echo $po->getpsio_id(); ?>][psio_amount_applied]" value="<?php echo $po->getpsio_amount_applied(); ?>">
+                                </td>
+                                <td align="center">
+                                    <input type="checkbox" name="associatedpo[<?php echo $po->getpsio_id(); ?>][delete]" value="1">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3><?php echo $this->__('Products'); ?></h3>
+
+
+                    <table cellspacing="0" class="data">
+                        <thead>
+                            <tr class="headings">
+                                <th class="a-center"><?php echo $this->__('Sku'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Name'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Price in PO'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Qty ordered'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Qty received'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Qty in other documents'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Qty in this document'); ?></th>
+                                <th class="a-center"><?php echo $this->__('Total invoiced qty'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($po->getProducts() as $product): ?>
+                                <?php $qty = $this->getQtyForPop($product); ?>
+                                <tr bgcolor="<?php echo ($qty > 0 ? '#F8ECE0' : ''); ?>">
+                                    <td align="center">
+                                        <?php
+                                        echo $product->getProduct()->getSku();
+                                        if(!Mage::getStoreConfig('purchase/purchase_order/hide_supplier_sku')){
+                                            echo ($product->getpop_supplier_ref()) ? ' / ' . $product->getpop_supplier_ref() : '';
+                                        }
+                                        ?></td>
+
+                                    <td align="center"><?php echo $product->getpop_product_name(); ?></td>
+                                    <td align="center"><?php echo $po->getCurrency()->formatTxt($product->getpop_price_ht()); ?></td>
+                                    <td align="center"><?php echo $product->getpop_qty(); ?></td>
+                                    <td align="center"><?php echo $product->getpop_supplied_qty(); ?></td>
+                                    <td align="center"><?php echo mage::helper('purchase/SupplierInvoice')->getComparisonHtmlColor($this->getProductQtyInOtherInvoices($product),$product->getpop_qty());  ?></td>
+                                    <td align="center"><input type="text" name="associatedpo[<?php echo $po->getpsio_id(); ?>][items][<?php echo $product->getId(); ?>][qty]" value="<?php echo $qty ?>"></td>
+                                    <td align="center"><?php echo mage::helper('purchase/SupplierInvoice')->getComparisonHtmlColor($product->getpop_qty_invoiced(),$product->getpop_qty()); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                </div>
+            </center>
+        </fieldset>
+    </div>
+
+<?php endforeach; ?>

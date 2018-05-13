@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <adminhtml_supplierreturn_return_index>
+	<reference name="content">
+	  <block type="supplierreturn/adminhtml_supplierreturn" name="supplierreturn" />
+	</reference>
+  </adminhtml_supplierreturn_return_index>
+  <adminhtml_supplierreturn_return_ajax>
+    <block type="core/text_list" name="root" output="toHtml">
+      <block type="supplierreturn/adminhtml_supplierreturn_grid" name="supplierreturn" />
+    </block>
+  </adminhtml_supplierreturn_return_ajax>
+  <adminhtml_supplierreturn_return_new>
+        <reference name="content">
+            <block type="supplierreturn/adminhtml_new" name="newreturn" template="supplierreturn/New.phtml" />
+        </reference>
+  </adminhtml_supplierreturn_return_new>
+  <adminhtml_supplierreturn_return_suppliernew>
+        <reference name="content">
+            <block type="supplierreturn/adminhtml_suppliernew" name="suppliernew" template="supplierreturn/Suppliernew.phtml" />
+        </reference>
+    </adminhtml_supplierreturn_return_suppliernew>
+  <adminhtml_supplierreturn_return_edit>
+        <reference name="content">
+            <block type="core/template" name="jsInline" template="supplierreturn/Inlinejs.phtml" />
+        </reference>
+        
+  </adminhtml_supplierreturn_return_edit>
+</layout>

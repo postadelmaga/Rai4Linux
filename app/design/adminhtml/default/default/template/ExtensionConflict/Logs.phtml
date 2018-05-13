@@ -1,0 +1,51 @@
+<div class="entry-edit">
+    <div class="content-header">
+        <table cellspacing="0" class="grid-header">
+            <tr>
+                <td><h3><?php echo $this->__('Logs and Reports') ?></h3></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box" style="margin:20px;">
+        <i><?php echo $this->__('This tool enables you displays here the Magento Logs and Magento Error Reports.') ?></i><br/>
+        <i><?php echo $this->__('Logs are the files stored in /var/log/, and present if you activate the option System > Configuration > Developer > Logs settings -> Enabled.') ?></i><br/>
+        <i><?php echo $this->__('Reports are the files stored in /var/report/, The file name matches with the "number" showed when you get an error screen called "Error report Number"') ?></i><br/>
+        <i><?php echo $this->__('The last report or logs updated are listed in first.') ?></i><br/>
+    </div>
+
+    <div class="box" style="margin:20px;">
+        <table style="width: 100%">
+            <tr>
+                <th>
+                    <?php echo $this->__('Logs');?>
+                </th>
+                <th>
+                    <?php echo $this->__('Reports');?>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $this->getLogFileCombo(); ?>
+                </td>
+                <td>
+                    <?php echo $this->getReportFileCombo(); ?>
+                </td>
+            </tr>
+        </table>
+
+
+    </div>
+
+    <div class="box" style="margin:20px;" id="displayZone">
+
+        <a href="#" onclick="downloadFile();return false;"><?php echo $this->__('Download'); ?></a> <div id="dl_filename"></div>
+        <div style="display: none;" id="dl_filepath"></div>
+        <textarea id="fileDisplayZone" name="fileDisplayZone" rows="50"
+                  style="width: 100%;  box-sizing: border-box; -moz-box-sizing: border-box;-webkit-box-sizing: border-box;">
+
+        </textarea>
+    </div>
+
+</div>
+

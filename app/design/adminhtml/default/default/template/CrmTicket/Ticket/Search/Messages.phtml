@@ -1,0 +1,12 @@
+<div class="entry-edit-head">
+    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Messages'); ?></h4>
+</div>
+<div id="ticket_fieldset" class="fieldset ">
+    <?php foreach ($this->getTicket()->getMessages('ASC') as $message) : ?>
+        <div class="box message-<?php echo $message->getCssStyle(); ?>">
+            <p style="margin-bottom: 15px;"><?php echo $message->getBackofficeMessageHeader(); ?></p>            
+            <div class="box-content"><p><?php echo $message->getctm_content(); ?></p></div>
+            <br />
+        </div>
+    <?php endforeach; ?>
+</div>

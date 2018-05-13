@@ -1,0 +1,10 @@
+<div class="entry-edit">
+
+    <div align="right">
+        <button title="<?php echo $this->__('Refresh'); ?>" type="button" class="scalable " onclick="setLocation('<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/SalesOrderPlanning_ProductAvailabilityStatus/RefreshProductAndGoBackToProductSheet', array('product_id'=> $this->getProduct()->getId())) ;?>');" style=""><span><span><span><?php echo $this->__('Refresh'); ?></span></span></span></button>
+    </div>
+    <p>&nbsp;</p>
+
+    <?php echo $this->getGridParentHtml() ?>
+
+</div>

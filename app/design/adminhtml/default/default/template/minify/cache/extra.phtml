@@ -1,0 +1,62 @@
+<?php
+/** @var $this BurnOut_Minify_Block_Adminhtml_Cache_Extra */
+?>
+<div>
+    <div>
+        <div class="content-header">
+            <table cellspacing="0">
+                <tr>
+                    <td>
+                        <h3><?php echo Mage::helper('adminhtml')->__('Minify: Image Tools') ?></h3>
+                    </td>
+                    <td class="form-buttons">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="form-list">
+            <tr>
+                <td class="scope-label grid-severity-notice">
+                    <span>Pending Optimization: <?php echo $this->getOptimizeProductImageStatus(); ?></span>
+                </td>
+                <td class="scope-label">
+                    Pending Product images for cron optimization
+                </td>
+            </tr>
+            <tr>
+                <td class="scope-label">
+                    <button onclick="setLocation('<?php echo $this->getOptimizeMediaImagesUrl() ?>')" type="button"
+                            class="scalable">
+                        <span><span><span><?php echo Mage::helper('adminhtml')->__('Optimize Media Images') ?></span></span></span>
+                    </button>
+                </td>
+                <td class="scope-label">
+                    <?php echo Mage::helper('adminhtml')->__('Optimize Images located in /media/ folder (excluded product images)') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="scope-label">
+                    <button onclick="setLocation('<?php echo $this->getOptimizeSkinImagesUrl() ?>')" type="button"
+                            class="scalable">
+                        <span><span><span><?php echo Mage::helper('adminhtml')->__('Optimize Template Images') ?></span></span></span>
+                    </button>
+                </td>
+                <td class="scope-label">
+                    <?php echo Mage::helper('adminhtml')->__('Optimize Images located in /skin/ folder') ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="scope-label">
+                    <button onclick="setLocation('<?php echo $this->getClearProductImageUrl() ?>')" type="button"
+                            class="scalable">
+                        <span><span><span><?php echo Mage::helper('adminhtml')->__('Clean Unused Product Images') ?></span></span></span>
+                    </button>
+                </td>
+                <td class="scope-label">
+                    <?php echo Mage::helper('adminhtml')->__('Delete Product Images (and Video thumbnails) not assigned to any products.') ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <?php echo $this->getChildHtml(); ?>
+</div>

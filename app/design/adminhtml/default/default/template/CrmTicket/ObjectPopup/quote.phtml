@@ -1,0 +1,60 @@
+<h1><?php echo $this->getQuoteLink(); ?></h1>
+
+<table border="0" width="100%">    
+   <tr>
+        <td >
+            <div class="entry-edit">
+                <div class="entry-edit-head">
+                    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Quote informations'); ?></h4>
+                </div>
+                <div class="fieldset">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td>
+                                <p><b><?php echo $this->getQuote()->getcaption(); ?></b></p>
+                                <p><?php echo $this->__('Date : %s', $this->getQuote()->getcreated_time()); ?></p>
+                                <p><?php echo $this->__('Status : %s', $this->getQuote()->getstatus()); ?></p>
+                                <p><?php echo $this->__('Store : %s', $this->getStoreName($this->getQuote()->getStoreId())); ?></p>
+
+                                <p><?php echo $this->__('Customer : %s', $this->getQuoteCustomerLink()); ?></p>
+                                <p><?php echo $this->__('Manager : %s', $this->getQuoteManagerName()); ?></p>
+                                <p><?php echo $this->__('Valid until %s', $this->getQuote()->getvalid_end_time()); ?></p>
+                            </td>
+                            <td>
+                                <p><?php echo '<b>'.$this->__('Comment').'</b><br>'.$this->getQuote()->getmessage(); ?></p>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="entry-edit">
+                <div class="entry-edit-head">
+                    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Quote products'); ?></h4>
+                </div>
+                <div class="fieldset">
+                     <table border="0" width="100%">
+                        <tr>
+                            <th><?php echo $this->__('Product'); ?></th>                            
+                            <th class="a-center"><?php echo $this->__('Price Excl. tax'); ?></th>
+                            <th class="a-center"><?php echo $this->__('Qty'); ?></th>
+                            <th class="a-center"><?php echo $this->__('Discount'); ?></th>
+                            
+                        </tr>
+                    <?php foreach($this->getQuote()->getItems() as $item): ?>
+                        <tr>
+                            <td><?php echo $this->getProductItem($item->getproduct_id())->getName(); ?></td>
+                            <td class="a-center"><?php echo (int)$item->getprice_ht(); ?></td>
+                            <td class="a-center"><?php echo (int)$item->getqty(); ?></td>
+                            <td class="a-center"><?php echo $item->getdiscount_purcent().'%'; ?></td>                            
+                        </tr>
+                    <?php endforeach; ?>
+                    </table>
+                </div>
+            </div>
+        </td>
+    </tr>    
+</table>
+
+</div>

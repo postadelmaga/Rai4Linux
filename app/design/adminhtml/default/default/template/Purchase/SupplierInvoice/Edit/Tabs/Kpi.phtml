@@ -1,0 +1,42 @@
+<style>
+
+    .kpi_table
+    {
+        width: 100%
+    }
+
+    .kpi_table th
+    {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #cccccc;
+        padding: 5px;
+        width: 25%;
+    }
+
+    .kpi_table td
+    {
+        text-align: center;
+        font-size: 18px;
+        background-color: #eeeeee;
+        padding: 5px;
+        width: 25%;
+    }
+
+</style>
+
+<table class="kpi_table">
+    <tr>
+        <th><?php echo $this->__('Total'); ?></th>
+        <th><?php echo $this->__('Total paid'); ?></th>
+        <th><?php echo $this->__('Total applied'); ?></th>
+    </tr>
+    <tr>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getpsi_amount()); ?></td>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getpsi_total_paid()); ?></td>
+        <td><?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($this->getSupplierInvoice()->getpsi_total_applied()); ?></td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>

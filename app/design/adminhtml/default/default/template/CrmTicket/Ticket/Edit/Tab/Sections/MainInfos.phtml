@@ -1,0 +1,12 @@
+<div class="entry-edit-head collapseable">
+    <a href="#" name="ticket_link" onclick="javascript:hideDisplayBlock(this, 'ticket_fieldset');" class="open" ><?php echo $this->__('Ticket information'); ?></a>
+</div>
+<div id="ticket_fieldset" class="fieldset" style="display: block;">
+    
+    <?php $this->displaySubTemplate('ImportantInfos.phtml'); ?>
+
+    <?php $this->displaySubTemplate('CustomerDetails.phtml'); ?>
+     
+    <?php $this->displaySubTemplate('Tags.phtml'); ?>                
+      
+</div>

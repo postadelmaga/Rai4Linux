@@ -1,0 +1,16 @@
+<style>
+    .crm_mess_box ul{
+      list-style-type: disc;
+      display: block;
+      margin : 20px !important;
+    }
+    .crm_mess_box li{
+      display: list-item;
+      float: inherit !important;
+    }
+</style>
+
+<div>
+    <input type="hidden" id="ct_id" name="ct_id" value="<?php echo $this->getTicket()->getId(); ?>">
+    <input type="hidden" id="form_key" name="form_key"  value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+</div>

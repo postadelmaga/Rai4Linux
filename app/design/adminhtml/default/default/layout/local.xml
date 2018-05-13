@@ -1,0 +1,11 @@
+<!--
+REMOVE ERROR LOCAL.XML check:
+ - so apache error is not displayed:
+ 'client denied by server configuration: MAGENTO_DIR/app/etc/local.xml'
+ -->
+<layout>
+    <default>
+        <remove name="notification_security" />
+        <remove name="notification_survey" />
+    </default>
+</layout>

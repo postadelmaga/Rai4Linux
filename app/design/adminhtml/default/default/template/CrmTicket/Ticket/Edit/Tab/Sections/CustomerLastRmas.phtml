@@ -1,0 +1,27 @@
+<?php
+$countRmas = $this->getRmaCount();
+if ($countRmas>0):
+$customerRmas = $this->getLastRmas();
+$rmaLimit = $this->getRmaLimit();
+$rmaLimit = ($countRmas<$rmaLimit) ? $countRmas : $rmaLimit; // for display consistancy
+?>
+<div class="entry-edit-head collapseable">
+    <a href="#" name="histo_customer_rmas_link" 
+       onclick="javascript:hideDisplayBlock(this, 'customerRmas_fieldset');"
+       class="close" ><?php echo $this->__('RMA').' ('.$countRmas.')' ?></a>
+</div>
+<div id="customerRmas_fieldset" class="fieldset" style="display: none;">
+    <table class="form-list" id="customer-last-rmas">
+        <tr>
+            <td>
+                <b><?php echo $this->__('Last %s RMAs on %s', $rmaLimit, $countRmas); ?></b><br/>
+                <?php
+                 foreach ($customerRmas as $cRma){
+                     echo '<a href="'.$this->getRmaUrl($cRma).'" target="_blank">'.$this->getRmaMainInfos($cRma).'</a> '.$this->getRmaAdditionnalInfos($cRma).'<br/>';
+                 }
+                ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php endif; ?>

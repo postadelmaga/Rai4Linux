@@ -1,0 +1,301 @@
+<?php
+$currentProduct = Mage::registry('current_product');
+?>
+<?php if ($currentProduct->getId()): ?>
+
+    <?php
+    $base_category_id = Mage::helper('burnout_catalog')->getProductBaseCategoryId($currentProduct);
+
+    $catNetWeight = '';
+    $catCombinedNomenclature = '';
+    if ($base_category_id) {
+        $base_category = Mage::getModel('catalog/category')->load($base_category_id);
+        $catNetWeight = $base_category->getCatNetWeight();
+        $catCombinedNomenclature = $base_category->getCatCombinedNomenclature();
+    }
+    $all_categories_ids = implode(',', $currentProduct->getCategoryIds());
+    ?>
+
+    <script type="text/javascript">
+        $('create_button').hide();
+        $('reset_button').hide();
+        $('combination_status').value = 1;
+        $('combination_visibility').value = 1;
+
+        function pasta(elm) {
+            var rowNr = parseInt(elm.id.split('_')[1]);
+
+            $(elm).on('paste', function () {
+                setTimeout(function () {
+                    var idc = 0;
+                    var rows = elm.value.split(/\n/);
+                    elm.innerHTML = "";
+
+                    for (var i = 0; i <= rows.length; i++) {
+                        idc = i + rowNr;
+                        var sep = /\t/;
+                        if (rows[i].indexOf(/\s/)) {
+                            var sep = /\s/;
+                        }
+                        var flds = rows[i].split(sep);
+                        for (var f = 0; f < flds.length; f++) {
+                            if (flds[f] != "") {
+                                document.getElementsByName('data_fld[' + idc + '][' + f + ']')[0].innerHTML = "";
+                                document.getElementsByName('data_fld[' + idc + '][' + f + ']')[0].innerHTML = flds[f];
+                                document.getElementsByName('data_fld[' + idc + '][' + f + ']')[0].value = flds[f];
+                            }
+                        }
+                    }
+                }, 100);
+            });
+        }
+
+        function createPreview() {
+            var product_name = $('combination_name').value;
+            var uniqueAttributes_multi = $('combination').select('select.multiselect');
+            var combination = Form.serializeElements(uniqueAttributes_multi, true);
+            var url = '<?php echo Mage::getUrl('quickconfpreview/adminhtml_preview/create');?>';
+
+            var params = combination;
+            params['name'] = product_name;
+            params['product_id'] = <?php echo $currentProduct->getId() ?>;
+            params.json = true;
+            new Ajax.Request(url, {
+                parameters: params,
+                onSuccess: function (transport) {
+                    $('reset_button').show();
+                    $('create_button').show();
+                    $('preview_button').hide();
+                    $('preview_area').update(transport.responseText);
+                }
+            });
+        }
+
+        function getPreviewGridValues() {
+            var rows_values = [];
+            var preview_rows = $('preview_area').select('.data tbody tr');
+
+            preview_rows.each(function (row) {
+                    var values = {};
+                    values.category_ids = '<?php echo $all_categories_ids ?>';
+                    values.mpn = row.select('.mpn')[0].value;
+                    values.upc_ean = row.select('.upc_ean')[0].value;
+                    values.net_weight = row.select('.net_weight')[0].value;
+                    values.combined_nomenclature = row.select('.combined_nomenclature')[0].value;
+                    rows_values.push(values);
+                }
+            );
+
+            return rows_values;
+        }
+
+        function resetGrid() {
+            var uniqueAttributes = $('combination').select('select.multiselect');
+
+            $('create_button').hide();
+            $('reset_button').hide();
+
+            for (var x = 0; x < uniqueAttributes.length; ++x) {
+                for (var y = 0; y < uniqueAttributes[x].options.length; ++y) {
+                    uniqueAttributes[x].options[y].selected = false;
+                }
+            }
+
+            $('preview_area').update('');
+            $('preview_button').show();
+        }
+
+        function quickCreationValidation() {
+            var eanIsUnique = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_unique('upc_ean'); ?>);
+            var mpnIsUnique = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_unique('mpn'); ?>);
+            var prodNetWeightIsUnique = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_unique('net_weight'); ?>);
+            var prodCombinedNomenclatureIsUnique = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_unique('combined_nomenclature'); ?>);
+            var eanIsRequired = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_required('upc_ean'); ?>);
+            var mpnIsRequired = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_required('mpn'); ?>);
+            var prodNetWeightIsRequired = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_required('net_weight'); ?>);
+            var prodCombinedNomenclatureIsRequired = parseInt(<?php echo Mage::helper('burnout_quickconfpreview')->is_required('combined_nomenclature'); ?>);
+            var uniqueAttributes = [];
+            var requiredAttributes = [];
+
+            $('display_error').update('');
+            if (mpnIsUnique) uniqueAttributes.push('mpn');
+            if (eanIsUnique) uniqueAttributes.push('upc_ean');
+            if (prodNetWeightIsUnique) uniqueAttributes.push('net_weight');
+            if (prodCombinedNomenclatureIsUnique) uniqueAttributes.push('combined_nomenclature');
+            if (mpnIsRequired) requiredAttributes.push('mpn');
+            if (eanIsRequired) requiredAttributes.push('upc_ean');
+            if (prodNetWeightIsRequired) requiredAttributes.push('net_weight');
+            if (prodCombinedNomenclatureIsRequired) requiredAttributes.push('combined_nomenclature');
+
+            if (requiredAttributes.length) {
+                if (rowRequiredValidation(requiredAttributes)) {
+                    if (uniqueAttributes.length) {
+                        if (rowUniqueValidation(uniqueAttributes)) {
+                            ajaxUniqueValidation(uniqueAttributes);
+                        }
+                    }
+                }
+            }
+            else {
+                return superProduct.quickCombinations();
+            }
+        }
+
+        function rowRequiredValidation(requiredAttributes) {
+            var isValid = true;
+
+            for (var i = 0; i < requiredAttributes.length; i++) {
+                var attribute_code = requiredAttributes[i];
+                var null_values = findNullAttributes(attribute_code);
+                if (null_values.length) {
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    $('display_error').update('Some of the values entered are null.');
+                }
+                return isValid;
+            }
+
+        }
+
+        function findNullAttributes(attribute_code) {
+            if (getNullAttributeValues)
+                var null_values = getNullAttributeValues(attribute_code);
+            //var null_values = getNullValues(values);
+            markNullField(attribute_code, null_values);
+
+            return null_values;
+        }
+
+        function rowUniqueValidation(uniqueAttributes) {
+            var isValid = true;
+
+            for (var i = 0; i < uniqueAttributes.length; i++) {
+                var attribute_code = uniqueAttributes[i];
+                var double_values = validateAttribute(attribute_code);
+                if (double_values.length) {
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                $('display_error').update('Some of the values entered are duplicated.');
+            }
+            return isValid;
+        }
+
+        function validateAttribute(attribute_code) {
+            if (getAttributeValues)
+                var values = getAttributeValues(attribute_code, true);
+            var double_values = getDoubleValues(values);
+            markDoubleField(attribute_code, double_values);
+
+            return double_values;
+        }
+
+        function ajaxUniqueValidation(uniqueAttributes) {
+
+            var values = {};
+            // ajax validation on existing products
+            for (var i = 0; i < uniqueAttributes.length; i++) {
+                var attribute_code = uniqueAttributes[i];
+                var property_name = 'attributes[' + attribute_code + '][]'; // workaroud for ajax and multiple values
+                values[property_name] = getAttributeValues(attribute_code, true);
+            }
+            values.json = true;
+            var url = '<?php echo Mage::getUrl('quickconfpreview/adminhtml_preview/validateAttributeValue');?>';
+            new Ajax.Request(url, {
+                parameters: values,
+                onSuccess: function (transport) {
+                    var response = transport.responseText.evalJSON();
+                    if (response.error) {
+                        $H(response.errorValues).each(function (pair) {
+                            var attribute_code = pair.key;
+                            var double_values = pair.value;
+                            markDoubleField(attribute_code, double_values);
+                        });
+
+                        $('display_error').update('Some of the values entered are already assigned to products.');
+                    }
+
+                    else {
+                        superProduct.quickCombinations()
+                    }
+                }
+            });
+        }
+
+        function getAttributeValues(attribute_code, skipEmpty) {
+            var elements = $('preview_area').select('tr .' + attribute_code);
+            var values = [];
+            elements.each(function (item) {
+                var v = item.value;
+                if (skipEmpty && v == '') {
+                    // do nothing
+                } else {
+                    values.push(item.value);
+                }
+            });
+            return values;
+        }
+
+        function getNullAttributeValues(attribute_code) {
+            var elements = $('preview_area').select('tr .' + attribute_code);
+            var values = [];
+            elements.each(function (item) {
+                var v = item.value;
+                if (v == '') {
+                    values.push(item.value);
+                }
+            });
+            return values;
+        }
+
+        function markDoubleField(attribute_code, double_values) {
+            var elements = $('preview_area').select('tr .' + attribute_code);
+            elements.each(function (item) {
+                var v = item.value;
+                item.setStyle({backgroundColor: 'white'});
+                if (double_values.indexOf(v) != -1) {
+                    item.setStyle({backgroundColor: 'red'});
+                }
+            });
+        }
+
+        function markNullField(attribute_code, null_values) {
+            var elements = $('preview_area').select('tr .' + attribute_code);
+            elements.each(function (item) {
+                var v = item.value;
+                item.setStyle({backgroundColor: 'white'});
+                if (null_values.indexOf(v) != -1) {
+                    item.setStyle({backgroundColor: 'red'});
+                }
+            });
+        }
+
+        function getDoubleValues(arr) {
+            var unique = [];
+            var double = [];
+
+            for (var i = 0; i < arr.length; i++) {
+                var v = arr[i];
+                if (unique.indexOf(v) != -1) {
+                    double.push(v);
+                } else {
+                    unique.push(v);
+                }
+            }
+            return double;
+        }
+
+        function setCategoryValue(code, value) {
+            var numRows = $('preview_table').rows.length;
+            for (var i = 1; i < numRows; i++) {
+                $(code + '_' + i).value = value;
+
+            }
+        }
+
+    </script>
+<?php endif; ?>

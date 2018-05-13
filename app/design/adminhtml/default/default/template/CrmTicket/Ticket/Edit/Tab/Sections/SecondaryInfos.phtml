@@ -1,0 +1,142 @@
+ <div class="entry-edit-head collapseable">
+    <a href="#" name="other_infos_link" onclick="javascript:hideDisplayBlock(this, 'other_fieldset');" class="close" ><?php echo $this->__('Other informations'); ?></a>
+</div>
+<div id="other_fieldset" class="fieldset" style="display: none;">
+    <div class="hor-scroll">
+        <table class="form-list" width="100%">
+            <tbody>                        
+                <tr>
+                    <td class="label"><?php echo $this->__('Created at'); ?> <span class="required">*</span></td>
+                    <td class="value">
+                        <?php echo Mage::helper('core')->formatDate($this->getTicket()->getct_created_at(), 'medium', true); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo $this->__('Updated at'); ?> <span class="required">*</span></td>
+                    <td class="value">
+                        <?php echo Mage::helper('core')->formatDate($this->getTicket()->getct_updated_at(), 'medium', true); ?>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td class="label"><?php echo $this->__('Dead line'); ?></td>
+                    <td class="value">
+                        <?php if ($this->getTicket()->getct_deadline()): ?>
+                            <?php echo Mage::helper('core')->formatDate($this->getTicket()->getct_deadline(), 'medium', true); ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label"><?php echo $this->__('Reply delay'); ?></td>
+                    <td class="value">
+                        <select class="select" name="ticket[ct_reply_delay]" id="ct_reply_delay">
+                            <option value=""><?php echo $this->__('No specific delay'); ?></option>
+                            <?php for($i=1;$i<99;$i++): ?>
+                                <option value="<?php echo $i; ?>" <?php echo ($i == $this->getTicket()->getct_reply_delay() ? ' selected ' : ''); ?>><?php echo $i; ?></option>
+                            <?php endfor; ?>
+                        </select> <i>&nbsp;<?php echo $this->__('hours'); ?></i>
+                    </td>
+                </tr>
+
+                <?php if (Mage::helper('CrmTicket')->allowProductSelection()): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Product'); ?></td>
+                    <td class="value">                        
+                        <select class="select" name="ticket[ct_product_id]" id="ct_manager">
+                            <option value="0">-</option>
+                            <?php foreach ($this->getProducts() as $product) : ?>
+                                <option <?php if ($this->getTicket()->getct_product_id() == $product->getId()) echo "selected" ?> value="<?php echo $product->getId(); ?>"><?php echo $product->getname(); ?></option>
+                            <?php endforeach; ?>
+                        </select>                        
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/show_priority')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Priority'); ?> <span class="required">*</span></td>
+                    <td class="value">
+                        <select class="required-entry select" name="ticket[ct_priority]" id="ct_priority">
+                            <?php foreach ($this->getPriorities() as $priority) : ?>
+                                <option <?php if ($this->getTicket()->getct_priority() == $priority->getId()) echo "selected" ?> value="<?php echo $priority->getId(); ?>"><?php echo $priority->getctp_name(); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/show_cost')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Cost'); ?></td>
+                    <td class="value">
+                        <input type="text" name="ticket[ct_cost]" id="ct_cost" value="<?php echo $this->getTicket()->getct_cost(); ?>">
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/show_public')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Is public'); ?> <span class="required">*</span></td>
+                    <td class="value">
+                        <select class="required-entry select" name="ticket[ct_is_public]" id="ct_is_public">
+                            <?php foreach ($this->getBooleans() as $k => $v) : ?>
+                                <option <?php if ($this->getTicket()->getct_is_public() == $k) echo "selected" ?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/change_email_account')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Email account'); ?> <span class="required">*</span></td>
+                    <td class="value">
+                        <select class="required-entry select" name="ticket[ct_email_account]" id="ct_is_public">
+                            <option value=""><?php echo $this->__('No email account selected'); ?></option>
+                            <?php foreach ($this->getEmailAccounts() as $emailAccount) : ?>
+                                <option <?php if ($this->matchEmailAccount($emailAccount)) echo "selected" ?> value="<?php echo $emailAccount->getConsolidedLogin() ?>"><?php echo $emailAccount->getcea_name(); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <tr>
+                    <td class="label"><?php echo $this->__('CC email'); ?></td>
+                    <td class="value">
+                        <input class="input-text" type="text"
+                               size="99%" name="ticket[ct_cc_email]" id="ct_cc_email"
+                               value="<?php echo $this->getTicket()->getct_cc_email(); ?>">
+                    </td>
+                </tr>
+
+                
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/show_invoicing_status')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Invoicing status'); ?></td>
+                    <td class="value">
+                        <select class="select" name="ticket[ct_invoicing_status]" id="ct_invoicing_status">
+                            <?php foreach ($this->getInvoicingStatus() as $k => $v) : ?>
+                                <option <?php if ($this->getTicket()->getct_invoicing_status() == $k) echo "selected" ?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                <?php if (Mage::getStoreConfig('crmticket/ticket_data/show_sticky')): ?>
+                <tr>
+                    <td class="label"><?php echo $this->__('Sticky ticket'); ?></td>
+                    <td class="value">
+                        <select class="select" name="ticket[ct_sticky]" id="ct_sticky">
+                            <?php foreach ($this->getBooleans() as $k => $v) : ?>
+                                <option <?php if ($this->getTicket()->getct_sticky() == $k) echo "selected" ?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

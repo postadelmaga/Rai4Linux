@@ -1,0 +1,261 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+$orderId = $this->getRequest()->getParam('order_id');
+$getShippingURL = Mage::helper('adminhtml')->getUrl('ship/index/shipping/order_id/' . $orderId);
+
+?>
+<?php /** @var $this Mage_Adminhtml_Block_Sales_Order_View_Tab_Info */ ?>
+<?php
+
+$_order = $this->getOrder();
+$method = $_order->getShippingDescription();
+
+$shipmentCollection = Mage::getResourceModel('sales/order_shipment_collection')
+    ->setOrderFilter($_order->getId())->load();
+$ub = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+
+foreach ($shipmentCollection as $shipment) {
+
+    foreach ($shipment->getAllTracks() as $tracknum) {
+        $tracknums[] = $tracknum->getNumber();
+    }
+
+}
+
+$trkUrl = $this->helper('shipping')->getTrackingPopupUrlBySalesModel($_order);
+
+?>
+<div>
+<div id="order-messages">
+    <?php echo $this->getChildHtml('order_messages') ?>
+</div>
+<?php echo $this->getChildHtml('order_info') ?>
+<input type="hidden" name="order_id" value="<?php echo $_order->getId() ?>"/>
+<?php if ($_order->getIsVirtual()): ?>
+<div class="box-right">
+    <?php else: ?>
+    <div class="box-left">
+        <?php endif; ?>
+        <!--Payment Method-->
+        <div class="entry-edit">
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-payment-method"><?php echo Mage::helper('sales')->__('Payment Information') ?></h4>
+            </div>
+            <fieldset>
+                <?php echo $this->getPaymentHtml() ?>
+                <div><?php echo Mage::helper('sales')->__('Order was placed using %s', $_order->getOrderCurrencyCode()) ?></div>
+            </fieldset>
+        </div>
+    </div>
+    <?php if (!$_order->getIsVirtual()): ?>
+        <div class="box-right">
+            <!--Shipping Method-->
+            <div class="entry-edit">
+                <div class="entry-edit-head">
+                    <h4 class="icon-head head-shipping-method"><?php echo Mage::helper('sales')->__('Shipping &amp; Handling Information') ?></h4>
+                </div>
+                <fieldset>
+                    <div id="order-shipping-method-info">
+                        <?php if ($_order->getTracksCollection()->count()) : ?>
+                            <a href="#" id="linkId"
+                               onclick="popWin('<?php echo $trkUrl; ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')"
+                               title="<?php echo $this->__('Track Order') ?>"><?php echo $this->__('Track Order') ?></a>
+                            <br/>
+                        <?php endif; ?>
+                        <?php if ($_order->getShippingDescription()): ?>
+                            <strong
+                                id="order-shipping-method-info_description"><?php echo $this->escapeHtml($_order->getShippingDescription()) ?></strong>
+
+                            <?php if ($this->helper('tax')->displayShippingPriceIncludingTax()): ?>
+                                <?php $_excl = $this->displayShippingPriceInclTax($_order); ?>
+                            <?php else: ?>
+                                <?php $_excl = $this->displayPriceAttribute('shipping_amount', false, ' '); ?>
+                            <?php endif; ?>
+                            <?php $_incl = $this->displayShippingPriceInclTax($_order); ?>
+
+                            <?php echo $_excl; ?>
+                            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php echo $this->helper('sales')->__('No shipping information available'); ?>
+                        <?php endif; ?>
+
+                    </div>
+                    <div id="order-shipping-method-choose" style="display:none">
+                        <dl class="shipment-methods">
+                            <?php $_shippingRateGroups = $this->getShippingRates(); ?>
+                            <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+                                <?php
+                                $hidden = Mage::getStoreConfig('carriers/' . $code . '/hide_on_checkout');
+                                $style = $hidden ? "style='color:#04f'" : "";
+                                $rsv = $hidden ? " (reserved)" : "";
+                                ?>
+                                <dt>
+                                    <strong <?php echo $style; ?>><?php echo $this->escapeHtml($this->getCarrierName($code)) . $rsv ?></strong>
+                                </dt>
+                                <dd>
+                                    <ul>
+                                        <?php foreach ($_rates as $_rate): ?>
+                                            <?php $_radioProperty = 'name="order[shipping_method]" type="radio" onclick="setShippingMethod(this);"'; ?>
+                                            <?php $_code = $_rate->getCode() ?>
+                                            <li>
+                                                <?php if ($_rate->getErrorMessage()): ?>
+                                                    <ul class="messages">
+                                                        <li class="error-msg"><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li>
+                                                    </ul>
+                                                <?php else: ?>
+                                                    <?php $_checked = $this->isMethodActive($_code) ? 'checked="checked"' : '' ?>
+                                                    <input <?php echo $_radioProperty ?>
+                                                        id="s_method_<?php echo $_code ?>" <?php echo $_checked ?>/>
+                                                    <?php $_hiddenValue = $_code . '||' . $this->escapeHtml($this->getCarrierName($code)) . '||' . $this->escapeHtml($_rate->getMethodTitle() ? $_rate->getMethodTitle() : $_rate->getMethodDescription()); ?>
+                                                    <input type="hidden" id="s_method_<?php echo $_code ?>_hidden"
+                                                           name="order_id" value="<?php echo $_hiddenValue; ?>"/>
+                                                    <label class="normal" for="s_method_<?php echo $_code ?>">
+                                                        <?php echo $this->escapeHtml($_rate->getMethodTitle() ? $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                                                        -
+                                                        <strong>
+                                                            <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                                                            <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+
+                                                            <?php echo $_excl; ?>
+                                                            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                                                (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                                                            <?php endif; ?>
+                                                        </strong>
+                                                    </label>
+                                                <?php endif ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </dd>
+                            <?php endforeach; ?>
+                        </dl>
+                    </div>
+                    <div id="order-shipping-method-choose-link">
+                            <span>
+                                <a href="#" onclick="showShippingMethods();return false;">
+                                    Change Shipping Method (NOTE: Price will not be changed)
+                                </a>
+                            </span>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="clear"></div>
+    <?php echo $this->getGiftOptionsHtml() ?>
+    <div class="clear"></div>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-products"><?php echo Mage::helper('sales')->__('Items Ordered') ?></h4>
+        </div>
+    </div>
+    <?php echo $this->getItemsHtml() ?>
+    <div class="clear"></div>
+
+    <div class="box-left">
+        <div class="entry-edit">
+            <div class="entry-edit-head">
+                <h4><?php echo Mage::helper('sales')->__('Comments History') ?></h4>
+            </div>
+            <fieldset><?php echo $this->getChildHtml('order_history') ?></fieldset>
+        </div>
+    </div>
+    <div class="box-right entry-edit">
+        <div class="entry-edit-head"><h4><?php echo Mage::helper('sales')->__('Order Totals') ?></h4></div>
+        <div class="order-totals"><?php echo $this->getChildHtml('order_totals') ?></div>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<?php echo $this->getChildHtml('popup_window'); ?>
+<script type="text/javascript">
+    //<![CDATA[
+    function setShippingMethod(input) {
+        var methodInfo = $(input.id + '_hidden').value;
+        var orderId = <?php echo $this->getOrder()->getId(); ?>;
+        var url = '<?php echo $this->getChangeShippingUrl(); ?>';
+        msg = 'Are you sure you want to change the shipping methods ? \n (Note: the shipping price will not be changed)';
+
+        if (confirm(msg)) {
+            new Ajax.Request(url, {
+                onSuccess: function (response) {
+                    $('order-shipping-method-info_description').update(response.responseText);
+                    hideShippingMethods();
+                },
+                method: 'post',
+                parameters: {
+                    'orderId': orderId,
+                    'shippingMethodInfo': methodInfo
+                }
+            });
+        }
+        else {
+            hideShippingMethods();
+        }
+        return true;
+    }
+    function hideShippingMethods() {
+        $('order-shipping-method-info').setStyle({
+            border: 'none'
+        });
+        $('order-shipping-method-choose-link').show();
+        $('order-shipping-method-choose').hide();
+        return true;
+    }
+    function showShippingMethods() {
+        $('order-shipping-method-info').setStyle({
+            border: '2px solid black'
+        });
+        $('order-shipping-method-choose-link').hide();
+        $('order-shipping-method-choose').show();
+        return true;
+    }
+
+    /**
+     * Retrieve gift options tooltip content
+     */
+    function getGiftOptionsTooltipContent(itemId) {
+        var contentLines = [];
+        var headerLine = null;
+        var contentLine = null;
+
+        $$('#gift_options_data_' + itemId + ' .gift-options-tooltip-content').each(function (element) {
+            if (element.down(0)) {
+                headerLine = element.down(0).innerHTML;
+                contentLine = element.down(0).next().innerHTML;
+                if (contentLine.length > 30) {
+                    contentLine = contentLine.slice(0, 30) + '...';
+                }
+                contentLines.push(headerLine + ' ' + contentLine);
+            }
+        });
+        return contentLines.join('<br/>');
+    }
+    giftOptionsTooltip.setTooltipContentLoaderFunction(getGiftOptionsTooltipContent);
+    //]]>
+</script>

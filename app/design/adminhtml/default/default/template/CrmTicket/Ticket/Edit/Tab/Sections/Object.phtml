@@ -1,0 +1,43 @@
+<?php /* -------------------------- OBJECT ----------------------------------------------------------------------------------- */ ?>
+<?php if (Mage::helper('CrmTicket')->allowCustomerObjectSelection()): ?>
+
+    <div class="entry-edit-head collapseable">
+      <a href="#" name="object_link" id="object_fieldset_link" onclick="javascript:hideDisplayBlock(this, 'object_fieldset');" class="open" ><?php echo $this->__('Object'); ?></a>
+    </div>
+    <div id="object_fieldset" class="fieldset" style="display: block;">
+
+        <select onchange="refreshObject(this.value)" class="select" name="ticket[ct_object_id]" id="ct_object_id">
+            <option value="">-</option>
+            <?php foreach ($this->getCustomerObjects() as $group => $items) : ?>
+                <optgroup label="<?php echo $group; ?>">
+                    <?php foreach($items as $k => $v): ?>
+                        <option <?php if ($this->getTicket()->getct_object_id() == $k) echo "selected" ?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
+                    <?php endforeach; ?>
+                </optgroup>
+            <?php endforeach; ?>
+        </select>
+        <br/>
+        <br/>
+        <div id="ticket_object" style="margin-bottom:15px;" class="fieldset" >
+            <?php
+              //load current object selected
+              $ticketObjectId = $this->getTicket()->getct_object_id();
+              if (!empty($ticketObjectId)) {
+
+                $html = mage::helper('CrmTicket/Customer')->getCustomerObjectContent($ticketObjectId);
+
+                if($html){
+                  echo '<div>'.$html;
+                }
+              }
+            ?>
+        </div>
+        <?php if($this->getCustomerObjectsCount() == 0): ?>
+            <script>
+                document.getElementById('object_fieldset').style.display = 'none';
+                document.getElementById('object_fieldset_link').className = 'close';
+            </script>
+        <?php endif; ?>
+
+    </div>
+<?php endif; ?>

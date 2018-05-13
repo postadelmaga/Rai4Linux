@@ -1,0 +1,28 @@
+<?php
+$countQuotes = $this->getQuoteCount();
+if ($countQuotes>0):
+$customerQuotes = $this->getLastQuotes();
+$quoteLimit = $this->getQuoteLimit();
+$quoteLimit = ($countQuotes<$quoteLimit) ? $countQuotes : $quoteLimit; // for display consistancy
+ ?>
+<div class="entry-edit-head collapseable">
+    <a href="#" name="histo_customer_quotes_link"
+       onclick="javascript:hideDisplayBlock(this, 'customerQuotes_fieldset');"
+       class="close" ><?php echo $this->__('Quotes').' ('.$countQuotes.')' ?></a>
+</div>
+<div id="customerQuotes_fieldset" class="fieldset" style="display: none;">
+    <table class="form-list" id="customer-last-quotes">
+        <tr>
+            <td>
+                <b><?php echo $this->__('Last %s quotes on %s', $quoteLimit, $countQuotes); ?></b><br/>
+                <?php
+                 foreach ($customerQuotes as $cQuote){
+                     echo '<a href="'.$this->getQuoteUrl($cQuote).'" target="_blank">'.$this->getQuoteMainInfos($cQuote).'</a> '.$this->getQuoteAdditionnalInfos($cQuote).'<br/>';
+                 }
+                ?>
+            </td>
+        </tr>
+
+    </table>
+</div>
+<?php endif; ?>

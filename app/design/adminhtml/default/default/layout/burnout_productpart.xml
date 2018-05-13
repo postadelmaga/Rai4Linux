@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<layout>
+    <!--MASTER LIST-->
+    <adminhtml_partmasterlist_index>
+        <reference name="content">
+            <block type="burnout_productpart/adminhtml_partMasterList_import" name="productpart.import"/>
+            <block type="burnout_productpart/adminhtml_partMasterList" name="productpart.index"/>
+        </reference>
+    </adminhtml_partmasterlist_index>
+
+    <adminhtml_partmasterlist_grid>
+        <block type="burnout_productpart/adminhtml_partMasterList_grid" name="productpart.grid" output="toHtml"/>
+    </adminhtml_partmasterlist_grid>
+
+    <adminhtml_partmasterlist_new>
+        <update handle="adminhtml_partmasterlist_edit"/>
+    </adminhtml_partmasterlist_new>
+
+    <adminhtml_partmasterlist_edit>
+        <reference name="content">
+            <block type="burnout_productpart/adminhtml_partMasterList_edit" name="productpart.edit"/>
+        </reference>
+        <reference name="left">
+            <block type="burnout_productpart/adminhtml_partMasterList_edit_tabs" name="productpart_edit_tabs">
+                <block type="burnout_productpart/adminhtml_partMasterList_edit_tab_general"
+                       name="productpart_edit_tab_general"/>
+                <action method="addTab">
+                    <name>general</name>
+                    <block>productpart_edit_tab_general</block>
+                </action>
+                <block type="burnout_productpart/adminhtml_partMasterList_edit_tab_product"
+                       name="productpart_edit_tab_product"/>
+                <action method="addTab">
+                    <name>products</name>
+                    <block>productpart_edit_tab_product</block>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_partmasterlist_edit>
+
+    <adminhtml_partmasterlist_productgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="burnout_productpart/adminhtml_partMasterList_edit_tab_product_grid"
+                   name="productpart_edit_tab_product_grid"/>
+        </block>
+    </adminhtml_partmasterlist_productgrid>
+    <!--MASTER LIST-->
+
+    <!-- PRODUCT DETAILS-->
+    <!--FORM CATALOG.XML-->
+    <HANDLE_CONFIGURABLE_NEW>
+        <remove name="product_tabs"/>
+        <reference name="left">
+            <block type="adminhtml/catalog_product_edit_tabs_configurable" name="configurable_product_tabs"></block>
+        </reference>
+    </HANDLE_CONFIGURABLE_NEW>
+
+    <HANDLE_CONFIGURABLE>
+        <reference name="product_tabs">
+            <action method="addTab"><name>configurable</name><block>adminhtml/catalog_product_edit_tab_super_config</block></action>
+            <action method="bindShadowTabs"><first>configurable</first><second>customer_options</second></action>
+        </reference>
+    </HANDLE_CONFIGURABLE>
+
+    <adminhtml_catalog_product_configurable_multi_part_new>
+        <update handle="HANDLE_CONFIGURABLE_NEW"/>
+        <update handle="HANDLE_GALLERY_BURNOUT_SWATCHES"/>
+        <reference name="left">
+            <remove name="configurable_product_tabs"/>
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tabs_configurableMultiPart"
+                   name="multiconfigurable_product_tabs"/>
+        </reference>
+    </adminhtml_catalog_product_configurable_multi_part_new>
+
+    <adminhtml_catalog_product_configurable_multi_part>
+        <update handle="HANDLE_CONFIGURABLE"/>
+        <update handle="HANDLE_GALLERY_BURNOUT_SWATCHES"/>
+        <reference name="head">
+            <action method="addJs">
+                <script>burnout_productpart/adminhtml/product_update.js</script>
+            </action>
+            <action method="addJs">
+                <script>burnout_productpart/adminhtml/swatchesgrids.js</script>
+            </action>
+        </reference>
+        <reference name="product_tabs">
+            <action method="addTab">
+                <name>configurable</name>
+                <block>burnout_productpart/adminhtml_catalog_product_edit_tabs_super_config</block>
+            </action>
+            <action method="bindShadowTabs">
+                <first>configurable</first>
+                <second>customer_options</second>
+            </action>
+        </reference>
+    </adminhtml_catalog_product_configurable_multi_part>
+
+    <adminhtml_catalog_product_superconfigmultipart>
+        <block type="burnout_productpart/adminhtml_catalog_product_edit_tabs_super_config_grid"
+               name="admin.product.edit.tab.super.config.grid" output="toHtml"/>
+    </adminhtml_catalog_product_superconfigmultipart>
+    <!--PRODUCT DETAILS: ASSOCIATED PRODUCTS-->
+
+    <!--PRODUCT DETAILS: PART SELECTOR -->
+
+    <adminhtml_catalog_product_new>
+        <reference name="product_tabs">
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tab_partSelector" name="product_part_tab_block"/>
+            <action method="addTab">
+                <htmlid>product_part_tab</htmlid>
+                <blockname>product_part_tab_block</blockname>
+            </action>
+        </reference>
+    </adminhtml_catalog_product_new>
+
+    <adminhtml_catalog_product_edit>
+        <reference name="product_tabs">
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tab_partSelector" name="product_part_tab_block"/>
+            <action method="addTab">
+                <htmlid>product_part_tab</htmlid>
+                <blockname>product_part_tab_block</blockname>
+            </action>
+        </reference>
+    </adminhtml_catalog_product_edit>
+
+    <adminhtml_productparttab_index>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tabs_universal"
+                   name="catalog.product.edit.tabs.productpartcheckbox"/>
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tabs_productPartGrid"
+                   name="catalog.product.edit.tabs.productpartgrid"/>
+            <block type="adminhtml/widget_grid_serializer" name="custom_grid_serializer">
+                <reference name="custom_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>catalog.product.edit.tabs.productpartgrid</grid_block_name>
+                        <data_callback>getSavedPartPids</data_callback>
+                        <hidden_input_name>parts[part_pids]</hidden_input_name>
+                        <reload_param_name>parts_id</reload_param_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_productparttab_index>
+    <adminhtml_productparttab_grid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="burnout_productpart/adminhtml_catalog_product_edit_tabs_productPartGrid"
+                   name="catalog.product.edit.tabs.productpartgrid"/>
+        </block>
+    </adminhtml_productparttab_grid>
+    <!--PRODUCT DETAILS: PART SELECTOR -->
+
+    <!--SALES ITEM RENDERER-->
+    <adminhtml_sales_order_view>
+        <reference name="order_items">
+            <action method="addColumnRender">
+                <column>name</column>
+                <block>burnout_productpart/adminhtml_sales_items_column_name_configurableMultiPart</block>
+                <template>sales/items/column/name.phtml</template>
+                <type>configurable_part</type>
+            </action>
+        </reference>
+    </adminhtml_sales_order_view>
+    <!--<adminhtml_sales_order_creditmemo_view>-->
+    <!--<reference name="creditmemo_items">-->
+    <!--</reference>-->
+    <!--</adminhtml_sales_order_creditmemo_view>-->
+    <!--SALES ITEM RENDERER-->
+</layout>

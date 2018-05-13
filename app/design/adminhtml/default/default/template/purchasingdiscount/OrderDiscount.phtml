@@ -1,0 +1,30 @@
+<div class="entry-edit" style="margin-left:10px; margin-right:10px;">
+    <div class="entry-edit-head">
+	    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo Mage::helper("purchasingdiscount")->__("Discount info")?></h4>
+	    <div class="form-buttons"></div>
+	</div>
+	<div class="fieldset " id="purchasingdiscount_form">
+	    <div class="hor-scroll">
+	        <table class="form-list" cellspacing="0">
+	            <tbody>
+	                <tr>
+					    <td class="label"><label for="po_base_discount"><?php echo Mage::helper("purchasingdiscount")->__("Base discount")?></label></td>
+					    <td class="value"><input id="po_base_discount" name="po_base_discount" value="<?php echo $this->base_discount()?>" class="validate-digits-range digits-range-0-100 " type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="po_first_additionnal_discount"><?php echo Mage::helper("purchasingdiscount")->__("Additionnal discount")?></label></td>
+					    <td class="value"><input id="po_first_additionnal_discount" name="po_first_additionnal_discount" value="<?php echo $this->first_additionnal_discount()?>" class="validate-digits-range digits-range-0-100 " type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="po_second_additionnal_discount"><?php echo Mage::helper("purchasingdiscount")->__("Additionnal2 discount")?></label></td>
+					    <td class="value"><input id="po_second_additionnal_discount" name="po_second_additionnal_discount" value="<?php echo $this->second_additionnal_discount()?>" class="validate-digits-range digits-range-0-100 " type="text">%</td>
+				    </tr>
+					<tr>
+					    <td class="label"><label for="po_cash_discount"><?php echo Mage::helper("purchasingdiscount")->__("Cash discount")?></label></td>
+					    <td class="value"><input id="po_cash_discount" name="po_cash_discount" value="<?php echo $this->cash_discount()?>" class="validate-digits-range digits-range-0-100 " type="text">%</td>
+				    </tr>
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+</div>

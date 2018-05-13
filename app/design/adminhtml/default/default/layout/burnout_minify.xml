@@ -1,0 +1,9 @@
+<layout>
+    <adminhtml_cache_index>
+        <reference name="content">
+            <block type="burnout_minify/adminhtml_cache_extra" name="cache.minify" template="minify/cache/extra.phtml">
+                <block type="burnout_minify/adminhtml_cache_extra_log" name="log_grid"/>
+            </block>
+        </reference>
+    </adminhtml_cache_index>
+</layout>

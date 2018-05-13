@@ -1,0 +1,25 @@
+ <?php if (Mage::getStoreConfig('crmticket/attachements/allow_attachement_on_ticket')): ?>
+    <?php /* -------------------------- ATTACHMENTS ----------------------------------------------------------------------------------- */ ?>
+    <div class="entry-edit-head collapseable">
+        <a href="#" name="attachements_link" onclick="javascript:hideDisplayBlock(this, 'attachements_fieldset');" class="open" ><?php echo $this->__('Attachments'); ?></a>
+    </div>
+    <div id="attachements_fieldset" class="fieldset" style="display: block;">
+        <?php foreach ($this->getTicket()->getAttachments() as $attachment): ?>
+            <div class="crm-attachment">
+                <?php
+                $attFileName=$attachment->getFileName();
+                if($attachment->canPreview()): ?>
+                  <a href="#" onclick="showImageAttachementPopup('<?php echo $this->getAttachmentDownloadLink($attachment); ?>','<?php echo $attFileName; ?>')"><?php echo $attFileName; ?></a>
+                <?php else: ?>
+                  <a href="<?php echo $this->getAttachmentDownloadLink($attachment); ?>"><?php echo $attFileName; ?></a>
+                 <?php endif; ?>
+                  &nbsp;<a href="<?php echo $this->getAttachmentDeleteLink($attachment); ?>"><img src="<?php echo $this->getSkinUrl('images/cancel_icon.gif') ?>" /></a>
+            </div>
+        <?php endforeach; ?>
+
+        <p>
+            <?php echo $this->__('Add attachment : '); ?>
+            <input type="file" name="new_attachment" id="new_attachment">
+        </p>
+    </div>
+<?php endif; ?>

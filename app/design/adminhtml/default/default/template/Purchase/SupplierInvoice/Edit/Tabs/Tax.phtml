@@ -1,0 +1,99 @@
+
+<p>&nbsp;</p>
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo$this->__('Add a new tax record')?></h4>
+    </div>
+    <fieldset id="my-fieldset">
+        <center>
+            <div class="grid">
+                <table cellspacing="0" class="data">
+                    <thead>
+                    <tr class="headings">
+                        </th><th class="a-center"><?php echo $this->__('Tax class'); ?></th>
+                        <th class="a-center"><?php echo $this->__('Value'); ?> (<?php echo $this->getSupplierInvoice()->getCurrency()->getcurrency_code(); ?>)</th>
+                        <?php if ($this->getSupplierInvoice()->getCurrency()->getcurrency_code() != Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE)): ?>
+                            <th class="a-center"><?php echo $this->__('Value'); ?> (<?php echo Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE); ?>)</th>
+                        <?php endif; ?>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td align="center">
+                            <select name="newtax[psit_tax_id]">
+                                <option></option>
+                                <?php foreach($this->getTaxClasses() as $taxClass): ?>
+                                    <option value="<?php echo $taxClass->getId(); ?>"><?php echo $taxClass->getptr_name(); ?> (<?php echo $taxClass->getptr_value(); ?>%)</option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td align="center">
+                            <input type="text" name="newtax[psit_amount]">
+                        </td>
+                        <?php if ($this->getSupplierInvoice()->getCurrency()->getcurrency_code() != Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE)): ?>
+                            <td align="center">
+                                <input type="text" name="newtax[psit_amount_base]">
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </center>
+    </fieldset>
+</div>
+
+<p>&nbsp;</p>
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo$this->__('Tax records')?></h4>
+    </div>
+    <fieldset id="my-fieldset">
+        <center>
+            <div class="grid">
+                <table cellspacing="0" class="data">
+                    <thead>
+                    <tr class="headings">
+                        <th class="a-center"><?php echo $this->__('Tax class'); ?></th>
+                        <th class="a-center"><?php echo $this->__('Value'); ?> (<?php echo $this->getSupplierInvoice()->getCurrency()->getcurrency_code(); ?>)</th>
+                        <?php if ($this->getSupplierInvoice()->getCurrency()->getcurrency_code() != Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE)): ?>
+                            <th class="a-center"><?php echo $this->__('Value'); ?> (<?php echo Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE); ?>)</th>
+                        <?php endif; ?>
+                        <th class="a-center"><?php echo $this->__('Delete'); ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($this->getSupplierInvoice()->getTaxRecords()->getSize() > 0): ?>
+                        <?php foreach($this->getSupplierInvoice()->getTaxRecords() as $taxRecord): ?>
+                            <tr>
+                                <td align="center">
+                                    <?php echo $taxRecord->getpsit_title(); ?> (<?php echo $taxRecord->getpsit_percent(); ?>%)
+                                </td>
+                                <td align="center">
+                                    <?php echo $this->getSupplierInvoice()->getCurrency()->formatTxt($taxRecord->getpsit_amount()); ?>
+                                </td>
+                                <?php if ($this->getSupplierInvoice()->getCurrency()->getcurrency_code() != Mage::getStoreConfig(Mage_Directory_Model_Currency::XML_PATH_CURRENCY_BASE)): ?>
+                                    <td align="center">
+                                        <?php echo $this->getBaseCurrency()->formatTxt($taxRecord->getpsit_amount_base()); ?>
+                                    </td>
+                                <?php endif; ?>
+                                <td align="center">
+                                    <input type="checkbox" name="taxrecords[<?php echo $taxRecord->getId(); ?>][delete]" value="1">
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td align="center" colspan="6">
+                                <?php echo $this->__('No tax record'); ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </center>
+    </fieldset>
+</div>

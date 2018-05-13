@@ -1,0 +1,11 @@
+<?php /* -------------------------- MESSAGES VIEW ----------------------------------------------------------------------------------- */ ?>
+<div id="history_block">
+  <div class="entry-edit-head collapseable">      
+      <div class="open" >
+          <button onclick="refreshTicketMessagesAjax(true);" type="button"><span><?php echo $this->__('Refresh message list') ?></span></button>
+      </div>
+  </div>
+  <div id="history_fieldset" class="fieldset " style="display: block;">     
+     <?php $this->displaySubTemplate('MessageList.phtml'); ?>
+  <div>
+</div>

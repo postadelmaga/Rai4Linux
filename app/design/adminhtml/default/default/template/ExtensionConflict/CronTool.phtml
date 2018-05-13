@@ -1,0 +1,111 @@
+<div class="entry-edit">
+
+    <div class="content-header">
+        <table cellspacing="0" class="grid-header">
+            <tr>
+                <td><h3><?php echo $this->__('Cron Tool') ?></h3></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box" style="margin:20px;">
+        <p><h3><?php echo $this->__('Cron Tool description'); ?></h3></p>
+        <p><?php echo $this->__('This tool has been made in order to help you to identify cron problems.'); ?></p>
+        <p><?php echo $this->__('It reports all parts you need to check in case of cron issues.'); ?></p>
+        <br>
+        <p><?php echo $this->__('Cron Tool sections list '); ?></p>
+        <p><?php echo $this->__(' 1) Magento Cron settings : compares recommended Cron settings with yours.'); ?></p>
+        <p><?php echo $this->__(' 2) Magento "Cron schedule" table analysis : displays tasks with pending, running and success statuses
+                                    , displaying them in red if they have been scheduled more than 5mn ago
+                                    , adding a duration column which allow you to see time elapsed between "executed at" and "finished at" date.'); ?></p>
+        <p><?php echo (mage::helper('ExtensionConflict/CronTool')->checkErpEnable()) ? $this->__(' 3) ERP Cron results : displays ErpCron state (enabled/disabled)
+                                                                                                    , and a warning if it is enabled without any background task executed in the last 5 minutes.')
+                                                                                                    : ''; ?></p>
+    </div>
+
+    <div class="grid">
+        <table>
+            <thead>
+            <tr class="headings" >
+                <th class="a-center" colspan="8"><?php echo $this->__('Magento cron settings '); ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th class="a-center"><?php echo $this->__('Magento settings names') ?></th>
+                <th class="a-center"><?php echo $this->__('Recommended Magento settings') ?></th>
+                <th class="a-center">
+                    <p><i><a href="<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/system_config/edit/', array('section' => 'system'));?>" target="_blank">
+                                <?php echo $this->__('Your settings'); ?></a></i></p>
+                </th>
+            </tr>
+            <?php
+            $cronToolDefaultDataMagentoCronSettings = mage::helper('ExtensionConflict/CronTool')->getCronToolDefaultMagentoCronSettings();
+            $cronToolCurrentDataMagentoCronSettings = mage::helper('ExtensionConflict/CronTool')->getCronToolCurrentMagentoCronSettings();
+
+            foreach($cronToolDefaultDataMagentoCronSettings as $text => $defaultSettingValue) {
+                echo '<tr>';
+                    echo '<td class="a-center">'.$text.'</td>';
+                    echo '<td class="a-center">'.$defaultSettingValue.'</td>';
+                    $currentValue = $cronToolCurrentDataMagentoCronSettings[$text];
+                    $color = ((int)$defaultSettingValue !== (int)$currentValue)?'red':'black';
+                    echo '<td class="a-center"><p style="color: '.$color.';">'.$currentValue.'</p></td>';
+                echo '</tr>';
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="grid">
+            <table>
+                <thead>
+                    <tr class="headings" >
+                        <th class="a-center" colspan="8"><?php echo $this->__('Magento "Cron schedule" :  Pending and running tasks '); ?></th>
+                    </tr>
+                </thead>
+            </table>
+    </div>
+    <?php echo $this->getGridParentHtml(); ?>
+    <br>
+    <?php
+    if(mage::helper('ExtensionConflict/CronTool')->isErpInstalled()) {
+    ?>
+        <div class="grid">
+            <table>
+                <thead>
+                <tr class="headings">
+                    <th class="a-center"><?php echo $this->__('ERP cron results') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="a-center">
+                        <?php
+                        if (mage::helper('ExtensionConflict/CronTool')->checkErpEnable()) {
+                            echo $this->__('<p align="center" style = "color:green;"><b>ErpCron is enabled</b></p>');
+
+                            if (mage::helper('ExtensionConflict/CronTool')->getLastScheduledTime('success', 'backgroundtasks')) {
+                                echo $this->__('<font color="red">WARNING :<br>');
+                                echo $this->__('ErpCron is currently enabled but no successful background task has been found in the last 5mn,<br>');
+                                echo $this->__('you need to set a cron task on /scripts/cron/erpcron.php (see it with your web hosting company) and then schedule it to run every minute.</font><br>');
+                            }
+
+                            echo $this->__('e.g : If this option is enabled, make sure that you have a cron task set on /scripts/cron/erpcron.php every minute, more information : <br>');
+                            echo $this->__('<p><i><a href="http://documentation.boostmyshop.com/embedded_erp/12_healthy_erp_erp_info.html#disable-erp-magento-cron-use-erpcron-php-instead" target="_blank">' . $this->__('ERP Cron Documentation') . '</a></i></p>');
+                        } else {
+                            echo $this->__('<p align="center" style = "color:red;"><b>ErpCron is Disabled</b></p>');
+                            echo $this->__('e.g : If you encounter troubles on not executed background tasks or not considered orders, please have a look at : <br>');
+                            echo $this->__('<p><i><a href="http://documentation.boostmyshop.com/embedded_erp/12_healthy_erp_erp_info.html#disable-erp-magento-cron-use-erpcron-php-instead" target="_blank">' . $this->__('ERP Cron Documentation') . '</a></i></p>');
+                        }
+                        ?>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    <?php
+    }
+    ?>
+
+</div>

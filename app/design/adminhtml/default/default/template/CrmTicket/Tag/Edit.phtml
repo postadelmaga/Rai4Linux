@@ -1,0 +1,65 @@
+<div class="entry-edit">
+    <div class="content-header">
+        <table cellspacing="0" class="grid-header">
+            <tr>
+                <td><h3><?php echo $this->getTitle(); ?></h3></td>
+                <td align="right">
+                    <button onclick="setLocation('<?php echo $this->getBackUrl(); ?>');" class="scalable back" type="button"><span><?php echo $this->__('Back') ?></span></button>
+                        <button onclick="document.location.href='<?php echo $this->getDeleteUrl() ?>'" class="scalable delete" type="button"><span><?php echo $this->__('Delete') ?></span></button>
+                    <button onclick="tagForm.submit();" class="scalable save" type="button"><span><?php echo $this->__('Save'); ?></span></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <form id="tag_form" method="POST" name="tag_form" action="<?php echo $this->getUrl("*/*/Save"); ?>">
+        <div>
+            <input type="hidden" id="form_key" name="form_key"  value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+            <input type="hidden" id="cts_id" name="ctg_id"  value="<?php echo $this->getTag()->getId() ?>" />
+        </div>
+        <div id="ticket_fieldset" class="fieldset ">
+            <div class="hor-scroll">
+                <table class="form-list" cellspacing="0">
+                    <tbody>
+                        <tr>
+                            <td class="label"><?php echo $this->__('Name'); ?> <span class="required">*</span></td>
+                            <td class="value">
+                                <input class="input-text required-entry" type="text" name="tag[ctg_name]" id="ctg_name" value="<?php echo $this->getTag()->getName(); ?>"></input>
+                                <br> <small><?php echo $this->__('Limited to 30 characters'); ?> </small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $this->__('Background color'); ?> </td>
+                            <td class="value">
+                                <input class="input-text" type="text" name="tag[ctg_bg_color]" id="ctg_bg_color" value="<?php echo $this->getTag()->getctg_bg_color(); ?>"></input>
+                                <br> <small><?php echo $this->__('HTML color code, limited to 6 characters, without # at begin'); ?> </small>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $this->__('Text color'); ?> </td>
+                            <td class="value">
+                                <input class="input-text" type="text" name="tag[ctg_text_color]" id="ctg_text_color" value="<?php echo $this->getTag()->getctg_text_color(); ?>"></input>
+                                <br> <small><?php echo $this->__('HTML color code, limited to 6 characters, without # at begin'); ?> </small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><?php echo $this->__('Rendering'); ?> </td>
+                            <td class="value">
+                                <?php echo $this->getTag()->getRendering(); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </form>
+<script type="text/javascript">
+    tagForm = new varienForm('tag_form', '');
+</script> 
+
+    
+
+</div>
+

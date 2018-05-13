@@ -1,0 +1,29 @@
+<?php
+/** @var $this MDN_OrderManager_Block_Adminhtml_Sales_Order_Shipping_ShippingInsurance */
+$helper = $this->getFeeHelper();
+?>
+<br/>
+<dl class="extra-fees" id="extrafees-<?php echo $helper->getFieldName() ?>">
+    <?php if ($this->canDisplay()): ?>
+        <dt>
+            <input name="<?php echo $helper->getFieldName() ?>"
+                   class="shippinginsurance_checkbox"
+                   id="<?php echo $helper->getFieldName() ?>"
+                   <?php if (!$this->canChange()):?> disabled="disabled" <?php endif;?>
+                   type="checkbox"<?php echo $this->isChecked() ? ' checked="checked"' : '' ?> />
+            <label for="<?php echo $helper->getFieldName() ?>">
+                <?php echo $helper->getTitle(null, true) ?>
+                <strong>
+                    <?php $_excl = $this->getPrice($helper->displayIncludingTax()); ?>
+                    <?php $_incl = $this->getPrice(true); ?>
+
+                    <?php echo $_excl; ?>
+                    <?php if ($helper->displayBothPrices() && $_incl != $_excl): ?>
+                        (<?php echo $helper->__('Incl. Tax') . ' '; ?><?php echo $_incl; ?>)
+                    <?php endif; ?>
+                </strong>
+            </label>
+        </dt>
+        <!--        <dt>--><?php //echo $helper->htmlEscape($helper->getComment()) ?><!--</dt>-->
+    <?php endif; ?>
+</dl>

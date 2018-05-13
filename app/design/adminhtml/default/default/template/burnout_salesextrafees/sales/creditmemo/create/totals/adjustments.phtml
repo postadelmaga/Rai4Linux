@@ -1,0 +1,51 @@
+<?php
+/** @var $this  BurnOut_SalesExtraFees_Block_Adminhtml_Sales_Order_Creditmemo_Create_Adjustments */
+?>
+<?php
+$_source = $this->getSource();
+$field_name = $this->getFeeHelper()->getDbField('amount');
+?>
+<?php if ($_source): ?>
+    <tr>
+        <td class="label"><?php echo $this->getFeeLabel() ?></td>
+        <td><input type="text" name="creditmemo[<?php echo $field_name; ?>]"
+                   value="<?php echo $this->getFeeBaseAmount() ?>"
+                   class="input-text not-negative-amount" style="width:60px;text-align:right"
+                   id="<?php echo $field_name; ?>"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <div id="<?php echo $field_name; ?>_adv"></div>
+        </td>
+    </tr>
+    <script type="text/javascript">
+        //<![CDATA[
+        Validation.addAllThese([
+            ['not-negative-amount', '<?php echo Mage::helper('core')->jsQuoteEscape($this->helper('sales')->__('Please enter positive number in this field.')) ?>', function (v) {
+                if (v.length)
+                    return /^\s*\d+([,.]\d+)*\s*%?\s*$/.test(v);
+                else
+                    return true;
+            }]
+        ]);
+
+        if ($('<?php echo $field_name; ?>')) {
+            $('<?php echo $field_name; ?>').advaiceContainer = $('<?php echo $field_name; ?>_adv');
+            unblockSubmit('<?php echo $field_name; ?>');
+        }
+
+        /**
+         * Depending on the display order it may not be defined
+         */
+        function unblockSubmit(id) {
+            $(id).observe('focus', function (event) {
+                if ($$('button[class="scalable update-button disabled"]').size() > 0) {
+                    enableElements('submit-button');
+                }
+            });
+        }
+        //]]>
+    </script>
+<?php endif; ?>

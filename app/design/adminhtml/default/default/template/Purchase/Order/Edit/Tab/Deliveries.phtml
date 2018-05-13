@@ -1,0 +1,248 @@
+<script>
+
+    function AllProductDelivered()
+    {
+        //add product deliveries in persistant grid array
+        <?php echo $this->getAllProductsDeliveredJs(); ?>
+
+        //update fields
+        persistantDeliveryGrid.restoreChanges();
+        
+        <?php echo $this->getAfterFillAllConfirmMessage(); ?>
+    }
+    
+    var txtDeliveryConfirmation = '<?php echo $this->__('You are going to create a delivery, do you confirm ?'); ?>';
+    var txtQtyIssue = '<?php echo $this->__('Qty issue for'); ?>';
+    var txtReceived = '<?php echo $this->__('received'); ?>';
+    var txtExpected = '<?php echo $this->__('expected'); ?>';
+
+    var printBarcodeLabelUrl = '<?php echo $this->getPrintBarcodeUrl(); ?>';
+
+</script>
+
+<div class="entry-edit-head">
+    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Create new reception'); ?></h4>
+</div>
+<div class="entry-edit">
+    <fieldset id="my-fieldset">
+        <table border="0" width="100%">
+            <tr>
+                <td><?php echo $this->__('Date'); ?></td>
+                <td width="30">&nbsp;</td>
+                <td>
+                    <input type="text" id="add_sm_date" name="add_sm_date" value="<?php echo date('Y-m-d'); ?>">
+                    <img src="<?php echo $this->getSkinUrl('images/grid-cal.gif') ?>" class="v-middle" id="img_calendar_sm" />
+                    <script type="text/javascript">
+                        Calendar.setup({
+                            inputField : 'add_sm_date',
+                            ifFormat : '%Y-%m-%e',
+                            button : 'img_calendar_sm',
+                            align : 'Bl',
+                            singleClick : true
+                        });
+                    </script>
+                </td>
+                <td rowspan="2" class="a-center">
+                    <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/purchasing/purchase_orders/tabs/deliveries/print_location')): ?>
+                        <p><button onclick="document.location.href='<?php echo $this->getPrintLocationUrl(); ?>';" class="scalable a-right" type="button"><span><?php echo $this->__('Print locations') ?></span></button></p>
+                    <?php endif; ?>
+                </td>
+                <td rowspan="2" class="a-center">
+                    <?php if (Mage::getSingleton('admin/session')->isAllowed('admin/erp/purchasing/purchase_orders/tabs/deliveries/print_barcode')): ?>
+                        <p><button onclick="document.location.href='<?php echo $this->getBarcodeLabelsUrl(); ?>';" class="scalable a-right" type="button"><span><?php echo $this->__('Print barcode sheet') ?></span></button></p>
+                    <?php endif ?>
+                    <p><button onclick="AllProductDelivered();" class="scalable a-right" type="button"><span><?php echo $this->__('All products delivered') ?></span></button></p>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo $this->__('Target warehouse'); ?></td>
+                <td width="30">&nbsp;</td>
+                <td><?php echo $this->getWarehousesAsCombo('add_sm_warehouse_id'); ?></td>
+            </tr>
+        </table>
+
+        <input type="hidden" id="error_qty_list" name="error_qty_list" value="">
+        <input type="hidden" id="error_qty_info" name="error_qty_info" value="">
+        <p>&nbsp;</p>
+
+        <?php echo $this->getProductDeliveryBlock(); ?>
+
+    </fieldset>
+</div>
+
+
+<div class="entry-edit-head">
+    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Receptions'); ?></h4>
+</div>
+<div class="entry-edit">
+
+    <?php if ($this->getOrder()->getReceptions()->getSize() == 0): ?>
+
+        <?php //Display receptions the OLD way (based on stock movements) ?>
+        <?php $stockMovements = $this->getOrder()->getStockMovements(); ?>
+        <?php if ($stockMovements->getSize()): ?>
+            <p>
+                <?php echo $this->__('Print delivery notes').' : '; ?>
+                <?php foreach($this->getDeliveries() as $deliveryDate): ?>
+                    <a href="<?php echo Mage::helper('adminhtml')->getUrl('*/*/PrintDeliveryNote', array('po_id' => $this->getOrder()->getId(), 'date' => $deliveryDate)); ?>"><?php echo Mage::helper('core')->formatDate($deliveryDate, 'short', false); ?></a>,&nbsp;
+                <?php endforeach; ?>
+            </p>
+
+            <div class="grid">
+                <table cellspacing="0" class="data" width="100%">
+                    <thead>
+                        <tr class="headings">
+                            <th class="a-center"><?php echo $this->__('Date'); ?></th>
+                            <th><?php echo $this->__('Product'); ?></th>
+                            <th class="a-center"><?php echo $this->__('Warehouse'); ?></th>
+                            <th class="a-center"><?php echo $this->__('Qty'); ?></th>
+                            <th><?php echo $this->__('Description'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        //Display stock movements
+                        foreach ($stockMovements as $item) {
+                            echo '<tr>';
+                            echo '<td class="a-center">' .Mage::helper('core')->formatTime($item->getsm_date(), Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM, true). '</td>';
+                            $productName = $item->getProduct()->getName();
+                            $productName .= mage::helper('AdvancedStock/Product_ConfigurableAttributes')->getDescription($item->getProduct()->getId());
+                            echo '<td><a href="' . $this->getUrl('adminhtml/AdvancedStock_Products/Edit', array('product_id' => $item->getProduct()->getId())) . '">' . $productName . '</a></td>';
+                            echo '<td>' . $item->getTargetWarehouseName()->getstock_name() . '</td>';
+                            echo '<td class="a-center">' . $item->getsm_qty() . '</td>';
+                            echo '<td>' . $item->getsm_description() . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+        <?php else: ?>
+            <p><?php echo $this->__('There is no reception'); ?></p>
+        <?php endif; ?>
+
+    <?php else: ?>
+
+        <?php //Display receptions the NEW way ?>
+
+    <div class="grid">
+        <table cellspacing="0" class="data" width="100%">
+            <thead>
+                <tr class="headings">
+                    <th><?php echo $this->__('Date'); ?></th>
+                    <th><?php echo $this->__('User'); ?></th>
+                    <th><?php echo $this->__('Products count'); ?></th>
+                    <th><?php echo $this->__('Details'); ?></th>
+                    <th><?php echo $this->__('Print'); ?></th>
+                    <th class="a-center"><?php echo $this->__('Attachment'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($this->getOrder()->getReceptions() as $reception): ?>
+                    <tr>
+                        <td class="a-center"><?php echo $reception->getStoreDate(); ?></td>
+                        <td class="a-left"><?php echo $reception->getusername(); ?></td>
+                        <td class="a-center"><?php echo $reception->getpor_products_count(); ?></td>
+                        <td class="a-left">
+                            <?php foreach($reception->getItems() as $item): ?>
+                                <?php echo $item->getPoriQty(); ?>x <?php echo $item->getPoriSku(); ?> <?php echo $item->getPoriProduct(); ?>
+                                <?php if ($item->getPoriComments()): ?>
+                                     <i>(<?php echo $item->getPoriComments(); ?>)</i>
+                                <?php endif; ?>
+                                => <?php echo $item->getStockName(); ?>
+                                <br>
+
+                            <?php endforeach; ?>
+                        </td>
+                        <td class="a-center"><a href="<?php echo $this->getPrintReceptionUrl($reception->getId()); ?>"><?php echo $this->__('Print'); ?></a></td>
+                        <td class="a-center" id="attachmentLinks">
+							<?php echo Mage::helper('purchase/order_attachment')->getAttachmentLinks($reception);?>
+						</td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<script>
+	function attach_file(recp_id){
+		content = "<div class='select-file' style='text-align:center;'> \
+					 <form id='reception_attach_file' action='<?php echo Mage::helper('adminhtml')->getUrl('*/*/attachReception'); ?>' medhod='post' >\
+					 <input name='form_key' type='hidden' value='<?php echo Mage::getModel('core/session')->getFormKey() ?>' />\
+					 <input type='file' id='file_attach' name='file_attach' multiple='multiple' />  \
+                     <label for='file_attach' id='file_attach_label'><?php echo $this->__('Click here or drag and drop file over here');?></label> \
+					 <input type='hidden' name='reception_id' value='"+recp_id+"' /> <br />\
+					 <button type='submit'><span><?php echo $this->__('SAVE');?></span></button>\
+					 <ul class='messages' ><li id='attachment-message-type'><span id='attachment-message'></span></li></ul>\
+				   </div>\
+		";
+		var infodialog = Dialog.info(content, 
+				{
+				closable:true,
+				resizable:false,
+				draggable:true,
+				className:'magento',
+				windowClassName:'popup-window',
+				title:'<?php echo $this->__("Attach file for Reception");?>',
+				top:150,
+				width:360,
+				height:180,
+				zIndex:499,
+				recenterAuto:true,
+				hideEffect:Element.hide,
+				showEffect:Element.show,
+				id:'browser_window'
+				}
+			) ;
+
+		 $('reception_attach_file').observe('submit', function(e){
+            e.preventDefault()
+            var form = e.target;
+            var data = new FormData(form);
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", form.action);
+            oReq.send(data);
+            Element.hide('browser_window');
+            Element.show('loading-mask');
+			oReq.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					data = JSON.parse(this.responseText);
+					if(data.success){
+                        Dialog.setInfoMessage(content);
+                        Element.show('browser_window');
+                        Element.hide('loading-mask');
+                        $('attachment-message-type').removeClassName("error-msg");
+                        $('attachment-message-type').addClassName("success-msg");
+                        $('attachment-message').update(data.message);
+                        /* update links to delete and download*/
+                        $('attachmentLinks').update(data.attachmentLinks);
+                        
+                        // wait for 1 Sec and close POPUP
+                        location.reload();
+						//setTimeout(function() {Dialog.closeInfo();}, 5000);
+						
+					}
+					else{
+                        Element.show('browser_window');
+                        Element.hide('loading-mask');
+						$('attachment-message-type').removeClassName("success-msg");
+						$('attachment-message-type').addClassName("error-msg");
+						$('attachment-message').update(data.message);
+						
+					}					
+			   }
+			};
+		});
+        document.getElementById('file_attach').onchange = function () {
+            var fullName =this.value;
+            var shortName = fullName.match(/[^\/\\]+$/);
+            document.getElementById('file_attach_label').innerHTML = "<?php echo $this->__('Selected file').' : ';?> "+ shortName;
+        };
+	}
+</script>
+    <?php endif; ?>
+</div>
+<style type="text/css">
+#file_attach{ height:80px;margin-bottom:-94px;opacity:0;width:100%;}
+#file_attach + label{display:block;padding:20px 40px;border:1px dashed #ccc;text-align:center;font-size:16px;font-weight:bold;cursor:pointer;}
+</style>
