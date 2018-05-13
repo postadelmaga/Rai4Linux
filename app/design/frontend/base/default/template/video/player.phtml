@@ -13,7 +13,6 @@
         </div>
     </template>
 
-
     <div class="w3-bar w3-mobile w3-border w3-round channel_list">
         <channels inline-template v-for="(channel, index) in channels"
                   :id="index"
@@ -38,7 +37,13 @@
     var data = JSON.parse('<?php echo $this->getJsonConfig() ?>');
     var vuePlayer = new Vue({
         data: data,
-        beforeMount:function () {
+        // beforeMount: function () {
+        //
+        // },
+        // created: function () {
+        //
+        // },
+        mounted: function () {
             this.player = new MediaElementPlayer('videoElement', {
                 /**
                  * YOU MUST SET THE TYPE WHEN NO SRC IS PROVIDED AT INITIALISATION
@@ -54,10 +59,14 @@
                 },
                 error: function (e) {
                     alert(e);
-                }
+                },
             });
-        }
+        },
+
     });
+
     vuePlayer.$mount('#app');
+
+
 
 </script>

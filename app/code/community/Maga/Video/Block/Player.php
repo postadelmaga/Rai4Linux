@@ -1,10 +1,10 @@
 <?php
 
-class Maga_Video_Block_Rai extends Mage_Core_Block_Template
+class Maga_Video_Block_Player extends Mage_Core_Block_Template
 {
     public function getJsonConfig()
     {
-        $model = Mage::getModel('video/rai');
+//        $model = Mage::getModel('video/rai');
 
         $helper = Mage::helper('video/rai');
 
