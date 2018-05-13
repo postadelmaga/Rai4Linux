@@ -2,12 +2,12 @@
 <config>
     <global>
         <cache>
+            <!--<backend>Mage_Cache_Backend_Redis</backend>-->
             <skip_process_modules_updates>0</skip_process_modules_updates>
             <lifetime>96400</lifetime>
             <frontend_options>
                 <slab_size>1040000</slab_size>
             </frontend_options>
-            <backend>Mage_Cache_Backend_Redis</backend>
             <backend_options>
                 <server>127.0.0.1</server>
                 <!-- or absolute path to unix socket -->
@@ -38,31 +38,31 @@
                 <use_lua>0</use_lua>
                 <!-- Set to 1 if Lua scripts should be used for some operations -->
             </backend_options>
-
-            <!--<request_processors>-->
-            <!--<processor>BurnOut_PageCache_Model_Processor</processor>-->
-            <!--</request_processors>-->
-            <!--<full_page_cache>-->
-            <!--<backend>File</backend>-->
-            <!--<backend_options>-->
-            <!--<cache_dir>full_page_cache</cache_dir>-->
-            <!--</backend_options>-->
-            <!--<backend>Mage_Cache_Backend_Redis</backend>-->
-            <!--<backend_options>-->
-            <!--<lifetime>86400</lifetime>-->
-            <!--<server>127.0.0.1</server>-->
-            <!--<port>6379</port>-->
-            <!--<persistent></persistent>-->
-            <!--<database>3</database>-->
-            <!--&lt;!&ndash;USED DIFFERENT VALUES FOR LIVE/STAGING &ndash;&gt;-->
-            <!--<password></password>-->
-            <!--<force_standalone>0</force_standalone>-->
-            <!--<connect_retries>1</connect_retries>-->
-            <!--<read_timeout>10</read_timeout>-->
-            <!--<automatic_cleaning_factor>0</automatic_cleaning_factor>-->
-            <!--<lifetimelimit>86400</lifetimelimit>-->
-            <!--</backend_options>-->
-            <!--</full_page_cache>-->
         </cache>
+        <!--<request_processors>-->
+        <!--<processor>BurnOut_PageCache_Model_Processor</processor>-->
+        <!--</request_processors>-->
+
+        <!--<full_page_cache>-->
+        <!--<backend>File</backend>-->
+        <!--<backend_options>-->
+        <!--<cache_dir>full_page_cache</cache_dir>-->
+        <!--</backend_options>-->
+        <!--<backend>Mage_Cache_Backend_Redis</backend>-->
+        <!--<backend_options>-->
+        <!--<lifetime>86400</lifetime>-->
+        <!--<server>127.0.0.1</server>-->
+        <!--<port>6379</port>-->
+        <!--<persistent></persistent>-->
+        <!--<database>3</database>-->
+        <!--&lt;!&ndash;USED DIFFERENT VALUES FOR LIVE/STAGING &ndash;&gt;-->
+        <!--<password></password>-->
+        <!--<force_standalone>0</force_standalone>-->
+        <!--<connect_retries>1</connect_retries>-->
+        <!--<read_timeout>10</read_timeout>-->
+        <!--<automatic_cleaning_factor>0</automatic_cleaning_factor>-->
+        <!--<lifetimelimit>86400</lifetimelimit>-->
+        <!--</backend_options>-->
+        <!--</full_page_cache>-->
     </global>
 </config>

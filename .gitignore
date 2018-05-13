@@ -1,5 +1,5 @@
 .idea/
-
+.htaccess
+/app/etc/local.xml
+/app/var/*
 /data/
-/log/
-/.htaccess
