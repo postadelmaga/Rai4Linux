@@ -19,16 +19,16 @@
         <models>
             <video>
                 <class>Maga_Video_Model</class>
-                <resourceModel>admin_resource</resourceModel>
+                <resourceModel>video_resource</resourceModel>
             </video>
-            <admin_resource>
+            <video_resource>
                 <class>Maga_Video_Model_Resource</class>
                 <entities>
                     <video_rai>
                         <table>video_rai</table>
                     </video_rai>
                 </entities>
-            </admin_resource>
+            </video_resource>
         </models>
         <resources>
             <video_setup>

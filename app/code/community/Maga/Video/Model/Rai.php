@@ -4,6 +4,12 @@ class Maga_Video_Model_Rai extends Mage_Core_Model_Abstract
 {
     const URL_BASE = "http://www.rai.it/dl/portale/html/palinsesti/replaytv/static/";
 
+    /**
+     * @return Maga_Video_Helper_Rai
+     */
+    public function getHelper(){
+        return Mage::helper('video/rai');
+    }
     public function debug()
     {
         $helper = Mage::helper('video/rai');
@@ -19,7 +25,7 @@ class Maga_Video_Model_Rai extends Mage_Core_Model_Abstract
     public function updateAllStreams()
     {
         $msg = '';
-        $helper = Mage::helper('video/rai');
+        $helper = $this->getHelper();
         foreach ($helper->getChannelList() as $ch) {
             foreach ($helper->getDayRange() as $day) {
                 $this->updateDay($ch, $day);
