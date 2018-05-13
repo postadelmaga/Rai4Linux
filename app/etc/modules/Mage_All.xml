@@ -405,13 +405,13 @@
                 <!--<Mage_Customer/>-->
             <!--</depends>-->
         <!--</Mage_ProductAlert>-->
-        <!--<Mage_Index>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Core/>-->
-            <!--</depends>-->
-        <!--</Mage_Index>-->
+        <Mage_Index>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Index>
 
     </modules>
 </config>

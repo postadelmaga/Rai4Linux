@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * Magento
  *
@@ -18,16 +19,37 @@
  * versions in the future. If you wish to customize Magento for your
  * needs please refer to http://www.magento.com for more information.
  *
- * @category    design
- * @package     base_default
+ * @category    Mage
+ * @package     Mage_Index
  * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-?>
-<div class="footer-container">
-    <div class="footer">
-        <?php echo $this->getChildHtml() ?>
-<!--        <p class="bugs">--><?php //echo $this->__('Help Us to Keep Magento Healthy') ?><!-- - <a href="http://www.magentocommerce.com/bug-tracking" onclick="this.target='_blank'"><strong>--><?php //echo $this->__('Report All Bugs') ?><!--</strong></a> --><?php //echo $this->__('(ver. %s)', Mage::getVersion()) ?><!--</p>-->
-<!--        <address>--><?php //echo $this->getCopyright() ?><!--</address>-->
-    </div>
-</div>
+-->
+<config>
+    <menu>
+        <system>
+            <children>
+                <index translate="title" module="index">
+                    <title>Index Management</title>
+                    <action>adminhtml/process/list</action>
+                    <sort_order>92</sort_order>
+                </index>
+            </children>
+        </system>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <index translate="title">
+                                <title>Index Management</title>
+                            </index>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
