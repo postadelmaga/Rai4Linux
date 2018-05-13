@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+    <video_index_index>
+        <reference name="head">
+            <action method="addJs"><script>lib/app/components.js</script></action>
+        </reference>
+        <reference name="content">
+            <block template="video/rai.phtml" type="video/rai" />
+        </reference>
+    </video_index_index>
+</layout>
