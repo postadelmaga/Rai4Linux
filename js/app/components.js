@@ -15,9 +15,17 @@ Vue.component('channels', {
             channels: self.$parent.channels,
         };
     },
+
     before: function () {
-        this.setCurrentChannel(1);
     },
+    created: function () {
+        var self = this;
+        this.setCurrentChannel(1);
+        this.$on('SwitchChannel', ch_id => {
+            this.selectCh(ch_id);
+            console.log(ch_id);
+        });
+    }
     methods: {
         click: function (event) {
             // now we have access to the native event
@@ -89,13 +97,6 @@ Vue.component('channels', {
             }
         }
     },
-    created: function () {
-        var self = this;
-        this.$on('SwitchChannel', ch_id => {
-            this.selectCh(ch_id);
-            console.log(ch_id);
-        });
-    }
 });
 
 
