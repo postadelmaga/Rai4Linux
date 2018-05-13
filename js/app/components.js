@@ -18,55 +18,22 @@ Vue.component('channels', {
 
     before: function () {
     },
-    created: function () {
-        var self = this;
-        this.setCurrentChannel(1);
-        this.$on('SwitchChannel', ch_id => {
-            this.selectCh(ch_id);
-            console.log(ch_id);
-        });
-    }
     methods: {
         click: function (event) {
             // now we have access to the native event
             if (event) event.preventDefault();
 
-            this.setCurrentChannel(this.channel.id);
-            // this.$emit('SwitchChannel', this.channel.id);
+            // this.setCurrentChannel(this.channel.id);
+            this.$parent.ch_current = this.channel.id;
+            this.$parent.$emit('switch-channel', this.channel.id);
         },
+    },
+});
 
-        getChannelById: function (ch_id) {
-            var i;
-            for (i in this.channels) {
-                if (this.channels[i].id == ch_id) {
-                    return this.channels[i];
-                }
-            }
-        },
 
-        setCurrentChannel(ch_id) {
-            var c = this.getChannelById(ch_id);
-            this.loadChannel(c);
-            this.$parent.ch_current = c;
-        },
-
-        loadChannels: function () {
-            for (var i in this.channels) {
-                this.loadChannel(this.channels[c]);
-            }
-        },
-
-        loadChannel: function (channel) {
-            for (var i in this.days) {
-                var day = this.days[i];
-                var dayData = this.loadDayChannel(day, channel.id);
-                if (dayData) {
-                    channel.days.push(dayData);
-                }
-
-            }
-        },
-
+Vue.component('daylist', {
+    template: '#daylist',
+    methods: {
         loadDayChannel: function (day, ch_id) {
             var url = this.ajaxurl;
             if (c.days.length == 0) {
@@ -96,12 +63,7 @@ Vue.component('channels', {
                 });
             }
         }
-    },
-});
-
-
-Vue.component('daylist', {
-    template: '#daylist',
+    }
 });
 
 Vue.component('program', {

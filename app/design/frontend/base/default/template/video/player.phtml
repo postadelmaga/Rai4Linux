@@ -1,7 +1,7 @@
 <div id="app">
 
     <div class="w3-container w3-black">
-        <h3>{{ch_current.title}}</h3>
+        <h3 >{{title}}</h3>
     </div>
 
     <template id="player">
@@ -35,38 +35,68 @@
 
 <script>
     var data = JSON.parse('<?php echo $this->getJsonConfig() ?>');
+    data.title = 'A';
     var vuePlayer = new Vue({
         data: data,
         // beforeMount: function () {
-        //
         // },
-        // created: function () {
-        //
-        // },
-        mounted: function () {
-            this.player = new MediaElementPlayer('videoElement', {
-                /**
-                 * YOU MUST SET THE TYPE WHEN NO SRC IS PROVIDED AT INITIALISATION
-                 * (This one is not very well documented.. If one leaves the type out, the success event will never fire!!)
-                 **/
-                type: ["video/mp4"],
-                features: ['playpause', 'progress', 'current', 'duration', 'tracks', 'volume'],
-                mediaElementInitialized: false,
-                //more options here..
-
-                success: function (mediaElement, domObject) {
-                    this.mediaElementInitialized = true;
-                },
-                error: function (e) {
-                    alert(e);
-                },
+        created: function () {
+            this.$on('switch-channel', ch_id => {
+                this.setCurrentChannel(ch_id);
+                console.log(ch_id);
             });
+
+        },
+        mounted: function () {
+            this._initPlayer();
+            this.setCurrentChannel(1);
+        },
+        methods: {
+            setCurrentChannel(ch_id) {
+                // var c = this.getChannelById(ch_id);
+                // this.loadChannel(c);
+                this.ch_current = ch_id;
+                this.title = this.getChannelById(ch_id).title;
+
+            },
+            getChannelById: function (ch_id) {
+                var i;
+                for (i in this.channels) {
+                    if (this.channels[i].id == ch_id) {
+                        return this.channels[i];
+                    }
+                }
+            },
+
+
+            loadChannels: function () {
+                for (var i in this.channels) {
+                    this.loadChannel(this.channels[c]);
+                }
+            },
+
+            _initPlayer() {
+                this.player = new MediaElementPlayer('videoElement', {
+                    /**
+                     * YOU MUST SET THE TYPE WHEN NO SRC IS PROVIDED AT INITIALISATION
+                     * (This one is not very well documented.. If one leaves the type out, the success event will never fire!!)
+                     **/
+                    type: ["video/mp4"],
+                    features: ['playpause', 'progress', 'current', 'duration', 'tracks', 'volume'],
+                    mediaElementInitialized: false,
+                    //more options here..
+
+                    success: function (mediaElement, domObject) {
+                        this.mediaElementInitialized = true;
+                    },
+                    error: function (e) {
+                        alert(e);
+                    },
+
+                });
+            }
         },
 
     });
-
     vuePlayer.$mount('#app');
-
-
-
 </script>
