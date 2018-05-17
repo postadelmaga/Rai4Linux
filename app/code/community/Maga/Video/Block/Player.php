@@ -11,7 +11,7 @@ class Maga_Video_Block_Player extends Mage_Core_Block_Template
         $config = array(
             'channels' => $helper->getChannelInfo(),
             'days' => $helper->getDayRange(),
-            'ch_current' => '',
+            'current_id' => '',
             'src_current' => '',
             'ajaxurl' => '?ajax=1',
         );

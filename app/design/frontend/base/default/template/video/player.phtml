@@ -55,7 +55,6 @@
                 this.setCurrentChannel(ch_id);
                 console.log(ch_id);
             });
-
         },
         mounted: function () {
             this._initPlayer();
@@ -65,7 +64,7 @@
             setCurrentChannel(ch_id) {
                 // var c = this.getChannelById(ch_id);
                 // this.loadChannel(c);
-                this.ch_current = ch_id;
+                this.current_id = ch_id;
                 this.title = this.getChannelById(ch_id).title;
 
             },

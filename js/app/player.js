@@ -4,7 +4,7 @@ Vue.component('player', {
 });
 
 // Vue.component('header', {
-//     props: ['ch_current'],
+//     props: ['current_id'],
 // });
 
 Vue.component('channels', {
@@ -17,7 +17,7 @@ Vue.component('channels', {
             if (event) event.preventDefault();
 
             // this.setCurrentChannel(this.channel.id);
-            this.$parent.ch_current = this.id;
+            this.$parent.current_id = this.id;
             this.$parent.$emit('switch-channel', this.id);
         },
     },
