@@ -26,10 +26,16 @@
  */
 -->
 <config>
+    <tabs>
+        <integrations translate="label" module="core">
+            <label>Integrations</label>
+            <sort_order>999</sort_order>
+        </integrations>
+    </tabs>
     <sections>
         <google translate="label" module="googleTag">
             <label>Google API</label>
-            <tab>Integration</tab>
+            <tab>integrations</tab>
             <frontend_type>text</frontend_type>
             <sort_order>900</sort_order>
             <show_in_default>1</show_in_default>
