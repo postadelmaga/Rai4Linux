@@ -83,7 +83,7 @@ class Maga_GoogleTag_Block_Abstract extends Mage_Core_Block_Template
      */
     protected function _getPageTrackingCode($accountId)
     {
-        if ($this->helper('googleanalytics')->isUseUniversalAnalytics()) {
+        if ($this->helper('googleTag')->isUseUniversalAnalytics()) {
             return $this->_getPageTrackingCodeUniversal($accountId);
         } else {
             return $this->_getPageTrackingCodeAnalytics($accountId);
@@ -136,7 +136,7 @@ _gaq.push(['_trackPageview'{$optPageURL}]);
      */
     protected function _getOrdersTrackingCode()
     {
-        if ($this->helper('googleanalytics')->isUseUniversalAnalytics()) {
+        if ($this->helper('googleTag')->isUseUniversalAnalytics()) {
             return $this->_getOrdersTrackingCodeUniversal();
         } else {
             return $this->_getOrdersTrackingCodeAnalytics();
@@ -245,10 +245,10 @@ _gaq.push(['_trackPageview'{$optPageURL}]);
      */
     protected function _getAnonymizationCode()
     {
-        if (!Mage::helper('googleanalytics')->isIpAnonymizationEnabled()) {
+        if (!Mage::helper('googleTag')->isIpAnonymizationEnabled()) {
             return '';
         }
-        if ($this->helper('googleanalytics')->isUseUniversalAnalytics()) {
+        if ($this->helper('googleTag')->isUseUniversalAnalytics()) {
             return $this->_getAnonymizationCodeUniversal();
         } else {
             return $this->_getAnonymizationCodeAnalytics();
@@ -282,7 +282,7 @@ _gaq.push(['_trackPageview'{$optPageURL}]);
      */
     protected function _isAvailable()
     {
-        return Mage::helper('googleanalytics')->isGoogleAnalyticsAvailable();
+        return Mage::helper('googleTag')->isGoogleAnalyticsAvailable();
     }
 
     /**

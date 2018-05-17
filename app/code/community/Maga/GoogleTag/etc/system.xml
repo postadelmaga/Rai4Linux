@@ -27,7 +27,7 @@
 -->
 <config>
     <sections>
-        <google translate="label" module="googleanalytics">
+        <google translate="label" module="googleTag">
             <label>Google API</label>
             <tab>Integration</tab>
             <frontend_type>text</frontend_type>

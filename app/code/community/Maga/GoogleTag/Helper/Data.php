@@ -1,6 +1,6 @@
 <?php
 
-class Maga_GoogleTag_Helper_Data extends Mage_GoogleAnalytics_Helper_Data
+class Maga_GoogleTag_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
      * Config paths for using throughout the code

@@ -12,7 +12,7 @@ class Maga_GoogleTag_Block_Script extends Maga_GoogleTag_Block_Abstract
     protected function _getAnalyticsJsonOptions()
     {
         /** @var BurnOut_Ultimo_Helper_GoogleAnalytics_Data $_helper */
-        $_helper = $this->helper('googleanalytics');
+        $_helper = $this->helper('googleTag');
         $params = array();
 
         $pageType = $_helper->getCurrentPageType();
@@ -57,7 +57,7 @@ class Maga_GoogleTag_Block_Script extends Maga_GoogleTag_Block_Abstract
     protected function _getAnalyticsExtraEventSnippet()
     {
         /** @var BurnOut_Ultimo_Helper_GoogleAnalytics_Data $_helper */
-        $_helper = $this->helper('googleanalytics');
+        $_helper = $this->helper('googleTag');
 
         if (empty($this->getOrderIds())) {
             // OTHER PAGES

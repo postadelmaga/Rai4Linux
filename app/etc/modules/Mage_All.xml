@@ -65,10 +65,17 @@
             <codePool>core</codePool>
             <depends>
                 <Mage_Core/>
-                <!--<Mage_Directory/>-->
+                <Mage_Directory/>
                 <Mage_AdminNotification/>
             </depends>
         </Mage_Install>
+        <Mage_Directory>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Directory>
         <Mage_AdminNotification>
             <active>true</active>
             <codePool>core</codePool>
@@ -77,13 +84,7 @@
                 <Mage_Adminhtml/>
             </depends>
         </Mage_AdminNotification>
-        <!--<Mage_Directory>-->
-        <!--<active>true</active>-->
-        <!--<codePool>core</codePool>-->
-        <!--<depends>-->
-        <!--<Mage_Core/>-->
-        <!--</depends>-->
-        <!--</Mage_Directory>-->
+
 
 
 
