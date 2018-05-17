@@ -27,14 +27,19 @@
             </updates>
         </layout>
         <!--<routers>-->
-            <!--<video>-->
-                <!--<use>standard</use>-->
-                <!--<args>-->
-                    <!--<module>Maga_Video</module>-->
-                    <!--<frontName>video</frontName>-->
-                <!--</args>-->
-            <!--</video>-->
+        <!--<video>-->
+        <!--<use>standard</use>-->
+        <!--<args>-->
+        <!--<module>Maga_Video</module>-->
+        <!--<frontName>video</frontName>-->
+        <!--</args>-->
+        <!--</video>-->
         <!--</routers>-->
     </frontend>
-
+    <default>
+        <google>
+            <active>1</active>
+            <account>UA-8551093-2</account>
+        </google>
+    </default>
 </config>
