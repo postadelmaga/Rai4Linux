@@ -1,0 +1,2 @@
+Mage_Install_Model_Installer::installDb()
+- removed directory module (locale currency )
