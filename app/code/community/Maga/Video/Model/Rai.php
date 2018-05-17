@@ -7,9 +7,11 @@ class Maga_Video_Model_Rai extends Mage_Core_Model_Abstract
     /**
      * @return Maga_Video_Helper_Rai
      */
-    public function getHelper(){
+    public function getHelper()
+    {
         return Mage::helper('video/rai');
     }
+
     public function debug()
     {
         $helper = Mage::helper('video/rai');

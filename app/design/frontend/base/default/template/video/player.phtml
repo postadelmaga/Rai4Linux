@@ -1,7 +1,7 @@
 <div id="app">
 
     <div class="w3-container w3-black">
-        <h3 >{{title}}</h3>
+        <h3>{{title}}</h3>
     </div>
 
     <template id="player">
@@ -15,20 +15,30 @@
 
     <div class="w3-bar w3-mobile w3-border w3-round channel_list">
         <channels inline-template v-for="(channel, index) in channels"
+                  :key="index"
                   :id="index"
-                  :channel="channel">
-            <a class="w3-bar-item w3-button" :id="id" @click="click">{{channel.title}}</a>
+                  :title="channel.title">
+            <a class="w3-bar-item w3-button" :id="id" @click="click">{{title}}</a>
         </channels>
     </div>
 
-    <template id="daylist">
-        <div class="w3-container day" v-for="day in days" :day="day">
-            <header class="w3-container w3-blue">
-                <h1>{{day}}</h1>
-            </header>
-            <button-counter></button-counter>
-            <program></program>
-        </div>
+    <template id="daylist" class="w3-container day" v-for="day in days" :day="day">
+        <header class="w3-container w3-blue">
+            <h1>{{day}}</h1>
+        </header>
+        <template id="program" v-for="program in day.programs" :program="program">
+            <div class="w3-card-4 program" style="display: inline-block">
+                <header class="w3-container w3-blue">
+                    <h5>TEST INPUT</h5>
+                </header>
+                <div class="w3-container">
+                    LINK
+                </div>
+                <footer class="w3-container w3-blue">
+                    <h5>Footer</h5>
+                </footer>
+            </div>
+        </template>
     </template>
 
 </div>
@@ -71,7 +81,7 @@
 
             loadChannels: function () {
                 for (var i in this.channels) {
-                    this.loadChannel(this.channels[c]);
+                    this.loadDayChannel(this.channels[c]);
                 }
             },
 

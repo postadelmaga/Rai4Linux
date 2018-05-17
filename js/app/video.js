@@ -8,14 +8,7 @@ Vue.component('player', {
 // });
 
 Vue.component('channels', {
-    props: ['channel', 'id', 'current'],
-    data: function () {
-        self = this;
-        return {
-            channels: self.$parent.channels,
-        };
-    },
-
+    props: ['id','title'],
     before: function () {
     },
     methods: {
@@ -24,8 +17,8 @@ Vue.component('channels', {
             if (event) event.preventDefault();
 
             // this.setCurrentChannel(this.channel.id);
-            this.$parent.ch_current = this.channel.id;
-            this.$parent.$emit('switch-channel', this.channel.id);
+            this.$parent.ch_current = this.id;
+            this.$parent.$emit('switch-channel', this.id);
         },
     },
 });
@@ -33,10 +26,21 @@ Vue.component('channels', {
 
 Vue.component('daylist', {
     template: '#daylist',
+    data: function () {
+        return {};
+    },
+    created: function () {
+        this.$parent.$on('switch-channel', ch_id => {
+            this.setCurrentChannel(ch_id);
+            console.log(ch_id);
+        });
+    },
     methods: {
         loadDayChannel: function (day, ch_id) {
             var url = this.ajaxurl;
-            if (c.days.length == 0) {
+            var channel = this.$parent.getChannelById(ch_id);
+
+            if (channel.days.length == 0) {
                 $.ajax({
                     url: url,
                     method: 'POST',
@@ -67,21 +71,13 @@ Vue.component('daylist', {
 });
 
 Vue.component('program', {
-    data: function () {
-        return {
-            time: this.$parent.day,
-        }
-    },
-    template: '<div>{{ time }} times.</div>'
+    template: '#program',
+    prop: ['day', 'title'],
 });
+
 
 // Define a new component called button-counter
 Vue.component('button-counter', {
-    data: function () {
-        return {
-            count: 0
-        }
-    },
     template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
 });
 

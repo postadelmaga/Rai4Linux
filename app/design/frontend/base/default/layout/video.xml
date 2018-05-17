@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <layout version="0.1.0">
+
     <video_index_index>
         <reference name="head">
             <action method="addJs">
-                <script>app/components.js</script>
+                <script>app/video.js</script>
             </action>
             <action method="addJs">
                 <script>lib/player/build/mediaelement-and-player.js</script>
@@ -17,6 +18,15 @@
             <block template="video/player.phtml" type="video/player"/>
         </reference>
     </video_index_index>
+
+    <video_index_ajax>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>empty.phtml</template>
+            </action>
+        </reference>
+    </video_index_ajax>
+
     <video_index_chart>
         <reference name="head">
             <action method="addJs">
@@ -27,4 +37,5 @@
             <block template="video/chart.phtml" type="core/template"/>
         </reference>
     </video_index_chart>
+
 </layout>
