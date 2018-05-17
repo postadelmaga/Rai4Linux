@@ -106,9 +106,9 @@ class Mage_Adminhtml_System_ConfigController extends Mage_Adminhtml_Controller_A
         if ($this->_isSectionAllowedFlag) {
             $this->_addContent($this->getLayout()->createBlock('adminhtml/system_config_edit')->initForm());
 
-            $this->_addJs($this->getLayout()
-                ->createBlock('adminhtml/template')
-                ->setTemplate('system/shipping/ups.phtml'));
+//            $this->_addJs($this->getLayout()
+//                ->createBlock('adminhtml/template')
+//                ->setTemplate('system/shipping/ups.phtml'));
             $this->_addJs($this->getLayout()
                 ->createBlock('adminhtml/template')
                 ->setTemplate('system/config/js.phtml'));
