@@ -8,8 +8,11 @@ Vue.component('player', {
 // });
 
 Vue.component('channels', {
-    props: ['id','title'],
+    props: ['id', 'title'],
     before: function () {
+    },
+    data: function () {
+        return {current_id: 1};
     },
     methods: {
         click: function (event) {
@@ -17,8 +20,8 @@ Vue.component('channels', {
             if (event) event.preventDefault();
 
             // this.setCurrentChannel(this.channel.id);
-            this.$parent.current_id = this.id;
             this.$parent.$emit('switch-channel', this.id);
+            this.$dispatch('switch-channel', this.id);
         },
     },
 });
@@ -36,37 +39,7 @@ Vue.component('daylist', {
         });
     },
     methods: {
-        loadDayChannel: function (day, ch_id) {
-            var url = this.ajaxurl;
-            var channel = this.$parent.getChannelById(ch_id);
 
-            if (channel.days.length == 0) {
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: {day: day, ch: ch_id},
-                    success: function (data) {
-                        try {
-                            var result = tryParseJSON(data);
-                            if (result.success) {
-                                return {date: day, programs: result.programs};
-                            }
-                            else {
-                                jQuery('body').append(jQuery('<div>').html(data));
-                                return null;
-                            }
-                        } catch (e) {
-                            jQuery('body').append(jQuery('<div>').html(data));
-                            return null;
-                        }
-
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
-        }
     }
 });
 

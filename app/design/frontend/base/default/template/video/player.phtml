@@ -17,7 +17,8 @@
         <channels inline-template v-for="(channel, index) in channels"
                   :key="index"
                   :id="index"
-                  :title="channel.title">
+                  :title="channel.title"
+                  ref="channelscomp">
             <a class="w3-bar-item w3-button" :id="id" @click="click">{{title}}</a>
         </channels>
     </div>
@@ -48,26 +49,30 @@
     data.title = '';
     var vuePlayer = new Vue({
         data: data,
-        // beforeMount: function () {
-        // },
-        created: function () {
+        beforeMount: function () {
             this.$on('switch-channel', ch_id => {
                 this.setCurrentChannel(ch_id);
                 console.log(ch_id);
             });
+        },
+        created: function () {
         },
         mounted: function () {
             this._initPlayer();
             this.setCurrentChannel(1);
         },
         methods: {
-            setCurrentChannel(ch_id) {
-                // var c = this.getChannelById(ch_id);
-                // this.loadChannel(c);
-                this.current_id = ch_id;
-                this.title = this.getChannelById(ch_id).title;
 
+            getCurrentChannel() {
+                return this.$ref.channelscomp.current_id;
             },
+
+            setCurrentChannel(id) {
+                this.component('channelscomp').current_id = 1;
+                this.$ref.channelscomp.current_id = 1;
+                this.loadDayChannel;
+            }
+
             getChannelById: function (ch_id) {
                 var i;
                 for (i in this.channels) {
@@ -76,6 +81,38 @@
                     }
                 }
             },
+
+            loadDayChannel: function (day, ch_id) {
+                var url = this.ajaxurl;
+                var channel = this.getChannelById(ch_id);
+
+                if (channel.days.programs.length == 0) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {day: day, ch: ch_id},
+                        success: function (data) {
+                            try {
+                                var result = tryParseJSON(data);
+                                if (result.success) {
+                                    return {date: day, programs: result.programs};
+                                }
+                                else {
+                                    jQuery('body').append(jQuery('<div>').html(data));
+                                    return null;
+                                }
+                            } catch (e) {
+                                jQuery('body').append(jQuery('<div>').html(data));
+                                return null;
+                            }
+
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            }
 
 
             loadChannels: function () {

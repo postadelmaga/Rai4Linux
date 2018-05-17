@@ -10,8 +10,8 @@ class Maga_Video_IndexController extends Mage_Core_Controller_Front_Action
 
     public function ajaxAction()
     {
-        $day = $this->getRequest()->getParams('day');
-        $channel = $this->getRequest()->getParams('channel');
+        $day = $this->getRequest()->getParam('day');
+        $channel = $this->getRequest()->getParam('channel');
         $result = Mage::getModel('video/rai')->requestDay($day, $channel);
 
         $this->getResponse()->setBody($result);
