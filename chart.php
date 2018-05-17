@@ -1,17 +1,21 @@
 <html>
 <head>
     <script src="./js/lib/Chart.js"></script>
-    <style>
-        /*#mychart_box{*/
-            /*width: 640px;*/
-            /*height: 480px;*/
-        /*}*/
-    </style>
+    <link type="text/css" rel="stylesheet" href="./skin/frontend/base/default/css/w3.css">
 </head>
 <body>
-<div id="mychart_box">
-    <canvas id="myChart" width="400" height="400"></canvas>
+
+<div class="w3-container w3-black">
+    <div>
+        <input pattern="[\p{Letter}\p{White_Space}]+" name="value" value="test">
+    </div>
+
+    <div style="">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
 </div>
+
+
 <script>
     var ctx = document.getElementById("myChart");
     var myChart = new Chart(ctx, {
@@ -22,29 +26,27 @@
                 "Blue",
                 "Yellow",
                 "Green",
-                // "Purple",
-                // "Orange"
+                "Purple",
+                "Orange"
             ],
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 3, 5,
-                    // 2, 3
-                ],
+                data: [12, 19, 3, 5, 2, 3],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(255, 206, 86, 0.2)',
                     'rgba(75, 192, 192, 0.2)',
-                    // 'rgba(153, 102, 255, 0.2)',
-                    // 'rgba(255, 159, 64, 0.2)'
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255,99,132,1)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
-                    // 'rgba(153, 102, 255, 1)',
-                    // 'rgba(255, 159, 64, 1)'
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -60,8 +62,8 @@
         }
     });
 
-    myChart.canvas.parentNode.style.width = '320px';
-    myChart.canvas.parentNode.style.height = '260px';
+    myChart.canvas.parentNode.style.width = '640px';
+    myChart.canvas.parentNode.style.heigth = '480px';
 </script>
 </body>
 </html>

@@ -38,8 +38,10 @@
     </frontend>
     <default>
         <google>
-            <active>1</active>
-            <account>UA-8551093-2</account>
+            <analytics>
+                <active>1</active>
+                <account>UA-8551093-2</account>
+            </analytics>
         </google>
     </default>
 </config>
