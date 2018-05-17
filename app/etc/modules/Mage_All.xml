@@ -52,13 +52,6 @@
                 <Mage_Admin/>
             </depends>
         </Mage_Adminhtml>
-        <Mage_Eav>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Core/>
-            </depends>
-        </Mage_Eav>
         <Mage_Cron>
             <active>true</active>
             <codePool>core</codePool>
@@ -84,13 +77,12 @@
                 <Mage_Adminhtml/>
             </depends>
         </Mage_AdminNotification>
-        <Mage_Directory>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Core/>
-            </depends>
-        </Mage_Directory>
+
+
+
+
+
+
         <Mage_Cms>
             <active>true</active>
             <codePool>core</codePool>
@@ -98,6 +90,36 @@
                 <Mage_Uploader/>
             </depends>
         </Mage_Cms>
+        <Mage_Uploader>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Uploader>
+
+        <Mage_Directory>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Directory>
+        <Mage_Eav>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Eav>
+        <Mage_Index>
+            <active>true</active>
+            <codePool>core</codePool>
+            <depends>
+                <Mage_Core/>
+            </depends>
+        </Mage_Index>
+
         <Mage_Customer>
             <active>true</active>
             <codePool>core</codePool>
@@ -114,13 +136,7 @@
                 <Mage_Core/>
             </depends>
         </Mage_Dataflow>
-        <Mage_Uploader>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Core/>
-            </depends>
-        </Mage_Uploader>
+
 
         <!--<Mage_Rule>-->
             <!--<active>true</active>-->
@@ -405,13 +421,6 @@
                 <!--<Mage_Customer/>-->
             <!--</depends>-->
         <!--</Mage_ProductAlert>-->
-        <Mage_Index>
-            <active>true</active>
-            <codePool>core</codePool>
-            <depends>
-                <Mage_Core/>
-            </depends>
-        </Mage_Index>
 
     </modules>
 </config>
