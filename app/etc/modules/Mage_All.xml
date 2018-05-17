@@ -77,7 +77,13 @@
                 <Mage_Adminhtml/>
             </depends>
         </Mage_AdminNotification>
-
+        <!--<Mage_Directory>-->
+        <!--<active>true</active>-->
+        <!--<codePool>core</codePool>-->
+        <!--<depends>-->
+        <!--<Mage_Core/>-->
+        <!--</depends>-->
+        <!--</Mage_Directory>-->
 
 
 
@@ -98,13 +104,7 @@
             <!--</depends>-->
         <!--</Mage_Uploader>-->
 
-        <!--<Mage_Directory>-->
-            <!--<active>true</active>-->
-            <!--<codePool>core</codePool>-->
-            <!--<depends>-->
-                <!--<Mage_Core/>-->
-            <!--</depends>-->
-        <!--</Mage_Directory>-->
+
         <!--<Mage_Eav>-->
             <!--<active>true</active>-->
             <!--<codePool>core</codePool>-->

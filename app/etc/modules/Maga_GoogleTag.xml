@@ -4,6 +4,6 @@
         <Maga_GoogleTag>
             <active>true</active>
             <codePool>community</codePool>
-        </Maga_Video>
+        </Maga_GoogleTag>
     </modules>
 </config>
