@@ -40,7 +40,7 @@ Default layout, loads most of the pages
 
                 <action method="addJs"><script>lib/jquery.js</script></action>
                 <action method="addJs"><script>lib/vue.js</script></action>
-                <action method="addJs"><script>app/video.js</script></action>
+                <action method="addJs"><script>app/player.js</script></action>
 
 
                 <block type="page/js_cookie" name="js_cookies" template="page/js/cookie.phtml"/>
