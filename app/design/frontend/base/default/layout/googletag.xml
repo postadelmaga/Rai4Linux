@@ -1,0 +1,11 @@
+<layout version="0.1.0">
+
+    <default>
+        <!-- Mage_GoogleAnalytics -->
+        <reference name="head" before="-">
+            <block type="googleTag/script" name="google_tag" as="google_tag"
+                    template="googletag/script.phtml"/>
+        </reference>
+    </default>
+
+</layout>

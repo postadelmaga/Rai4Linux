@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var $this BurnOut_Ultimo_Block_GoogleAnalytics_Ga
+ *
+ * BOI update Google Analitics / Adwords
+ */
+
+/** @var BurnOut_Ultimo_Helper_GoogleAnalytics_Data $_helper */
+$_helper = $this->helper('googleanalytics');
+$_accountId = $_helper->getAccountId();
+$_accountId_adwords = $_helper->getAdwordsAccountId();
+?>
+<?php if (!$this->helper('core/cookie')->isUserNotAllowSaveCookie()): ?>
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=<?php echo $_accountId ?>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        <?php if ($options = $this->_getAnalyticsJsonOptions()): ?>
+        gtag('config', '<?php echo $_accountId ?>', <?php echo $options ?>);
+        <?php else: ?>
+        gtag('config', '<?php echo $_accountId ?>');
+        <?php endif?>
+
+        <?php if ($_helper->isGoogleAdwordsAvailable()): ?>
+        gtag('config', '<?php echo $_accountId_adwords ?>');
+        <?php endif; ?>
+    </script>
+
+    <script>
+        <?php echo $this->_getAnalyticsExtraEventSnippet() ?>
+
+        <?php if ($_helper->isGoogleAdwordsAvailable()): ?>
+        <?php echo $this->_getAdwordsConversionEventSnippet($_accountId_adwords) ?>
+        <?php endif; ?>
+    </script>
+
+<?php endif; ?>
+

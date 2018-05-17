@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Maga_GoogleTag>
+            <version>0.0.1</version>
+        </Maga_GoogleTag>
+    </modules>
+    <global>
+        <blocks>
+            <googleTag>
+                <class>Maga_GoogleTag_Block</class>
+            </googleTag>
+        </blocks>
+        <helpers>
+            <googleTag>
+                <class>Maga_GoogleTag_Helper</class>
+            </googleTag>
+        </helpers>
+    </global>
+
+    <frontend>
+        <layout>
+            <updates>
+                <googleTag>
+                    <file>ga.xml</file>
+                </googleTag>
+            </updates>
+        </layout>
+        <!--<routers>-->
+            <!--<video>-->
+                <!--<use>standard</use>-->
+                <!--<args>-->
+                    <!--<module>Maga_Video</module>-->
+                    <!--<frontName>video</frontName>-->
+                <!--</args>-->
+            <!--</video>-->
+        <!--</routers>-->
+    </frontend>
+
+</config>
