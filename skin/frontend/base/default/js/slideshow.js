@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * Magento
  *
@@ -25,19 +23,22 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
--->
-<layout version="0.1.0">
-    <default>
-        <!--<reference name="head">-->
-            <!--<block type="core/template" name="optional_zip_countries" as="optional_zip_countries" template="directory/js/optional_zip_countries.phtml" />-->
-        <!--</reference>-->
+$j(document).ready(function () {
 
-        <!--<reference name="header">-->
-            <!--<block type="directory/currency" name="currency" as="currency_switcher" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
+    // ==============================================
+    // UI Pattern - Slideshow
+    // ==============================================
 
-        <!--<reference name="footer">-->
-            <!--<block type="directory/currency" name="footer_currency" after="footer_store_language" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
-    </default>
-</layout>
+    $j('.slideshow-container .slideshow')
+        .cycle({
+            slides: '> li',
+            pager: '.slideshow-pager',
+            pagerTemplate: '<span class="pager-box"></span>',
+            speed: 600,
+            pauseOnHover: true,
+            swipe: true,
+            prev: '.slideshow-prev',
+            next: '.slideshow-next',
+            fx: 'scrollHorz'
+        });
+});

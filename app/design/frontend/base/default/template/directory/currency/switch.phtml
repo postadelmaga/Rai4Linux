@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Magento
  *
@@ -20,24 +19,13 @@
  * needs please refer to http://www.magento.com for more information.
  *
  * @category    design
- * @package     rwd_default
+ * @package     base_default
  * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
--->
-<layout version="0.1.0">
-    <default>
-        <!--<reference name="head">-->
-            <!--<block type="core/template" name="optional_zip_countries" as="optional_zip_countries" template="directory/js/optional_zip_countries.phtml" />-->
-        <!--</reference>-->
-
-        <!--<reference name="header">-->
-            <!--<block type="directory/currency" name="currency" as="currency_switcher" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
-
-        <!--<reference name="footer">-->
-            <!--<block type="directory/currency" name="footer_currency" after="footer_store_language" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
-    </default>
-</layout>
+?>
+<div class="page-title">
+    <h1><?php echo $this->__('Currency') ?></h1>
+</div>
+<p><?php echo $this->__('Your current currency is: %s', $currency->getCode()) ?></p>
+<p><a href="<?php echo Mage::getBaseUrl() ?>"><?php echo $this->__('Continue &raquo;') ?></a></p>

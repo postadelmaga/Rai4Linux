@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Magento
  *
@@ -24,20 +23,23 @@
  * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
--->
-<layout version="0.1.0">
-    <default>
-        <!--<reference name="head">-->
-            <!--<block type="core/template" name="optional_zip_countries" as="optional_zip_countries" template="directory/js/optional_zip_countries.phtml" />-->
-        <!--</reference>-->
-
-        <!--<reference name="header">-->
-            <!--<block type="directory/currency" name="currency" as="currency_switcher" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
-
-        <!--<reference name="footer">-->
-            <!--<block type="directory/currency" name="footer_currency" after="footer_store_language" template="directory/currency.phtml"/>-->
-        <!--</reference>-->
-    </default>
-</layout>
+?>
+<?php
+/**
+ * Currency switcher
+ *
+ * @see Mage_Directory_Block_Currency
+ */
+?>
+<?php if($this->getCurrencyCount()>1): ?>
+<div class="currency-switcher">
+    <label for="select-currency"><?php echo $this->__('Your Currency:') ?></label>
+    <select id="select-currency" name="currency" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Your Currency')) ?>" onchange="setLocation(this.value)">
+        <?php foreach ($this->getCurrencies() as $_code => $_name): ?>
+        <option value="<?php echo $this->getSwitchCurrencyUrl($_code) ?>"<?php if($_code==$this->getCurrentCurrencyCode()): ?> selected="selected"<?php endif; ?>>
+            <?php echo $_name ?> - <?php echo $_code ?>
+        </option>
+    <?php endforeach; ?>
+    </select>
+</div>
+<?php endif; ?>

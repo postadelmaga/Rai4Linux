@@ -17,4 +17,14 @@
             <block template="video/player.phtml" type="video/player"/>
         </reference>
     </video_index_index>
+    <video_index_chart>
+        <reference name="head">
+            <action method="addJs">
+                <script>app/lib/Chart.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block template="video/chart.phtml" type="core/template"/>
+        </reference>
+    </video_index_chart>
 </layout>
