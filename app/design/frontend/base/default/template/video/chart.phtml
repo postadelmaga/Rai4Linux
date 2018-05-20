@@ -19,53 +19,45 @@
 
     <div class="w3-container w3-sand w3-hover-border-deep-purple">
         <div class="w3-panel w3-center">
-            <div class="w3-card-4 w3-light-gray card-box">
 
+            <div class="w3-card-4 w3-light-gray card-box">
                 <header class="w3-container w3-black">
                     <h5>Header</h5>
                 </header>
-
                 <div class="w3-container">
                     <p>
-                        <canvas id="myChart" width="400" height="400"></canvas>
+                        <canvas id="myChart"></canvas>
                     </p>
                     <script>
                         var myChart = new Chart(jQuery('#myChart'), JSON.parse('<?php echo $this->getJsonConfig()?>'));
-
-                        myChart.canvas.parentNode.style.width = '580px';
-                        // myChart.canvas.parentNode.style.heigth = '320px';
                     </script>
                 </div>
 
                 <footer class="w3-container">
                     <h5>Footer</h5>
                 </footer>
-
             </div>
-            <div class="w3-card-4 w3-light-gray card-box">
 
+            <div class="w3-card-4 w3-light-gray card-box">
                 <header class="w3-container w3-black">
                     <h5>Header</h5>
                 </header>
-
                 <div class="w3-container">
                     <p>
-                        <canvas id="myChart2" width="400" height="400"></canvas>
+                        <canvas id="myChart2"></canvas>
                     </p>
                     <script>
                         var myChart2 = new Chart(jQuery('#myChart2'), JSON.parse('<?php echo $this->getJsonConfig()?>'));
-
-                        myChart2.canvas.parentNode.style.width = '580px';
-                        // myChart2.canvas.parentNode.style.heigth = '320px';
                     </script>
                 </div>
 
                 <footer class="w3-container">
                     <h5>Footer</h5>
                 </footer>
-
             </div>
+
         </div>
+
         <div class="w3-panel w3-center">
 
             <div class="card-box w3-card-4 w3-light-gray">
