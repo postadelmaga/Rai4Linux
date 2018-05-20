@@ -20,12 +20,11 @@ Vue.component('channels', {
             if (event) event.preventDefault();
 
             // this.setCurrentChannel(this.channel.id);
-            this.$parent.$emit('switch-channel', this.id);
-            this.$dispatch('switch-channel', this.id);
+            // this.$parent.$emit('switch-channel', this.id);
+            // this.$dispatch('switch-channel', this.id);
         },
     },
 });
-
 
 Vue.component('daylist', {
     template: '#daylist',

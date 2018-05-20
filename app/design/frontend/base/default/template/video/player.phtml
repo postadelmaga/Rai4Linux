@@ -1,7 +1,7 @@
 <div id="app">
 
     <div class="w3-container w3-black">
-        <h3>{{title}}</h3>
+        <h3>{{this.getTitle()}}</h3>
     </div>
 
     <template id="player">
@@ -23,7 +23,7 @@
         </channels>
     </div>
 
-    <template id="daylist" class="w3-container day" v-for="day in days" :day="day">
+    <template id="daylist" class="w3-container day" v-for="day in dayrange" :day="day">
         <header class="w3-container w3-blue">
             <h1>{{day}}</h1>
         </header>
@@ -62,17 +62,17 @@
             this.setCurrentChannel(1);
         },
         methods: {
-
-            getCurrentChannel() {
-                return this.$ref.channelscomp.current_id;
+            getTitle() {
+                return this.getCurrentChannel().title;
             },
-
+            getCurrentChannel() {
+                return this.getChannelById(this.$options.components.channels.current_id);
+            },
             setCurrentChannel(id) {
-                this.component('channelscomp').current_id = 1;
-                this.$ref.channelscomp.current_id = 1;
-                this.loadDayChannel;
-            }
-
+                for (var i in this.dayrange) {
+                    this.loadDayChannel(this.dayrange[i], id);
+                }
+            },
             getChannelById: function (ch_id) {
                 var i;
                 for (i in this.channels) {
@@ -81,7 +81,6 @@
                     }
                 }
             },
-
             loadDayChannel: function (day, ch_id) {
                 var url = this.ajaxurl;
                 var channel = this.getChannelById(ch_id);
@@ -111,13 +110,6 @@
                             console.log(error);
                         }
                     });
-                }
-            }
-
-
-            loadChannels: function () {
-                for (var i in this.channels) {
-                    this.loadDayChannel(this.channels[c]);
                 }
             },
 

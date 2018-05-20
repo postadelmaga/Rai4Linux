@@ -2,19 +2,35 @@
 
 class Maga_Video_Helper_Rai extends Mage_Core_Helper_Abstract
 {
+    public function getDayRange()
+    {
+        $day_range = array();
+        $date = New Zend_Date();
+
+        for ($i = 7; $i >= 0; $i--) {
+            $day_range[] = $date->subDay($i)->get('Y-MM-dd');
+        }
+        return $day_range;
+    }
+
     public function getChannelList()
     {
         $channels = array();
-        foreach ($this->getChannelInfo() as $ch) {
-            $channels[$ch['id']] = $ch['title'];
+        foreach ($this->getChannelCollection() as $ch) {
+            $channels[$ch->getId()] = $ch->getTitle();
         }
 
         return $channels;
     }
 
-    public function getChannelInfo()
+    /**
+     * @return Varien_Data_Collection
+     * @throws Exception
+     */
+    public function getChannelCollection()
     {
-        $channels = array(
+        $collection = New Varien_Data_Collection();
+        $channels_data = array(
             array(
                 'id' => 1,
                 'title' => 'RaiUno',
@@ -40,22 +56,12 @@ class Maga_Video_Helper_Rai extends Mage_Core_Helper_Abstract
                 'days' => array()
             ),
         );
-        return $channels;
-    }
 
-    public function getDayRange()
-    {
-        $range = array();
-
-        for ($i = 1; $i <= 7; $i++) {
-            $prev = date("Y-m-d", mktime(2, 0, 0, date("m"), date("d") - $i, date("Y")));
-
-            $date = new DateTime($prev);
-            $prevDay = $date->format('Y-m-d');
-
-            $range[] = $prevDay;
+        foreach ($channels_data as $c) {
+            $chan = New Varien_Object($c);
+            $collection->addItem($chan);
         }
-        return array_reverse($range);
+        return $collection;
     }
 
     public function getQualityType()

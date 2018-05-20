@@ -30,11 +30,11 @@
     <video_index_chart>
         <reference name="head">
             <action method="addJs">
-                <script>app/lib/Chart.js</script>
+                <script>lib/Chart.js</script>
             </action>
         </reference>
         <reference name="content">
-            <block template="video/chart.phtml" type="core/template"/>
+            <block template="video/chart.phtml" type="video/chart"/>
         </reference>
     </video_index_chart>
 
